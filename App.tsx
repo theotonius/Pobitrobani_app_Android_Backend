@@ -267,7 +267,7 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    document.documentElement.style.setProperty('--app-font', `'${fontFamily}', 'Nikosh', 'Noto Sans Bengali', 'Hind Siliguri', sans-serif`);
+    document.documentElement.style.setProperty('--app-font', `'${fontFamily}', 'Noto Sans Bengali', 'Hind Siliguri', system-ui, -apple-system, sans-serif`);
   }, [fontFamily]);
 
   // Pull to refresh handlers
@@ -1765,10 +1765,10 @@ export default function App() {
                           value={fontFamily} 
                           onChange={(e) => handleFontChange(e.target.value)}
                           className={`w-full p-4 md:p-6 rounded-xl md:rounded-2xl border-2 transition-all duration-300 appearance-none cursor-pointer outline-none focus:border-amber-500/50 shadow-inner ${theme === 'dark' ? 'bg-slate-900 border-white/5 text-slate-200' : 'bg-white border-black/5 text-slate-800'} bn-serif text-base md:text-lg`}
-                          style={{ fontFamily: `'${fontFamily}', 'Noto Sans Bengali', 'SolaimanLipi', sans-serif` }}
+                          style={{ fontFamily: `'${fontFamily}', 'Noto Sans Bengali', 'Hind Siliguri', system-ui, sans-serif` }}
                         >
                           {fonts.map(f => (
-                            <option key={f.id} value={f.id} className={theme === 'dark' ? 'bg-slate-900 text-white' : 'bg-white text-slate-900'} style={{ fontFamily: `'${f.id}', 'Noto Sans Bengali', sans-serif` }}>{f.name}</option>
+                            <option key={f.id} value={f.id} className={theme === 'dark' ? 'bg-slate-900 text-white' : 'bg-white text-slate-900'} style={{ fontFamily: `'Noto Sans Bengali', system-ui, sans-serif` }}>{f.name}</option>
                           ))}
                         </select>
                         <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-amber-500/50 group-hover/select:text-amber-500 transition-colors">
