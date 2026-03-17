@@ -1,0 +1,8 @@
+{
+  "name": "পবিত্র বানী (Sacred Word)",
+  "description": "An AI-powered soulful companion that provides deep spiritual insights, lyrical analysis, and audio readings for any text or song.",
+  "requestFramePermissions": [
+    "microphone",
+    "geolocation"
+  ]
+}
