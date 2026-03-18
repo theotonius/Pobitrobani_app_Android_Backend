@@ -11,7 +11,7 @@ import { normalizeBengali, transliterateToBengali, BENGALI_SEARCH_INDEX } from '
 const NavItem: React.FC<{ icon: React.ReactNode; label: string; active: boolean; onClick: () => void; theme: string }> = ({ icon, label, active, onClick, theme }) => (
   <button 
     onClick={onClick}
-    className={`flex items-center gap-2 lg:gap-3 transition-all px-4 lg:px-6 py-3 rounded-2xl group relative ${active ? (theme === 'dark' ? 'text-amber-400' : 'text-amber-700') : (theme === 'dark' ? 'text-slate-400 hover:text-slate-200' : 'text-slate-500 hover:text-slate-800')}`}
+    className={`flex items-center gap-2 lg:gap-3 transition-all px-4 lg:px-6 py-3 rounded-2xl group relative ${active ? (theme === 'dark' ? 'text-amber-400' : 'text-amber-700') : (theme === 'dark' ? 'text-slate-300 hover:text-slate-200' : 'text-slate-500 hover:text-slate-800')}`}
   >
     {active && (
       <motion.div 
@@ -34,7 +34,7 @@ const SnippetBookmark: React.FC<{
 }> = ({ saved, onClick, theme }) => (
   <button 
     onClick={onClick}
-    className={`p-2 rounded-xl transition-all duration-300 ${saved ? 'bg-amber-500 text-white shadow-lg scale-110' : (theme === 'dark' ? 'bg-white/5 text-slate-400 hover:text-amber-500 hover:bg-white/10' : 'bg-black/5 text-slate-600 hover:text-amber-600 hover:bg-black/10')}`}
+    className={`p-2 rounded-xl transition-all duration-300 ${saved ? 'bg-amber-500 text-white shadow-lg scale-110' : (theme === 'dark' ? 'bg-white/5 text-slate-300 hover:text-amber-500 hover:bg-white/10' : 'bg-black/5 text-slate-600 hover:text-amber-600 hover:bg-black/10')}`}
   >
     <Bookmark size={14} fill={saved ? "currentColor" : "none"} />
   </button>
@@ -948,14 +948,14 @@ export default function App() {
                     onChange={e => { setQuery(e.target.value); setShowSuggestions(true); }}
                     onFocus={() => setShowSuggestions(true)}
                     placeholder={t.searchPlaceholder}
-                    className={`w-full ${theme === 'dark' ? 'bg-slate-900/60' : 'bg-white/80'} backdrop-blur-3xl border border-white/10 pl-6 pr-24 md:pl-10 md:pr-64 py-5 md:py-8 rounded-[1.5rem] md:rounded-[2.5rem] text-lg md:text-2xl outline-none focus:ring-2 ring-amber-500/50 transition-all duration-300 ${theme === 'dark' ? 'placeholder-slate-500 text-amber-50' : 'placeholder-slate-400 text-slate-900'} font-bold shadow-2xl md:shadow-3xl bn-serif`}
+                    className={`w-full ${theme === 'dark' ? 'bg-slate-900/60' : 'bg-white/80'} backdrop-blur-3xl border border-white/10 pl-6 pr-24 md:pl-10 md:pr-64 py-5 md:py-8 rounded-[1.5rem] md:rounded-[2.5rem] text-lg md:text-2xl outline-none focus:ring-2 ring-amber-500/50 transition-all duration-300 ${theme === 'dark' ? 'placeholder-slate-400 text-amber-50' : 'placeholder-slate-400 text-slate-900'} font-bold shadow-2xl md:shadow-3xl bn-serif`}
                   />
                   <div className="absolute right-2 md:right-3 top-1/2 -translate-y-1/2 flex items-center gap-1 md:gap-2">
                     {query && (
                       <button 
                         type="button"
                         onClick={() => { setQuery(''); setShowSuggestions(true); }}
-                        className="w-8 h-8 md:w-12 md:h-12 flex items-center justify-center text-slate-400 hover:text-amber-500 transition-colors rounded-full"
+                        className="w-8 h-8 md:w-12 md:h-12 flex items-center justify-center text-slate-300 hover:text-amber-500 transition-colors rounded-full"
                       >
                         <XCircle size={16} />
                       </button>
@@ -980,7 +980,7 @@ export default function App() {
                     {searchHistory.length > 0 && (
                       <button 
                         onClick={(e) => { e.stopPropagation(); setSearchHistory([]); localStorage.removeItem('sacred_word_search_history'); }}
-                        className="text-[8px] md:text-[9px] font-black uppercase text-rose-500/60 hover:text-rose-500 transition-colors"
+                        className="text-[8px] md:text-[9px] font-black uppercase text-rose-400/70 hover:text-rose-500 transition-colors"
                       >
                         ইতিহাস মুছুন
                       </button>
@@ -1059,7 +1059,7 @@ export default function App() {
                   <CircleAlert size={32} />
                 </div>
                 <h3 className={`text-xl md:text-3xl font-black ${theme === 'dark' ? 'text-slate-100' : 'text-slate-900'} mb-3 md:mb-4 bn-serif transition-colors duration-300`}>{t.errorTitle}</h3>
-                <p className={`${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'} text-base md:text-lg mb-8 md:mb-10 bn-serif text-center md:text-justify px-2`}>{error}</p>
+                <p className={`${theme === 'dark' ? 'text-slate-300' : 'text-slate-600'} text-base md:text-lg mb-8 md:mb-10 bn-serif text-center md:text-justify px-2`}>{error}</p>
                 <button onClick={() => setState(AppState.IDLE)} className={`px-10 py-4 md:px-12 md:py-5 bg-rose-600 hover:bg-rose-500 rounded-2xl text-white font-black transition-all shadow-lg active:scale-95 text-sm md:text-base`}>{t.retry}</button>
               </motion.div>
             )}
@@ -1076,7 +1076,7 @@ export default function App() {
                   <div className={`relative ${theme === 'dark' ? 'bg-slate-900/50' : 'bg-white/70'} backdrop-blur-3xl p-6 md:p-16 lg:p-20 rounded-[2rem] md:rounded-[4rem] border border-white/5 overflow-hidden text-center shadow-3xl transition-all duration-300 ${readerMode ? 'max-w-4xl mx-auto' : ''}`}>
                     <div className="flex flex-col md:flex-row md:justify-between items-center gap-6 mb-8 md:mb-12">
                       <div className="divine-glass px-4 py-2 rounded-xl flex items-center gap-2">
-                        <span className="text-[10px] font-black uppercase tracking-widest text-amber-700/60">
+                        <span className="text-[10px] font-black uppercase tracking-widest text-amber-400/70">
                           {languageVersion === 'modern' ? t.modernVersion : languageVersion === 'carey' ? t.careyVersion : t.kitabulVersion}
                         </span>
                       </div>
@@ -1125,7 +1125,7 @@ export default function App() {
                           <div className="w-12 h-12 md:w-16 md:h-16 bg-amber-500/10 rounded-xl md:rounded-2xl flex items-center justify-center text-amber-700 shadow-inner group-hover:scale-110 transition-transform">
                             <Church size={24} />
                           </div>
-                          {readerMode && <h4 className={`text-xl md:text-2xl font-black ${theme === 'dark' ? 'text-amber-200' : 'text-amber-800'} bn-serif`}>{t.versionLabels[languageVersion].theologicalMeaning}</h4>}
+                          {readerMode && <h4 className={`text-xl md:text-2xl font-black text-amber-400 bn-serif`}>{t.versionLabels[languageVersion].theologicalMeaning}</h4>}
                         </div>
                         <SnippetBookmark 
                           saved={isSnippetSaved(currentVerse.explanation.theologicalMeaning, 'insight')}
@@ -1143,7 +1143,7 @@ export default function App() {
                         />
                       </div>
                       <div className="space-y-3 md:space-y-4">
-                        {!readerMode && <h4 className={`text-lg md:text-xl font-black ${theme === 'dark' ? 'text-amber-200' : 'text-amber-800'} bn-serif`}>{t.versionLabels[languageVersion].theologicalMeaning}</h4>}
+                        {!readerMode && <h4 className={`text-lg md:text-xl font-black text-amber-400 bn-serif`}>{t.versionLabels[languageVersion].theologicalMeaning}</h4>}
                         <div className="h-0.5 w-10 bg-amber-500/20 rounded-full"></div>
                         <div className={`${readerMode ? 'text-lg md:text-xl' : explanationSizeClass} ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'} leading-relaxed bn-serif font-medium text-justify transition-all duration-300`}>
                           {renderVerseText(currentVerse.explanation.theologicalMeaning, 'amber', true)}
@@ -1151,7 +1151,7 @@ export default function App() {
                       </div>
                     </div>
                     <div className="mt-6 md:mt-8 pt-4 md:pt-6 border-t border-white/5">
-                       <p className={`text-[9px] md:text-[10px] font-black uppercase tracking-widest ${theme === 'dark' ? 'text-amber-400/70' : 'text-amber-700/60'} flex items-center gap-2`}>
+                       <p className={`text-[9px] md:text-[10px] font-black uppercase tracking-widest ${theme === 'dark' ? 'text-amber-400/70' : 'text-amber-400/70'} flex items-center gap-2`}>
                          <Bookmark size={10} />
                          সূত্র: {currentVerse.explanation.theologicalReference}
                        </p>
@@ -1165,7 +1165,7 @@ export default function App() {
                           <div className="w-12 h-12 md:w-16 md:h-16 bg-blue-500/10 rounded-xl md:rounded-2xl flex items-center justify-center text-blue-600 shadow-inner group-hover:scale-110 transition-transform">
                             <BookOpen size={24} />
                           </div>
-                          {readerMode && <h4 className="text-xl md:text-2xl font-black text-blue-700 bn-serif">{t.versionLabels[languageVersion].historicalContext}</h4>}
+                          {readerMode && <h4 className="text-xl md:text-2xl font-black text-amber-400 bn-serif">{t.versionLabels[languageVersion].historicalContext}</h4>}
                         </div>
                         <SnippetBookmark 
                           saved={isSnippetSaved(currentVerse.explanation.historicalContext, 'insight')}
@@ -1183,7 +1183,7 @@ export default function App() {
                         />
                       </div>
                       <div className="space-y-3 md:space-y-4">
-                        {!readerMode && <h4 className="text-lg md:text-xl font-black text-blue-700 bn-serif">{t.versionLabels[languageVersion].historicalContext}</h4>}
+                        {!readerMode && <h4 className="text-lg md:text-xl font-black text-amber-400 bn-serif">{t.versionLabels[languageVersion].historicalContext}</h4>}
                         <div className="h-0.5 w-10 bg-blue-500/20 rounded-full"></div>
                         <div className={`${readerMode ? 'text-lg md:text-xl' : explanationSizeClass} ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'} leading-relaxed bn-serif font-medium text-justify transition-all duration-300`}>
                           {renderVerseText(currentVerse.explanation.historicalContext, 'blue', true)}
@@ -1205,7 +1205,7 @@ export default function App() {
                           <div className="w-12 h-12 md:w-16 md:h-16 bg-emerald-500/10 rounded-xl md:rounded-2xl flex items-center justify-center text-emerald-600 shadow-inner group-hover:scale-110 transition-transform">
                             <Cross size={24} />
                           </div>
-                          {readerMode && <h4 className="text-xl md:text-2xl font-black text-emerald-700 bn-serif">{t.versionLabels[languageVersion].practicalApplication}</h4>}
+                          {readerMode && <h4 className="text-xl md:text-2xl font-black text-amber-400 bn-serif">{t.versionLabels[languageVersion].practicalApplication}</h4>}
                         </div>
                         <SnippetBookmark 
                           saved={isSnippetSaved(currentVerse.explanation.practicalApplication, 'insight')}
@@ -1223,7 +1223,7 @@ export default function App() {
                         />
                       </div>
                       <div className="space-y-3 md:space-y-4">
-                        {!readerMode && <h4 className="text-lg md:text-xl font-black text-emerald-700 bn-serif">{t.versionLabels[languageVersion].practicalApplication}</h4>}
+                        {!readerMode && <h4 className="text-lg md:text-xl font-black text-amber-400 bn-serif">{t.versionLabels[languageVersion].practicalApplication}</h4>}
                         <div className="h-0.5 w-10 bg-emerald-500/20 rounded-full"></div>
                         <div className={`${readerMode ? 'text-lg md:text-xl' : explanationSizeClass} ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'} leading-relaxed bn-serif font-medium text-justify transition-all duration-300`}>
                           {renderVerseText(currentVerse.explanation.practicalApplication, 'emerald', true)}
@@ -1246,7 +1246,7 @@ export default function App() {
                         <div className="w-10 h-10 bg-violet-500/10 rounded-xl flex items-center justify-center text-violet-600 group-hover:rotate-12 transition-transform">
                           <LinkIcon size={20} />
                         </div>
-                        <h4 className="text-lg font-black text-violet-700 bn-serif">{t.versionLabels[languageVersion].crossReferences}</h4>
+                        <h4 className="text-lg font-black text-amber-400 bn-serif">{t.versionLabels[languageVersion].crossReferences}</h4>
                       </div>
                       <div className="flex flex-wrap gap-2">
                         {currentVerse.explanation.crossReferences.map((ref, i) => (
@@ -1269,7 +1269,7 @@ export default function App() {
                           <div className="w-10 h-10 bg-rose-500/10 rounded-xl flex items-center justify-center text-rose-600 group-hover:scale-110 transition-transform">
                             <Lightbulb size={20} />
                           </div>
-                          <h4 className={`${readerMode ? 'text-xl md:text-2xl' : 'text-lg'} font-black text-rose-700 bn-serif`}>{t.versionLabels[languageVersion].meditationPoint}</h4>
+                          <h4 className={`${readerMode ? 'text-xl md:text-2xl' : 'text-lg'} font-black text-amber-400 bn-serif`}>{t.versionLabels[languageVersion].meditationPoint}</h4>
                         </div>
                         <SnippetBookmark 
                           saved={isSnippetSaved(currentVerse.explanation.meditationPoint, 'insight')}
@@ -1300,7 +1300,7 @@ export default function App() {
                         <div className="w-10 h-10 bg-indigo-500/10 rounded-xl flex items-center justify-center text-indigo-600">
                           <Languages size={20} />
                         </div>
-                        <h4 className={`${readerMode ? 'text-xl md:text-2xl' : 'text-lg'} font-black text-indigo-700 bn-serif`}>{t.versionLabels[languageVersion].originalInsight}</h4>
+                        <h4 className={`${readerMode ? 'text-xl md:text-2xl' : 'text-lg'} font-black text-amber-400 bn-serif`}>{t.versionLabels[languageVersion].originalInsight}</h4>
                       </div>
                       <SnippetBookmark 
                         saved={isSnippetSaved(currentVerse.explanation.originalInsight || '', 'insight')}
@@ -1348,27 +1348,27 @@ export default function App() {
                     >
                       <HandHeart size={28} />
                     </motion.div>
-                    <h4 className={`text-xl md:text-2xl font-black ${theme === 'dark' ? 'text-amber-200' : 'text-amber-800'} bn-serif`}>ঐশ্বরিক প্রার্থনা</h4>
+                    <h4 className={`text-xl md:text-2xl font-black text-amber-400 bn-serif`}>ঐশ্বরিক প্রার্থনা</h4>
                   </div>
                   <div className={`${readerMode ? 'text-lg md:text-xl' : explanationSizeClass} ${theme === 'dark' ? 'text-slate-200' : 'text-slate-800'} leading-relaxed bn-serif font-medium text-center sm:text-justify relative z-10 px-2 md:px-4 transition-all duration-300`}>
                     {renderVerseText(currentVerse.prayer, 'amber', true)}
                   </div>
-                  <p className={`${theme === 'dark' ? 'text-amber-400/60' : 'text-amber-700/60'} font-black text-[10px] md:text-xs uppercase tracking-[0.4em] bn-serif`}>আমেন</p>
+                  <p className={`${theme === 'dark' ? 'text-amber-400/60' : 'text-amber-400/70'} font-black text-[10px] md:text-xs uppercase tracking-[0.4em] bn-serif`}>আমেন</p>
                 </div>
 
                 <div className="flex flex-wrap justify-center gap-2 md:gap-3 pt-4">
                    {currentVerse.keyThemes.map((themeStr, i) => (
-                     <span key={i} className="px-4 md:px-6 py-2 md:py-3 rounded-full divine-glass text-[9px] md:text-xs font-black text-amber-700/70 uppercase tracking-widest border border-amber-500/10 hover:border-amber-500/40 transition-all duration-300 cursor-default shadow-sm">{themeStr}</span>
+                     <span key={i} className="px-4 md:px-6 py-2 md:py-3 rounded-full divine-glass text-[9px] md:text-xs font-black text-amber-400/80 uppercase tracking-widest border border-amber-500/10 hover:border-amber-500/40 transition-all duration-300 cursor-default shadow-sm">{themeStr}</span>
                    ))}
                 </div>
 
                 <div className="flex flex-col sm:flex-row justify-center gap-4 md:gap-6 pt-6 md:pt-10">
-                  <button onClick={toggleSave} className={`w-full sm:w-auto flex items-center justify-center gap-3 md:gap-4 px-8 md:px-12 py-4 md:py-6 rounded-2xl md:rounded-[2.5rem] divine-glass transition-all duration-300 border-2 ${isCurrentVerseSaved ? 'text-amber-800 bg-amber-500/10 border-amber-500/40 shadow-[0_0_40px_rgba(139,115,85,0.2)]' : `${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'} border-white/5 hover:border-amber-500/20 hover:text-slate-200`} active:scale-95`}>
+                  <button onClick={toggleSave} className={`w-full sm:w-auto flex items-center justify-center gap-3 md:gap-4 px-8 md:px-12 py-4 md:py-6 rounded-2xl md:rounded-[2.5rem] divine-glass transition-all duration-300 border-2 ${isCurrentVerseSaved ? 'text-amber-800 bg-amber-500/10 border-amber-500/40 shadow-[0_0_40px_rgba(139,115,85,0.2)]' : `${theme === 'dark' ? 'text-slate-300' : 'text-slate-600'} border-white/5 hover:border-amber-500/20 hover:text-slate-200`} active:scale-95`}>
                     <Bookmark size={20} className={isCurrentVerseSaved ? 'fill-current' : ''} />
                     <span className="font-black bn-serif tracking-widest uppercase text-sm md:text-base">{isCurrentVerseSaved ? t.removeFromCollection : t.saveToCollection}</span>
                   </button>
 
-                  <button onClick={handleShare} className={`w-full sm:w-auto flex items-center justify-center gap-3 md:gap-4 px-8 md:px-12 py-4 md:py-6 rounded-2xl md:rounded-[2.5rem] divine-glass transition-all duration-300 border-2 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'} border-white/5 hover:border-amber-500/20 hover:text-slate-200 active:scale-95 relative group`}>
+                  <button onClick={handleShare} className={`w-full sm:w-auto flex items-center justify-center gap-3 md:gap-4 px-8 md:px-12 py-4 md:py-6 rounded-2xl md:rounded-[2.5rem] divine-glass transition-all duration-300 border-2 ${theme === 'dark' ? 'text-slate-300' : 'text-slate-600'} border-white/5 hover:border-amber-500/20 hover:text-slate-200 active:scale-95 relative group`}>
                     <AnimatePresence>
                       {showCopyFeedback && (
                         <motion.div 
@@ -1476,7 +1476,7 @@ export default function App() {
                 <div className="flex flex-col lg:flex-row gap-6 items-center justify-between divine-glass p-6 md:p-8 rounded-[1.5rem] md:rounded-[3rem] border-white/5 shadow-2xl transition-all duration-300">
                    <div className="w-full lg:w-2/3 space-y-4">
                       <div className="flex justify-between items-center pr-2">
-                        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-amber-700/50 px-2 transition-colors duration-300">ট্যাগ ফিল্টার</p>
+                        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-amber-400/60 px-2 transition-colors duration-300">ট্যাগ ফিল্টার</p>
                         <button 
                           onClick={exportSavedVerses}
                           className="flex items-center gap-2 text-[9px] md:text-[10px] font-black uppercase tracking-widest text-amber-700 hover:text-amber-600 transition-colors py-1.5 px-3 divine-glass rounded-lg border-white/5"
@@ -1488,7 +1488,7 @@ export default function App() {
                       <div className="flex items-center gap-2 md:gap-3 overflow-x-auto pb-2 no-scrollbar scroll-smooth">
                         <button 
                           onClick={() => setFilterTag(null)}
-                          className={`whitespace-nowrap px-4 md:px-6 py-2 rounded-full transition-all duration-300 text-[10px] md:text-[11px] font-black uppercase tracking-widest border-2 ${!filterTag ? 'bg-amber-700 text-white border-amber-700 shadow-lg' : `bg-white/5 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'} border-white/5 hover:border-amber-500/20`}`}
+                          className={`whitespace-nowrap px-4 md:px-6 py-2 rounded-full transition-all duration-300 text-[10px] md:text-[11px] font-black uppercase tracking-widest border-2 ${!filterTag ? 'bg-amber-700 text-white border-amber-700 shadow-lg' : `bg-white/5 ${theme === 'dark' ? 'text-slate-300' : 'text-slate-600'} border-white/5 hover:border-amber-500/20`}`}
                         >
                           সব ট্যাগ
                         </button>
@@ -1496,7 +1496,7 @@ export default function App() {
                           <button 
                             key={tag}
                             onClick={() => setFilterTag(tag === filterTag ? null : tag)}
-                            className={`whitespace-nowrap px-4 md:px-6 py-2 rounded-full transition-all duration-300 text-[10px] md:text-[11px] font-black uppercase tracking-widest border-2 ${filterTag === tag ? 'bg-amber-700 text-white border-amber-700 shadow-lg' : `bg-white/5 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'} border-white/5 hover:border-amber-500/20`}`}
+                            className={`whitespace-nowrap px-4 md:px-6 py-2 rounded-full transition-all duration-300 text-[10px] md:text-[11px] font-black uppercase tracking-widest border-2 ${filterTag === tag ? 'bg-amber-700 text-white border-amber-700 shadow-lg' : `bg-white/5 ${theme === 'dark' ? 'text-slate-300' : 'text-slate-600'} border-white/5 hover:border-amber-500/20`}`}
                           >
                             {tag}
                           </button>
@@ -1505,7 +1505,7 @@ export default function App() {
                    </div>
 
                    <div className="w-full lg:w-1/3 space-y-4">
-                      <p className="text-[10px] font-black uppercase tracking-[0.3em] text-amber-700/50 px-2 transition-colors duration-300">মূল থিম ফিল্টার</p>
+                      <p className="text-[10px] font-black uppercase tracking-[0.3em] text-amber-400/60 px-2 transition-colors duration-300">মূল থিম ফিল্টার</p>
                       <div className="relative group/theme-select">
                         <select 
                           value={filterTheme || ''} 
@@ -1528,7 +1528,7 @@ export default function App() {
                   <div className="flex justify-center">
                     <button 
                       onClick={() => { setFilterTag(null); setFilterTheme(null); }}
-                      className="text-[9px] md:text-[10px] font-black uppercase tracking-[0.4em] text-amber-700/60 hover:text-amber-700 transition-colors flex items-center gap-2 group"
+                      className="text-[9px] md:text-[10px] font-black uppercase tracking-[0.4em] text-amber-400/70 hover:text-amber-700 transition-colors flex items-center gap-2 group"
                     >
                       <XCircle size={12} className="group-hover:rotate-90 transition-transform" />
                       ফিল্টার পরিষ্কার করুন
@@ -1541,7 +1541,7 @@ export default function App() {
             {filteredVerses.length === 0 ? (
               <div className="divine-glass p-12 md:p-24 lg:p-32 text-center rounded-[2rem] md:rounded-[5rem] opacity-50 shadow-2xl max-w-4xl mx-auto border-dashed border-2 border-white/10 transition-all duration-300">
                 <div className="w-16 h-16 md:w-24 md:h-24 bg-slate-500/10 rounded-full flex items-center justify-center mx-auto mb-6 md:mb-10">
-                  <Bookmark size={48} className={`${theme === 'dark' ? 'text-slate-400/50' : 'text-slate-500/50'}`} />
+                  <Bookmark size={48} className={`${theme === 'dark' ? 'text-slate-300/50' : 'text-slate-500/50'}`} />
                 </div>
                 <p className={`text-lg md:text-2xl bn-serif font-medium ${theme === 'dark' ? 'text-amber-100' : 'text-amber-950'} mb-6 md:mb-10 transition-colors duration-300`}>
                   { (filterTag || filterTheme) ? "এই ফিল্টারে কোনো পদ পাওয়া যায়নি" : "বর্তমানে কোনো সংরক্ষিত পদ নেই" }
@@ -1567,7 +1567,7 @@ export default function App() {
                             <span className="text-amber-700 font-black text-[10px] md:text-xs bn-serif tracking-wide">{v.reference}</span>
                           </div>
                           <div className="flex gap-2 opacity-40 group-hover:opacity-100 transition-opacity">
-                            <button onClick={(e) => { e.stopPropagation(); setNewTagInputId(v.id); }} className={`${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'} hover:text-amber-700 transition-colors p-2 divine-glass rounded-xl h-8 w-8 md:h-10 md:w-10 flex items-center justify-center`}>
+                            <button onClick={(e) => { e.stopPropagation(); setNewTagInputId(v.id); }} className={`${theme === 'dark' ? 'text-slate-300' : 'text-slate-600'} hover:text-amber-700 transition-colors p-2 divine-glass rounded-xl h-8 w-8 md:h-10 md:w-10 flex items-center justify-center`}>
                               <Sparkles size={16} />
                             </button>
                             <button onClick={(e) => { e.stopPropagation(); saveToLocal(savedVerses.filter(item => item.id !== v.id)); }} className="text-rose-500/50 hover:text-rose-500 transition-colors p-2 divine-glass rounded-xl h-8 w-8 md:h-10 md:w-10 flex items-center justify-center">
@@ -1581,7 +1581,7 @@ export default function App() {
                       <div className="mt-8 md:mt-10 space-y-4">
                         <div className="flex flex-wrap gap-2">
                            {v.keyThemes.slice(0, 3).map((themeStr, i) => (
-                             <span key={i} className="text-[9px] md:text-[10px] font-black uppercase tracking-widest text-amber-700/60 bn-serif transition-colors duration-300">{themeStr}</span>
+                             <span key={i} className="text-[9px] md:text-[10px] font-black uppercase tracking-widest text-amber-400/70 bn-serif transition-colors duration-300">{themeStr}</span>
                            ))}
                         </div>
 
@@ -1632,7 +1632,7 @@ export default function App() {
             <div className="max-w-4xl mx-auto space-y-6 md:space-y-8">
               {savedSnippets.length === 0 ? (
                 <div className="divine-glass p-12 md:p-24 text-center rounded-[2rem] md:rounded-[4rem] opacity-50 shadow-2xl border-dashed border-2 border-white/10 transition-all duration-300">
-                  <Sparkles size={48} className={`${theme === 'dark' ? 'text-slate-400/50' : 'text-slate-500/50'} mx-auto mb-6`} />
+                  <Sparkles size={48} className={`${theme === 'dark' ? 'text-slate-300/50' : 'text-slate-500/50'} mx-auto mb-6`} />
                   <p className={`text-lg md:text-xl bn-serif font-medium ${theme === 'dark' ? 'text-amber-100' : 'text-amber-950'} transition-colors duration-300`}>বর্তমানে কোনো সংরক্ষিত অন্তর্দৃষ্টি নেই</p>
                   <button onClick={() => setActiveView('SEARCH')} className="mt-8 px-8 py-3 bg-amber-700 text-white rounded-xl font-black text-xs uppercase tracking-widest shadow-lg active:scale-95">অন্বেষণ শুরু করুন</button>
                 </div>
@@ -1651,7 +1651,7 @@ export default function App() {
                         <div>
                           <div className="flex justify-between items-start mb-6">
                             <div className="space-y-1">
-                              <span className={`text-[9px] font-black uppercase tracking-widest ${theme === 'dark' ? 'text-amber-400/70' : 'text-amber-700/60'} bn-serif`}>{snippet.label}</span>
+                              <span className={`text-[9px] font-black uppercase tracking-widest ${theme === 'dark' ? 'text-amber-400/70' : 'text-amber-400/70'} bn-serif`}>{snippet.label}</span>
                               <p className={`text-xs md:text-sm font-black ${theme === 'dark' ? 'text-amber-200' : 'text-amber-800'} bn-serif`}>{snippet.reference}</p>
                             </div>
                             <button 
@@ -1710,14 +1710,14 @@ export default function App() {
                       <div className="grid grid-cols-2 gap-4 md:gap-6">
                           <button 
                             onClick={() => handleAppLangChange('bn')} 
-                            className={`p-6 md:p-10 rounded-2xl md:rounded-[2.5rem] border-2 transition-all duration-300 flex flex-col items-center gap-3 md:gap-4 ${appLang === 'bn' ? 'bg-amber-500/10 border-amber-500/50 text-amber-700 shadow-[0_0_50px_rgba(251,191,36,0.15)]' : `bg-white/5 border-transparent ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'} hover:bg-white/10`}`}
+                            className={`p-6 md:p-10 rounded-2xl md:rounded-[2.5rem] border-2 transition-all duration-300 flex flex-col items-center gap-3 md:gap-4 ${appLang === 'bn' ? 'bg-amber-500/10 border-amber-500/50 text-amber-700 shadow-[0_0_50px_rgba(251,191,36,0.15)]' : `bg-white/5 border-transparent ${theme === 'dark' ? 'text-slate-300' : 'text-slate-600'} hover:bg-white/10`}`}
                           >
                             <Languages size={24} className="opacity-50" />
                             <span className="font-black tracking-[0.2em] text-[10px] md:text-[11px] uppercase bn-serif">{t.bengali}</span>
                           </button>
                           <button 
                             onClick={() => handleAppLangChange('en')} 
-                            className={`p-6 md:p-10 rounded-2xl md:rounded-[2.5rem] border-2 transition-all duration-300 flex flex-col items-center gap-3 md:gap-4 ${appLang === 'en' ? 'bg-amber-500/10 border-amber-500/50 text-amber-700 shadow-[0_0_50px_rgba(251,191,36,0.15)]' : `bg-white/5 border-transparent ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'} hover:bg-white/10`}`}
+                            className={`p-6 md:p-10 rounded-2xl md:rounded-[2.5rem] border-2 transition-all duration-300 flex flex-col items-center gap-3 md:gap-4 ${appLang === 'en' ? 'bg-amber-500/10 border-amber-500/50 text-amber-700 shadow-[0_0_50px_rgba(251,191,36,0.15)]' : `bg-white/5 border-transparent ${theme === 'dark' ? 'text-slate-300' : 'text-slate-600'} hover:bg-white/10`}`}
                           >
                             <Languages size={24} className="opacity-50" />
                             <span className="font-black tracking-[0.2em] text-[10px] md:text-[11px] uppercase bn-serif">{t.english}</span>
@@ -1733,21 +1733,21 @@ export default function App() {
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6">
                             <button 
                               onClick={() => handleLangVersionChange('modern')} 
-                              className={`p-6 md:p-10 rounded-2xl md:rounded-[2.5rem] border-2 transition-all duration-300 flex flex-col items-center gap-3 md:gap-4 ${languageVersion === 'modern' ? 'bg-amber-500/10 border-amber-500/50 text-amber-700 shadow-[0_0_50px_rgba(251,191,36,0.15)]' : `bg-white/5 border-transparent ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'} hover:bg-white/10`}`}
+                              className={`p-6 md:p-10 rounded-2xl md:rounded-[2.5rem] border-2 transition-all duration-300 flex flex-col items-center gap-3 md:gap-4 ${languageVersion === 'modern' ? 'bg-amber-500/10 border-amber-500/50 text-amber-700 shadow-[0_0_50px_rgba(251,191,36,0.15)]' : `bg-white/5 border-transparent ${theme === 'dark' ? 'text-slate-300' : 'text-slate-600'} hover:bg-white/10`}`}
                             >
                               <BookOpen size={24} className="opacity-50" />
                               <span className="font-black tracking-[0.2em] text-[10px] md:text-[11px] uppercase bn-serif">{t.modernVersion}</span>
                             </button>
                             <button 
                               onClick={() => handleLangVersionChange('carey')} 
-                              className={`p-6 md:p-10 rounded-2xl md:rounded-[2.5rem] border-2 transition-all duration-300 flex flex-col items-center gap-3 md:gap-4 ${languageVersion === 'carey' ? 'bg-amber-500/10 border-amber-500/50 text-amber-700 shadow-[0_0_50px_rgba(251,191,36,0.15)]' : `bg-white/5 border-transparent ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'} hover:bg-white/10`}`}
+                              className={`p-6 md:p-10 rounded-2xl md:rounded-[2.5rem] border-2 transition-all duration-300 flex flex-col items-center gap-3 md:gap-4 ${languageVersion === 'carey' ? 'bg-amber-500/10 border-amber-500/50 text-amber-700 shadow-[0_0_50px_rgba(251,191,36,0.15)]' : `bg-white/5 border-transparent ${theme === 'dark' ? 'text-slate-300' : 'text-slate-600'} hover:bg-white/10`}`}
                             >
                               <Book size={24} className="opacity-50" />
                               <span className="font-black tracking-[0.2em] text-[10px] md:text-[11px] uppercase bn-serif">{t.careyVersion}</span>
                             </button>
                             <button 
                               onClick={() => handleLangVersionChange('kitabul')} 
-                              className={`p-6 md:p-10 rounded-2xl md:rounded-[2.5rem] border-2 transition-all duration-300 flex flex-col items-center gap-3 md:gap-4 ${languageVersion === 'kitabul' ? 'bg-amber-500/10 border-amber-500/50 text-amber-700 shadow-[0_0_50px_rgba(251,191,36,0.15)]' : `bg-white/5 border-transparent ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'} hover:bg-white/10`}`}
+                              className={`p-6 md:p-10 rounded-2xl md:rounded-[2.5rem] border-2 transition-all duration-300 flex flex-col items-center gap-3 md:gap-4 ${languageVersion === 'kitabul' ? 'bg-amber-500/10 border-amber-500/50 text-amber-700 shadow-[0_0_50px_rgba(251,191,36,0.15)]' : `bg-white/5 border-transparent ${theme === 'dark' ? 'text-slate-300' : 'text-slate-600'} hover:bg-white/10`}`}
                             >
                               <Sparkles size={24} className="opacity-50" />
                               <span className="font-black tracking-[0.2em] text-[10px] md:text-[11px] uppercase bn-serif">{t.kitabulVersion}</span>
@@ -1784,7 +1784,7 @@ export default function App() {
                       </div>
                       <div className="flex flex-wrap gap-3 md:gap-4">
                           {[{ id: 'sm', label: t.small }, { id: 'base', label: t.base }, { id: 'lg', label: t.large }, { id: 'xl', label: 'Extra' }].map(size => (
-                            <button key={size.id} onClick={() => handleFontSizeChange(size.id)} className={`px-6 md:px-10 py-3 md:py-4 rounded-xl md:rounded-2xl border-2 transition-all font-black bn-serif text-sm md:text-lg ${fontSize === size.id ? 'bg-amber-500 text-white border-amber-500 shadow-xl' : `bg-white/5 border-white/5 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'} hover:bg-white/10`}`}>{size.label}</button>
+                            <button key={size.id} onClick={() => handleFontSizeChange(size.id)} className={`px-6 md:px-10 py-3 md:py-4 rounded-xl md:rounded-2xl border-2 transition-all font-black bn-serif text-sm md:text-lg ${fontSize === size.id ? 'bg-amber-500 text-white border-amber-500 shadow-xl' : `bg-white/5 border-white/5 ${theme === 'dark' ? 'text-slate-300' : 'text-slate-600'} hover:bg-white/10`}`}>{size.label}</button>
                           ))}
                       </div>
                     </div>
@@ -1824,7 +1824,7 @@ export default function App() {
                            <p className={`${theme === 'dark' ? 'text-amber-400' : 'text-amber-700'} font-black text-[9px] md:text-xs uppercase tracking-[0.5em]`}>শান্তি ও প্রজ্ঞার কারিগর</p>
                          </div>
                          
-                         <p className={`${theme === 'dark' ? 'text-slate-400' : 'text-slate-700'} leading-relaxed bn-serif text-base md:text-lg font-medium text-justify transition-colors duration-300`}>
+                         <p className={`${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'} leading-relaxed bn-serif text-base md:text-lg font-medium text-justify transition-colors duration-300`}>
                            "পবিত্র বানী" অ্যাপটি আধুনিক কৃত্রিম বুদ্ধিমত্তা এবং বাইবেলীয় দর্শনের এক অনবদ্য মেলবন্ধন। আমাদের লক্ষ্য প্রযুক্তির মাধ্যমে শান্তির আলো ও ঐশ্বরিক জ্ঞান পৌঁছে দেয়া।
                          </p>
 
@@ -1873,7 +1873,7 @@ const RecommendItem: React.FC<{ title: string; desc: string; icon: React.ReactNo
          {icon}
        </div>
        <div className="space-y-1">
-         <p className="text-[9px] md:text-[11px] font-black uppercase tracking-[0.3em] text-amber-700/50">{desc}</p>
+         <p className="text-[9px] md:text-[11px] font-black uppercase tracking-[0.3em] text-amber-400/60">{desc}</p>
          <h4 className={`text-base md:text-2xl font-bold ${theme === 'dark' ? 'text-slate-200' : 'text-amber-950'} bn-serif group-hover:text-amber-600 transition-colors duration-300`}>{title}</h4>
        </div>
     </div>
@@ -1885,9 +1885,9 @@ const RecommendItem: React.FC<{ title: string; desc: string; icon: React.ReactNo
 
 const MobileNavItem: React.FC<{ icon: React.ReactNode; active: boolean; onClick: () => void; label: string; theme: string }> = ({ icon, active, onClick, label, theme }) => (
   <button onClick={onClick} className="relative flex-1 flex flex-col items-center justify-center py-3 group">
-    <div className={`relative z-10 transition-all duration-500 flex flex-col items-center ${active ? 'text-amber-500 scale-110' : (theme === 'dark' ? 'text-slate-400 group-hover:text-amber-500/50' : 'text-slate-500 group-hover:text-amber-500/50')}`}>
+    <div className={`relative z-10 transition-all duration-500 flex flex-col items-center ${active ? 'text-amber-500 scale-110' : (theme === 'dark' ? 'text-slate-300 group-hover:text-amber-500/50' : 'text-slate-500 group-hover:text-amber-500/50')}`}>
       {icon}
-      <span className={`text-[10px] mt-1.5 font-bold tracking-wider uppercase transition-all duration-500 ${active ? 'text-amber-500' : (theme === 'dark' ? 'text-slate-400' : 'text-slate-500')}`}>{label}</span>
+      <span className={`text-[10px] mt-1.5 font-bold tracking-wider uppercase transition-all duration-500 ${active ? 'text-amber-500' : (theme === 'dark' ? 'text-slate-300' : 'text-slate-500')}`}>{label}</span>
     </div>
     {active && (
       <motion.div 
@@ -1907,7 +1907,7 @@ const SocialIcon: React.FC<{ icon: React.ReactNode; link: string }> = ({ icon, l
       href={link}
       target={isDirect ? undefined : "_blank"}
       rel={isDirect ? undefined : "noopener noreferrer"}
-      className="w-10 h-10 md:w-14 md:h-14 rounded-xl md:rounded-2xl bg-white/5 flex items-center justify-center text-slate-400 hover:text-amber-500 hover:bg-amber-500/10 transition-all duration-300 border-2 border-white/5 hover:border-amber-500/30 shadow-sm active:scale-90"
+      className="w-10 h-10 md:w-14 md:h-14 rounded-xl md:rounded-2xl bg-white/5 flex items-center justify-center text-slate-300 hover:text-amber-500 hover:bg-amber-500/10 transition-all duration-300 border-2 border-white/5 hover:border-amber-500/30 shadow-sm active:scale-90"
     >
       {icon}
     </motion.a>
