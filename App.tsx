@@ -1825,7 +1825,7 @@ export default function App() {
                          </div>
                          
                          <p className={`${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'} leading-relaxed bn-serif text-base md:text-lg font-medium text-justify transition-colors duration-300`}>
-                           "পবিত্র বানী" অ্যাপটি আধুনিক কৃত্রিম বুদ্ধিমত্তা এবং বাইবেলীয় দর্শনের এক অনবদ্য মেলবন্ধন। আমাদের লক্ষ্য প্রযুক্তির মাধ্যমে শান্তির আলো ও ঐশ্বরিক জ্ঞান পৌঁছে দেয়া।
+                           "পবিত্র বানী" অ্যাপটি আধুনিক বাইবেলীয় দর্শনের এক অনবদ্য মেলবন্ধন। আমাদের লক্ষ্য প্রযুক্তির মাধ্যমে শান্তির আলো ও ঐশ্বরিক জ্ঞান পৌঁছে দেয়া।
                          </p>
 
                          <div className="flex flex-col sm:flex-row justify-center md:justify-start gap-4">
