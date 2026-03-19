@@ -873,7 +873,7 @@ export default function App() {
 
   return (
     <div 
-      className={`min-h-screen flex flex-col relative transition-all duration-300 ease-in-out overflow-x-hidden animate-in fade-in duration-500`}
+      className={`min-h-screen flex flex-col relative transition-all duration-300 ease-in-out overflow-x-hidden animate-in fade-in duration-500 no-scrollbar`}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}

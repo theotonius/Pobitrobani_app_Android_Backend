@@ -37,13 +37,23 @@
   }
 
   @media (max-width: 1024px) {
+    body {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+    }
+
     body::-webkit-scrollbar {
       display: none;
     }
 
-    body {
+    body * {
       -ms-overflow-style: none;
       scrollbar-width: none;
+    }
+
+    body *::-webkit-scrollbar {
+      display: none;
     }
   }
 
