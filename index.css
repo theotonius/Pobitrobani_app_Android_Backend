@@ -36,6 +36,17 @@
                 color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
+  @media (max-width: 1024px) {
+    body::-webkit-scrollbar {
+      display: none;
+    }
+
+    body {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  }
+
   h1, h2, h3, h4, p, span, button, input, select {
     font-family: inherit;
     transition: color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
