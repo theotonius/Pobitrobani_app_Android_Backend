@@ -2,7 +2,7 @@
 export const translations = {
   bn: {
     appName: "পবিত্র বানী",
-    searchPlaceholder: "বাইবেলের পদ, লিরিক্স বা আধ্যাত্মিক বিষয় খুঁজুন...",
+    searchPlaceholder: "বাইবেলের পদ, আধ্যাত্মিক বিষয় খুঁজুন...",
     searching: "ঐশ্বরিক জ্ঞান অনুসন্ধান করা হচ্ছে...",
     searchingSub: "দ্রুত এবং গভীর বিশ্লেষণের জন্য কৃত্রিম বুদ্ধিমত্তা কাজ করছে",
     errorTitle: "তথ্য বিভ্রাট",
