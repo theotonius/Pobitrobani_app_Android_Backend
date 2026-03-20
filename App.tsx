@@ -1090,15 +1090,35 @@ export default function App() {
                     </div>
 
                     <div className="mb-8 md:mb-12 relative px-2 md:px-8">
-                      <h2 className={`${readerMode ? (isLongText ? 'text-2xl md:text-4xl' : 'text-3xl md:text-5xl') : mainTextSizeClass} font-bold ${theme === 'dark' ? 'text-amber-50' : 'text-amber-950'} leading-relaxed bn-serif drop-shadow-sm max-w-4xl mx-auto relative z-10 text-justify transition-all duration-300`}>
+                      <h2 className={`${readerMode ? (isLongText ? 'text-2xl md:text-4xl' : 'text-3xl md:text-5xl') : mainTextSizeClass} font-normal ${theme === 'dark' ? 'text-amber-50' : 'text-amber-950'} leading-relaxed bn-serif drop-shadow-sm max-w-4xl mx-auto relative z-10 text-justify transition-all duration-300`}>
                         {renderVerseText(currentVerse.text)}
                       </h2>
                     </div>
                     
-                    <div className="inline-flex items-center gap-4 md:gap-6 px-8 md:px-12 py-3 md:py-4 bg-amber-500/10 rounded-full border border-amber-500/20 shadow-inner">
-                      <motion.div animate={{ scale: [1, 1.2, 1] }} transition={{ repeat: Infinity, duration: 2 }} className="hidden sm:block w-2 h-2 bg-amber-500 rounded-full" />
-                      <p className={`${theme === 'dark' ? 'text-amber-200' : 'text-amber-800'} font-black tracking-[0.1em] md:tracking-[0.2em] text-base md:text-xl lg:text-2xl bn-serif`}>{currentVerse.reference}</p>
-                      <motion.div animate={{ scale: [1, 1.2, 1] }} transition={{ repeat: Infinity, duration: 2, delay: 1 }} className="hidden sm:block w-2 h-2 bg-amber-500 rounded-full" />
+                    <div className="inline-flex items-center gap-4 md:gap-6">
+                      <motion.div 
+                        animate={{ scale: [1, 1.05, 1], boxShadow: ['0 0 0 0 rgba(251, 191, 36, 0)', '0 0 20px 5px rgba(251, 191, 36, 0.3)', '0 0 0 0 rgba(251, 191, 36, 0)'] }}
+                        transition={{ repeat: Infinity, duration: 2 }}
+                        className="hidden sm:flex w-3 h-3 bg-amber-500 rounded-full"
+                      />
+                      <motion.div
+                        initial={{ scale: 0.8, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        transition={{ type: 'spring', stiffness: 200, damping: 15 }}
+                        className="relative px-6 md:px-10 py-3 md:py-4 bg-gradient-to-br from-amber-400 via-amber-500 to-amber-600 rounded-full shadow-lg shadow-amber-500/30 border-2 border-amber-300/50"
+                      >
+                        <motion.div 
+                          className="absolute inset-0 bg-gradient-to-br from-amber-300 to-amber-500 rounded-full opacity-0"
+                          animate={{ opacity: [0, 0.3, 0] }}
+                          transition={{ repeat: Infinity, duration: 2 }}
+                        />
+                        <p className={`relative z-10 text-amber-900 font-black tracking-[0.1em] md:tracking-[0.2em] text-base md:text-xl lg:text-2xl bn-serif drop-shadow-sm`}>{currentVerse.reference}</p>
+                      </motion.div>
+                      <motion.div 
+                        animate={{ scale: [1, 1.05, 1], boxShadow: ['0 0 0 0 rgba(251, 191, 36, 0)', '0 0 20px 5px rgba(251, 191, 36, 0.3)', '0 0 0 0 rgba(251, 191, 36, 0)'] }}
+                        transition={{ repeat: Infinity, duration: 2, delay: 1 }}
+                        className="hidden sm:flex w-3 h-3 bg-amber-500 rounded-full"
+                      />
                       <SnippetBookmark 
                         saved={isSnippetSaved(currentVerse.text, 'lyric')}
                         onClick={(e) => {
