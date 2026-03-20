@@ -61,15 +61,54 @@
         --accent-gold: #d97706;
       }
 
+      html {
+        scroll-behavior: smooth;
+        height: 100%;
+      }
+
       body {
         font-family: var(--app-font);
         background-color: var(--bg-color);
         color: var(--text-color);
         margin: 0;
         padding: 0;
-        /* Enhanced smooth transition */
+        height: 100%;
+        overflow-y: scroll !important;
+        overflow-x: hidden;
+        -ms-overflow-style: none !important;
+        scrollbar-width: none !important;
+        -webkit-overflow-scrolling: touch;
         transition: background-color 0.8s cubic-bezier(0.4, 0, 0.2, 1), 
                     color 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      body::-webkit-scrollbar {
+        width: 0px !important;
+        background: transparent !important;
+        display: none !important;
+      }
+
+      body * {
+        -ms-overflow-style: none !important;
+        scrollbar-width: none !important;
+      }
+
+      body *::-webkit-scrollbar {
+        width: 0px !important;
+        background: transparent !important;
+        display: none !important;
+      }
+
+      ::-webkit-scrollbar {
+        width: 0px !important;
+        background: transparent !important;
+        display: none !important;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        width: 0px !important;
+        background: transparent !important;
+        display: none !important;
       }
 
       /* Base typography overrides */
@@ -130,25 +169,12 @@
 
       /* Hide scrollbar for IE, Edge and Firefox */
       .no-scrollbar {
-        -ms-overflow-style: none;  /* IE and Edge */
-        scrollbar-width: none;  /* Firefox */
+        -ms-overflow-style: none;
+        scrollbar-width: none;
       }
 
-      ::-webkit-scrollbar {
-        width: 6px;
-      }
-
-      ::-webkit-scrollbar-track {
-        background: transparent;
-      }
-
-      ::-webkit-scrollbar-thumb {
-        background: rgba(251, 191, 36, 0.1);
-        border-radius: 10px;
-      }
-
-      ::-webkit-scrollbar-thumb:hover {
-        background: rgba(251, 191, 36, 0.2);
+      .no-scrollbar::-webkit-scrollbar {
+        display: none;
       }
     </style>
     <script type="importmap">
