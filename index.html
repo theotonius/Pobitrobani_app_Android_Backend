@@ -42,6 +42,30 @@
         font-display: swap;
       }
 
+      @font-face {
+        font-family: 'Kalpurush';
+        src: url('https://cdn.jsdelivr.net/gh/a兆娛/a兆娛.github.io@master/fonts/kalpurush.woff2') format('woff2');
+        font-weight: normal;
+        font-style: normal;
+        font-display: swap;
+      }
+
+      @font-face {
+        font-family: 'SiyamRupali';
+        src: url('https://cdn.jsdelivr.net/gh/nuhil/bangla-fonts@master/SiyamRupali.ttf') format('truetype');
+        font-weight: normal;
+        font-style: normal;
+        font-display: swap;
+      }
+
+      @font-face {
+        font-family: 'AdorshoLipi';
+        src: url('https://cdn.jsdelivr.net/gh/nuhil/bangla-fonts@master/AdorshoLipi.ttf') format('truetype');
+        font-weight: normal;
+        font-style: normal;
+        font-display: swap;
+      }
+
       :root {
         --bg-color: #0f172a;
         --text-color: #f8fafc;
@@ -64,10 +88,12 @@
       html {
         scroll-behavior: smooth;
         height: 100%;
+        font-family: var(--app-font);
       }
 
       body {
-        font-family: var(--app-font);
+        font-family: inherit;
+        background-color: var(--bg-color);
         background-color: var(--bg-color);
         color: var(--text-color);
         margin: 0;

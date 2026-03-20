@@ -29,10 +29,11 @@
   html {
     scroll-behavior: smooth;
     height: 100%;
+    font-family: var(--app-font);
   }
 
   body {
-    font-family: var(--app-font);
+    font-family: inherit;
     background-color: var(--bg-color);
     color: var(--text-color);
     margin: 0;
