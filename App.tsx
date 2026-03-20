@@ -1273,7 +1273,7 @@ export default function App() {
                           <button 
                             key={i} 
                             onClick={() => handleSearch(ref)}
-                            className="px-3 py-1.5 bg-violet-500/5 border border-violet-500/10 rounded-lg text-[10px] md:text-xs font-bold text-violet-700/80 bn-serif hover:bg-violet-500/20 hover:border-violet-500/40 transition-all cursor-pointer active:scale-95"
+                            className="px-3 py-1.5 bg-amber-500/10 border border-amber-500/20 rounded-lg text-[10px] md:text-xs font-medium text-amber-800 dark:text-amber-200 bn-serif hover:bg-amber-500/25 hover:border-amber-500/40 hover:text-amber-900 dark:hover:text-amber-100 transition-all cursor-pointer active:scale-95"
                           >
                             {ref}
                           </button>
