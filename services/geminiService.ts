@@ -119,6 +119,7 @@ export const geminiService = {
       
       const result = {
         ...data,
+        reference: data.reference || query,
         id: Math.random().toString(36).substring(2, 11),
         timestamp: Date.now()
       };
