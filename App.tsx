@@ -948,7 +948,7 @@ export default function App() {
                     onChange={e => { setQuery(e.target.value); setShowSuggestions(true); }}
                     onFocus={() => setShowSuggestions(true)}
                     placeholder={t.searchPlaceholder}
-                    className={`w-full ${theme === 'dark' ? 'bg-slate-900/60' : 'bg-white/80'} backdrop-blur-3xl border border-white/10 pl-6 pr-24 md:pl-10 md:pr-64 py-5 md:py-8 rounded-[1.5rem] md:rounded-[2.5rem] text-lg md:text-2xl outline-none focus:ring-2 ring-amber-500/50 transition-all duration-300 ${theme === 'dark' ? 'placeholder-slate-400 text-amber-50' : 'placeholder-slate-400 text-slate-900'} font-bold shadow-2xl md:shadow-3xl bn-serif`}
+                    className={`w-full ${theme === 'dark' ? 'bg-slate-900/60' : 'bg-white/80'} backdrop-blur-3xl border border-white/10 pl-5 pr-20 sm:pr-24 md:pl-10 md:pr-64 py-4 sm:py-5 md:py-8 rounded-[1.5rem] md:rounded-[2.5rem] text-base sm:text-lg md:text-2xl outline-none focus:ring-2 ring-amber-500/50 transition-all duration-300 ${theme === 'dark' ? 'placeholder-slate-400 text-amber-50' : 'placeholder-slate-400 text-slate-900'} font-bold shadow-2xl md:shadow-3xl bn-serif`}
                   />
                   <div className="absolute right-2 md:right-3 top-1/2 -translate-y-1/2 flex items-center gap-1 md:gap-2">
                     {query && (

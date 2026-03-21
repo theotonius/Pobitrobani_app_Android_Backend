@@ -73,20 +73,11 @@ export default async function handler(
 
   // Fallback to DeepSeek
   if (deepseekKey) {
-    console.log(`AI Proxy: Trying DeepSeek for model: ${request.body.model}`);
-
-    // Convert model name for DeepSeek if needed
-    let deepseekModel = request.body.model;
-    if (deepseekModel.includes('gemini')) {
-      deepseekModel = 'deepseek-chat';
-    }
-    if (deepseekModel.includes('deepseek')) {
-      deepseekModel = 'deepseek-chat';
-    }
+    console.log(`AI Proxy: Trying DeepSeek fallback`);
 
     const body = {
       ...request.body,
-      model: deepseekModel
+      model: 'deepseek-chat'
     };
 
     const deepseekRes = await makeRequest(
