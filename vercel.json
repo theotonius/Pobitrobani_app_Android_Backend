@@ -1,11 +1,8 @@
 {
   "functions": {
-    "api/ai/generate.ts": {
+    "api/**/*.ts": {
       "memory": 1024,
       "maxDuration": 30
     }
-  },
-  "rewrites": [
-    { "source": "/api/ai/generate", "destination": "/api/ai/generate" }
-  ]
+  }
 }
