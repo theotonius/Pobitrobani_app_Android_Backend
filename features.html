@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>পবিত্র বানী - Features</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Noto+Sans+Bengali:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg-primary: #ffffff;
+      --bg-secondary: #f8f9fa;
+      --bg-tertiary: #f1f3f4;
+      --text-primary: #1a1a2e;
+      --text-secondary: #4a5568;
+      --text-tertiary: #718096;
+      --accent: #d97706;
+      --accent-light: #f59e0b;
+      --accent-bg: #fffbeb;
+      --border: #e2e8f0;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+      --shadow-md: 0 4px 12px rgba(0,0,0,0.05);
+      --shadow-lg: 0 12px 32px rgba(0,0,0,0.08);
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 80px 24px;
+    }
+
+    /* Header */
+    .header {
+      text-align: center;
+      margin-bottom: 80px;
+    }
+
+    .header-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      background: var(--accent-bg);
+      border-radius: 100px;
+      margin-bottom: 24px;
+    }
+
+    .header-badge span {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--accent);
+      letter-spacing: 0.5px;
+    }
+
+    .header h1 {
+      font-size: 48px;
+      font-weight: 800;
+      color: var(--text-primary);
+      margin-bottom: 16px;
+      letter-spacing: -1px;
+    }
+
+    .header p {
+      font-size: 18px;
+      color: var(--text-secondary);
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    /* Section */
+    .section {
+      margin-bottom: 72px;
+    }
+
+    .section-header {
+      margin-bottom: 32px;
+    }
+
+    .section-number {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 8px;
+    }
+
+    .section-title {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+
+    .section-desc {
+      font-size: 16px;
+      color: var(--text-tertiary);
+    }
+
+    /* Cards Grid */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .card {
+      background: var(--bg-primary);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px;
+      transition: all 0.3s ease;
+    }
+
+    .card:hover {
+      border-color: var(--accent);
+      box-shadow: var(--shadow-lg);
+      transform: translateY(-2px);
+    }
+
+    .card-icon {
+      width: 44px;
+      height: 44px;
+      background: var(--accent-bg);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    .card-icon svg {
+      width: 22px;
+      height: 22px;
+      stroke: var(--accent);
+      fill: none;
+      stroke-width: 1.5;
+    }
+
+    .card h3 {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+
+    .card p {
+      font-size: 14px;
+      color: var(--text-tertiary);
+      line-height: 1.6;
+    }
+
+    /* Version Cards */
+    .version-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    @media (max-width: 768px) {
+      .version-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .version-card {
+      background: var(--bg-secondary);
+      border-radius: 16px;
+      padding: 28px;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+
+    .version-card:hover {
+      background: var(--accent-bg);
+    }
+
+    .version-card .icon {
+      width: 56px;
+      height: 56px;
+      background: var(--bg-primary);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .version-card .icon svg {
+      width: 24px;
+      height: 24px;
+      stroke: var(--accent);
+      fill: none;
+      stroke-width: 1.5;
+    }
+
+    .version-card h3 {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+
+    .version-card .native {
+      font-family: 'Noto Sans Bengali', sans-serif;
+      font-size: 15px;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+
+    .version-card p {
+      font-size: 13px;
+      color: var(--text-tertiary);
+      line-height: 1.6;
+    }
+
+    /* Analysis List */
+    .analysis-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+    }
+
+    .analysis-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 18px 20px;
+      background: var(--bg-secondary);
+      border-radius: 12px;
+      transition: all 0.2s ease;
+    }
+
+    .analysis-item:hover {
+      background: var(--accent-bg);
+    }
+
+    .analysis-item .check {
+      width: 24px;
+      height: 24px;
+      background: var(--accent);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .analysis-item .check svg {
+      width: 12px;
+      height: 12px;
+      stroke: white;
+      stroke-width: 3;
+    }
+
+    .analysis-item .content h4 {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 2px;
+    }
+
+    .analysis-item .content p {
+      font-family: 'Noto Sans Bengali', sans-serif;
+      font-size: 13px;
+      color: var(--text-tertiary);
+    }
+
+    /* AI Chain */
+    .ai-chain {
+      background: var(--bg-secondary);
+      border-radius: 20px;
+      padding: 40px;
+    }
+
+    .chain-header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .chain-header h3 {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 6px;
+    }
+
+    .chain-header p {
+      font-size: 14px;
+      color: var(--text-tertiary);
+    }
+
+    .chain-flow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .chain-item {
+      background: var(--bg-primary);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px 28px;
+      text-align: center;
+      min-width: 180px;
+      transition: all 0.3s ease;
+    }
+
+    .chain-item:hover {
+      border-color: var(--accent);
+    }
+
+    .chain-item.primary {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+
+    .chain-item .label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-tertiary);
+      margin-bottom: 6px;
+    }
+
+    .chain-item.primary .label {
+      color: rgba(255,255,255,0.8);
+    }
+
+    .chain-item .name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .chain-item.primary .name {
+      color: white;
+    }
+
+    .chain-item .provider {
+      font-size: 12px;
+      color: var(--text-tertiary);
+      margin-top: 2px;
+    }
+
+    .chain-item.primary .provider {
+      color: rgba(255,255,255,0.7);
+    }
+
+    .chain-arrow {
+      color: var(--accent);
+      font-size: 20px;
+    }
+
+    /* Divider */
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 72px 0;
+    }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      padding: 48px 0;
+      border-top: 1px solid var(--border);
+    }
+
+    .footer p {
+      font-size: 14px;
+      color: var(--text-tertiary);
+    }
+
+    .footer .brand {
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .container {
+        padding: 60px 20px;
+      }
+
+      .header h1 {
+        font-size: 36px;
+      }
+
+      .header p {
+        font-size: 16px;
+      }
+
+      .section-title {
+        font-size: 24px;
+      }
+
+      .chain-flow {
+        flex-direction: column;
+      }
+
+      .chain-arrow {
+        transform: rotate(90deg);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-badge">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+        </svg>
+        <span>পবিত্র বানী - Sacred Word</span>
+      </div>
+      <h1>App Features</h1>
+      <p>A comprehensive spiritual companion powered by AI for biblical wisdom and divine guidance.</p>
+    </header>
+
+    <!-- Search & Discovery -->
+    <section class="section">
+      <div class="section-header">
+        <p class="section-number">01</p>
+        <h2 class="section-title">Search & Discovery</h2>
+        <p class="section-desc">Intelligent search capabilities for spiritual exploration.</p>
+      </div>
+      <div class="cards-grid">
+        <div class="card">
+          <div class="card-icon">
+            <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+          </div>
+          <h3>AI-Powered Search</h3>
+          <p>Search Bible verses, spiritual topics, hymns, and lyrics with intelligent AI assistance.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          </div>
+          <h3>Bengali-First Search</h3>
+          <p>Native Bengali support with transliteration for seamless experience.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">
+            <svg viewBox="0 0 24 24"><path d="M12 20V10M18 20V4M6 20v-4"/></svg>
+          </div>
+          <h3>Auto-Suggestions</h3>
+          <p>Get suggested topics and search history for quick access.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">
+            <svg viewBox="0 0 24 24"><path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/></svg>
+          </div>
+          <h3>Fuzzy Search</h3>
+          <p>Handles typos and variations for accurate results.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Bible Study -->
+    <section class="section">
+      <div class="section-header">
+        <p class="section-number">02</p>
+        <h2 class="section-title">Bible Study</h2>
+        <p class="section-desc">Deep analysis and multiple translations for comprehensive understanding.</p>
+      </div>
+
+      <div class="version-grid">
+        <div class="version-card">
+          <div class="icon">
+            <svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+          </div>
+          <h3>Modern Bengali</h3>
+          <p class="native">সাধারণ বাংলা</p>
+          <p>Contemporary translation for modern readers with easy comprehension.</p>
+        </div>
+        <div class="version-card">
+          <div class="icon">
+            <svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+          </div>
+          <h3>Carey Version</h3>
+          <p class="native">কেরী ভার্শন</p>
+          <p>Traditional translation with classical tone and historical significance.</p>
+        </div>
+        <div class="version-card">
+          <div class="icon">
+            <svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+          </div>
+          <h3>Kitabul Mukkadas</h3>
+          <p class="native">কিতাবুল মোকাদ্দস</p>
+          <p>Using Islamic terminology: Allah, Isa Masih, Injil Sharif terms.</p>
+        </div>
+      </div>
+
+      <div style="margin-top: 32px;">
+        <div class="section-header">
+          <h2 class="section-title">Deep Verse Analysis</h2>
+          <p class="section-desc">Comprehensive theological, historical, and practical insights.</p>
+        </div>
+        <div class="analysis-grid">
+          <div class="analysis-item">
+            <div class="check">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5"/></svg>
+            </div>
+            <div class="content">
+              <h4>Theological Meaning</h4>
+              <p>তাত্ত্বিক অর্থ</p>
+            </div>
+          </div>
+          <div class="analysis-item">
+            <div class="check">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5"/></svg>
+            </div>
+            <div class="content">
+              <h4>Historical Context</h4>
+              <p>শাস্ত্রীয় প্রেক্ষাপট</p>
+            </div>
+          </div>
+          <div class="analysis-item">
+            <div class="check">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5"/></svg>
+            </div>
+            <div class="content">
+              <h4>Practical Application</h4>
+              <p>খ্রিস্টীয় জীবনচর্চা</p>
+            </div>
+          </div>
+          <div class="analysis-item">
+            <div class="check">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5"/></svg>
+            </div>
+            <div class="content">
+              <h4>Cross References</h4>
+              <p>অন্যান্য প্রাসঙ্গিক পদ</p>
+            </div>
+          </div>
+          <div class="analysis-item">
+            <div class="check">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5"/></svg>
+            </div>
+            <div class="content">
+              <h4>Meditation Point</h4>
+              <p>ধ্যানের বিষয়</p>
+            </div>
+          </div>
+          <div class="analysis-item">
+            <div class="check">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5"/></svg>
+            </div>
+            <div class="content">
+              <h4>Original Language</h4>
+              <p>মূল ভাষার অন্তর্দৃষ্টি</p>
+            </div>
+          </div>
+          <div class="analysis-item">
+            <div class="check">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5"/></svg>
+            </div>
+            <div class="content">
+              <h4>AI Prayer</h4>
+              <p>ঐশ্বরিক প্রার্থনা</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- User Experience -->
+    <section class="section">
+      <div class="section-header">
+        <p class="section-number">03</p>
+        <h2 class="section-title">User Experience</h2>
+        <p class="section-desc">Thoughtfully designed for comfort and accessibility.</p>
+      </div>
+      <div class="cards-grid">
+        <div class="card">
+          <div class="card-icon">
+            <svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          </div>
+          <h3>Dark/Light Theme</h3>
+          <p>Smooth transitions between themes for comfortable reading.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">
+            <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><path d="M8 21h8M12 17v4"/></svg>
+          </div>
+          <h3>Responsive Design</h3>
+          <p>Seamless experience on mobile, tablet, and desktop.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">
+            <svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+          </div>
+          <h3>Reader Mode</h3>
+          <p>Distraction-free view for focused reading.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          </div>
+          <h3>Multi-language UI</h3>
+          <p>Bengali, English, and more languages supported.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">
+            <svg viewBox="0 0 24 24"><path d="M4 7V4h16v3M9 20h6M12 4v16"/></svg>
+          </div>
+          <h3>Custom Fonts</h3>
+          <p>Optimized Bengali fonts: SolaimanLipi, Nikosh, Noto Sans Bengali.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">
+            <svg viewBox="0 0 24 24"><path d="M4 7V4h16v3M9 20h6M12 4v16"/></svg>
+          </div>
+          <h3>Adjustable Font Sizes</h3>
+          <p>Small, Base, Large, Extra Large options.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Collection -->
+    <section class="section">
+      <div class="section-header">
+        <p class="section-number">04</p>
+        <h2 class="section-title">Collection & Organization</h2>
+        <p class="section-desc">Save and organize your spiritual discoveries.</p>
+      </div>
+      <div class="cards-grid">
+        <div class="card">
+          <div class="card-icon">
+            <svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+          </div>
+          <h3>Save Verses</h3>
+          <p>Bookmark important verses for future reference.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">
+            <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>
+          </div>
+          <h3>Save Snippets</h3>
+          <p>Save insights, prayers, and lyrics separately.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">
+            <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+          </div>
+          <h3>Filter & Search</h3>
+          <p>Find saved content easily with powerful search.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">
+            <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          </div>
+          <h3>Export</h3>
+          <p>Export your collection data for backup.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">
+            <svg viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+          </div>
+          <h3>Tag System</h3>
+          <p>Organize content by themes and topics.</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- AI Backend -->
+    <section class="section">
+      <div class="section-header">
+        <p class="section-number">05</p>
+        <h2 class="section-title">AI & Backend</h2>
+        <p class="section-desc">Intelligent multi-model fallback system for reliability.</p>
+      </div>
+
+      <div class="ai-chain">
+        <div class="chain-header">
+          <h3>Multi-Fallback Chain</h3>
+          <p>Automatic failover ensures uninterrupted service</p>
+        </div>
+        <div class="chain-flow">
+          <div class="chain-item primary">
+            <p class="label">Primary</p>
+            <p class="name">Gemini 2.0 Flash</p>
+            <p class="provider">OpenRouter</p>
+          </div>
+          <span class="chain-arrow">→</span>
+          <div class="chain-item">
+            <p class="label">Fallback 1</p>
+            <p class="name">DeepSeek Chat</p>
+            <p class="provider">OpenRouter</p>
+          </div>
+          <span class="chain-arrow">→</span>
+          <div class="chain-item">
+            <p class="label">Fallback 2</p>
+            <p class="name">Claude Haiku 4.5</p>
+            <p class="provider">OpenRouter</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="cards-grid" style="margin-top: 24px;">
+        <div class="card">
+          <div class="card-icon">
+            <svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+          </div>
+          <h3>Daily Quote</h3>
+          <p>AI-generated daily verse to inspire your day.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">
+            <svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+          </div>
+          <h3>Response Caching</h3>
+          <p>Fast repeated queries with intelligent caching.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Mobile -->
+    <section class="section">
+      <div class="section-header">
+        <p class="section-number">06</p>
+        <h2 class="section-title">Mobile & Sharing</h2>
+        <p class="section-desc">Designed for on-the-go spiritual guidance.</p>
+      </div>
+      <div class="cards-grid">
+        <div class="card">
+          <div class="card-icon">
+            <svg viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+          </div>
+          <h3>Touch-Optimized</h3>
+          <p>Large tap targets for easy mobile interaction.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+          </div>
+          <h3>Smooth Animations</h3>
+          <p>Delightful animated loader for great UX.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">
+            <svg viewBox="0 0 24 24"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+          </div>
+          <h3>Mobile Navigation</h3>
+          <p>Bottom navigation for quick access.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">
+            <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+          </div>
+          <h3>Share Verses</h3>
+          <p>Copy to clipboard with beautiful formatting.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <p><span class="brand">পবিত্র বানী</span> — Sacred Word</p>
+      <p style="margin-top: 8px;">March 2026</p>
+    </footer>
+  </div>
+</body>
+</html>
