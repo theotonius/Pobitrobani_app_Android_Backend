@@ -7,7 +7,7 @@
 <p align="center">
   <a href="features.html">📋 View All Features</a>
   •
-  <a href="https://sacred-word.app">🌐 Live Demo</a>
+  <a href="https://sacredword.vercel.app" target="_blank">🌐 Live Demo</a>
 </p>
 
 </div>
