@@ -14,8 +14,8 @@
 
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      background: #ffffff;
-      color: #111827;
+      background: #0a0a0f;
+      color: #e5e7eb;
       line-height: 1.6;
       -webkit-font-smoothing: antialiased;
     }
@@ -30,7 +30,7 @@
     .hero {
       padding: 80px 0 60px;
       text-align: center;
-      border-bottom: 1px solid #e5e7eb;
+      border-bottom: 1px solid #1f2937;
     }
 
     .hero-brand {
@@ -38,7 +38,8 @@
       align-items: center;
       gap: 8px;
       padding: 6px 14px 6px 10px;
-      background: #fffbeb;
+      background: rgba(217, 119, 6, 0.15);
+      border: 1px solid rgba(217, 119, 6, 0.3);
       border-radius: 100px;
       margin-bottom: 24px;
     }
@@ -62,20 +63,20 @@
     .hero-brand span {
       font-size: 13px;
       font-weight: 600;
-      color: #d97706;
+      color: #f59e0b;
     }
 
     .hero h1 {
       font-size: 42px;
       font-weight: 800;
-      color: #111827;
+      color: #ffffff;
       letter-spacing: -0.5px;
       margin-bottom: 12px;
     }
 
     .hero p {
       font-size: 18px;
-      color: #6b7280;
+      color: #9ca3af;
       max-width: 480px;
       margin: 0 auto;
     }
@@ -104,7 +105,7 @@
       gap: 6px;
       font-size: 11px;
       font-weight: 700;
-      color: #d97706;
+      color: #f59e0b;
       text-transform: uppercase;
       letter-spacing: 1.5px;
       margin-bottom: 10px;
@@ -113,20 +114,20 @@
     .section-label .dot {
       width: 6px;
       height: 6px;
-      background: #d97706;
+      background: #f59e0b;
       border-radius: 50%;
     }
 
     .section-title {
       font-size: 24px;
       font-weight: 700;
-      color: #111827;
+      color: #ffffff;
       margin-bottom: 6px;
     }
 
     .section-desc {
       font-size: 15px;
-      color: #6b7280;
+      color: #9ca3af;
     }
 
     /* Cards */
@@ -144,31 +145,32 @@
 
     .card {
       padding: 22px;
-      background: #f9fafb;
+      background: #111827;
+      border: 1px solid #1f2937;
       border-radius: 14px;
       transition: all 0.2s ease;
     }
 
     .card:hover {
-      background: #fffbeb;
+      border-color: #f59e0b;
+      background: rgba(217, 119, 6, 0.08);
     }
 
     .card-icon {
       width: 38px;
       height: 38px;
-      background: white;
+      background: rgba(217, 119, 6, 0.15);
       border-radius: 10px;
       display: flex;
       align-items: center;
       justify-content: center;
       margin-bottom: 14px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
     }
 
     .card-icon svg {
       width: 18px;
       height: 18px;
-      stroke: #d97706;
+      stroke: #f59e0b;
       fill: none;
       stroke-width: 1.5;
     }
@@ -176,13 +178,13 @@
     .card h3 {
       font-size: 15px;
       font-weight: 600;
-      color: #111827;
+      color: #ffffff;
       margin-bottom: 4px;
     }
 
     .card p {
       font-size: 13px;
-      color: #6b7280;
+      color: #9ca3af;
       line-height: 1.5;
     }
 
@@ -201,27 +203,33 @@
 
     .version {
       padding: 24px;
-      background: #f9fafb;
+      background: #111827;
+      border: 1px solid #1f2937;
       border-radius: 14px;
       text-align: center;
+      transition: all 0.2s ease;
+    }
+
+    .version:hover {
+      border-color: #f59e0b;
+      background: rgba(217, 119, 6, 0.08);
     }
 
     .version-icon {
       width: 48px;
       height: 48px;
-      background: white;
+      background: rgba(217, 119, 6, 0.15);
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
       margin: 0 auto 16px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
     }
 
     .version-icon svg {
       width: 22px;
       height: 22px;
-      stroke: #d97706;
+      stroke: #f59e0b;
       fill: none;
       stroke-width: 1.5;
     }
@@ -229,20 +237,20 @@
     .version h3 {
       font-size: 15px;
       font-weight: 600;
-      color: #111827;
+      color: #ffffff;
       margin-bottom: 2px;
     }
 
     .version .native {
       font-family: 'Noto Sans Bengali', sans-serif;
       font-size: 14px;
-      color: #d97706;
+      color: #f59e0b;
       margin-bottom: 8px;
     }
 
     .version p {
       font-size: 12px;
-      color: #6b7280;
+      color: #9ca3af;
       line-height: 1.5;
     }
 
@@ -258,12 +266,15 @@
       align-items: center;
       gap: 12px;
       padding: 14px 16px;
-      background: #f9fafb;
+      background: #111827;
+      border: 1px solid #1f2937;
       border-radius: 10px;
+      transition: all 0.2s ease;
     }
 
     .analysis-item:hover {
-      background: #fffbeb;
+      border-color: #f59e0b;
+      background: rgba(217, 119, 6, 0.08);
     }
 
     .analysis-check {
@@ -287,19 +298,20 @@
     .analysis-item .text h4 {
       font-size: 13px;
       font-weight: 600;
-      color: #111827;
+      color: #ffffff;
     }
 
     .analysis-item .text p {
       font-family: 'Noto Sans Bengali', sans-serif;
       font-size: 12px;
-      color: #6b7280;
+      color: #9ca3af;
     }
 
     /* AI Chain */
     .chain {
       padding: 32px;
-      background: #f9fafb;
+      background: #111827;
+      border: 1px solid #1f2937;
       border-radius: 16px;
     }
 
@@ -311,13 +323,13 @@
     .chain-header h3 {
       font-size: 17px;
       font-weight: 700;
-      color: #111827;
+      color: #ffffff;
       margin-bottom: 4px;
     }
 
     .chain-header p {
       font-size: 13px;
-      color: #6b7280;
+      color: #9ca3af;
     }
 
     .chain-flow {
@@ -330,8 +342,8 @@
 
     .chain-node {
       padding: 16px 24px;
-      background: white;
-      border: 1px solid #e5e7eb;
+      background: #0a0a0f;
+      border: 1px solid #1f2937;
       border-radius: 10px;
       text-align: center;
       min-width: 150px;
@@ -339,7 +351,7 @@
     }
 
     .chain-node:hover {
-      border-color: #d97706;
+      border-color: #f59e0b;
     }
 
     .chain-node.active {
@@ -352,7 +364,7 @@
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 1px;
-      color: #9ca3af;
+      color: #6b7280;
       margin-bottom: 4px;
     }
 
@@ -363,7 +375,7 @@
     .chain-node .name {
       font-size: 13px;
       font-weight: 600;
-      color: #111827;
+      color: #ffffff;
     }
 
     .chain-node.active .name {
@@ -372,7 +384,7 @@
 
     .chain-node .via {
       font-size: 11px;
-      color: #9ca3af;
+      color: #6b7280;
       margin-top: 2px;
     }
 
@@ -381,7 +393,7 @@
     }
 
     .chain-arrow {
-      color: #d97706;
+      color: #f59e0b;
       font-size: 16px;
       font-weight: 600;
     }
@@ -398,18 +410,18 @@
     /* Footer */
     .footer {
       padding: 40px 0;
-      border-top: 1px solid #e5e7eb;
+      border-top: 1px solid #1f2937;
       text-align: center;
     }
 
     .footer p {
       font-size: 13px;
-      color: #9ca3af;
+      color: #6b7280;
     }
 
     .footer .brand {
       font-weight: 600;
-      color: #6b7280;
+      color: #9ca3af;
     }
   </style>
 </head>
