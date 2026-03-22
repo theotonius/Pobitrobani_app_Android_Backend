@@ -187,6 +187,7 @@ export default function App() {
   const [savedViewMode, setSavedViewMode] = useState<'VERSES' | 'SNIPPETS'>('VERSES');
   const [query, setQuery] = useState('');
   const [state, setState] = useState<AppState>(AppState.IDLE);
+  const [highlightVerseNum, setHighlightVerseNum] = useState(false);
   const [currentVerse, setCurrentVerse] = useState<VerseData | null>(null);
   const [savedVerses, setSavedVerses] = useState<VerseData[]>([]);
   const [savedSnippets, setSavedSnippets] = useState<SnippetData[]>([]);
@@ -400,6 +401,7 @@ export default function App() {
     setState(AppState.SEARCHING);
     setError('');
     setCurrentVerse(null);
+    setHighlightVerseNum(false);
     
     // Normalize query for better matching
     const normalizedQuery = normalizeBengali(finalQuery);
@@ -452,6 +454,8 @@ export default function App() {
       setTimeout(() => {
         setCurrentVerse(localResults[0].item);
         setState(AppState.IDLE);
+        setHighlightVerseNum(true);
+        setTimeout(() => setHighlightVerseNum(false), 5000);
       }, 300);
       return;
     }
@@ -459,6 +463,8 @@ export default function App() {
     try {
       const data = await geminiService.fetchVerseExplanation(finalQuery, languageVersion, appLang);
       setCurrentVerse(data);
+      setHighlightVerseNum(true);
+      setTimeout(() => setHighlightVerseNum(false), 5000);
       
       // Update search history
       const updatedHistory = [finalQuery, ...searchHistory.filter(h => h !== finalQuery)].slice(0, 10);
@@ -636,7 +642,8 @@ export default function App() {
   };
 
   const renderVerseText = (text: string, color: string = 'amber', isExplanation: boolean = false) => {
-    const parts = text.split(/(\[\d+\])/g);
+    const toArabic = (num: string) => num.replace(/[০-৯]/g, (d: string) => '০১২৩৪৫৬৭৮৯'.indexOf(d).toString());
+    const parts = text.split(/(\[[\d০-৯]+\])/g);
     
     const colorClasses: Record<string, string> = {
       amber: 'bg-amber-600 border-amber-400/30 shadow-[0_0_25px_rgba(217,119,6,0.4)] hover:bg-amber-500',
@@ -655,7 +662,7 @@ export default function App() {
       let currentVerseNum: string | null = null;
       
       parts.forEach((part, i) => {
-        const match = part.match(/\[(\d+)\]/);
+        const match = part.match(/\[([\d০-৯]+)\]/);
         if (match) {
           if (currentContent.length > 0) {
             blocks.push(
@@ -676,9 +683,9 @@ export default function App() {
               key={`num-${i}`} 
               animate={{ scale: [1, 1.1, 1] }}
               transition={{ repeat: Infinity, duration: 2, delay: i * 0.5 }}
-              className={`inline-flex items-center justify-center w-6 h-6 md:w-8 md:h-8 ${selectedColor} text-white rounded-full text-[10px] md:text-sm font-black mr-3 align-middle border-2 shadow-lg group-hover/verse:scale-110 transition-transform`}
+              className={`inline-flex items-center justify-center w-6 h-6 md:w-8 md:h-8 ${selectedColor} text-white rounded-full text-[10px] md:text-sm font-black mr-3 align-middle border-2 shadow-lg group-hover/verse:scale-110 transition-transform ${highlightVerseNum ? 'ring-4 ring-yellow-400 shadow-[0_0_15px_rgba(250,204,21,0.8)]' : ''}`}
             >
-              {currentVerseNum}
+              {toArabic(currentVerseNum)}
             </motion.span>
           );
         } else if (part.trim()) {
@@ -703,16 +710,16 @@ export default function App() {
     }
 
     return parts.map((part, i) => {
-      const match = part.match(/\[(\d+)\]/);
+      const match = part.match(/\[([\d০-৯]+)\]/);
       if (match) {
         return (
           <motion.span 
             key={i} 
             animate={{ scale: [1, 1.1, 1] }}
             transition={{ repeat: Infinity, duration: 3, delay: i * 0.3 }}
-            className={`inline-flex items-center justify-center w-6 h-6 md:w-10 md:h-10 ${selectedColor} text-white rounded-full text-[10px] md:text-lg font-black mx-1.5 mb-1.5 align-middle border-2 transition-all hover:scale-110`}
+            className={`inline-flex items-center justify-center w-6 h-6 md:w-10 md:h-10 ${selectedColor} text-white rounded-full text-[10px] md:text-lg font-black mx-1.5 mb-1.5 align-middle border-2 transition-all hover:scale-110 ${highlightVerseNum ? 'ring-4 ring-yellow-400 shadow-[0_0_15px_rgba(250,204,21,0.8)]' : ''}`}
           >
-            {match[1]}
+            {toArabic(match[1])}
           </motion.span>
         );
       }
