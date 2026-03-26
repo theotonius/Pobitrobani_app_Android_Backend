@@ -67,8 +67,6 @@ export const geminiService = {
         "theologicalReference": string,
         "historicalContext": string,
         "historicalReference": string,
-        "metaphoricalMeaning": string,
-        "metaphoricalReference": string,
         "practicalApplication": string,
         "practicalReference": string,
         "crossReferences": string[],

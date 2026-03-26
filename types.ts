@@ -20,8 +20,6 @@ export interface VerseData {
     historicalReference: string;
     practicalApplication: string;
     practicalReference: string;
-    metaphoricalMeaning: string;
-    metaphoricalReference: string;
     crossReferences: string[];
     meditationPoint: string;
     originalInsight?: string;
