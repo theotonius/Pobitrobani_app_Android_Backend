@@ -1105,7 +1105,7 @@ export default function App() {
                     </div>
 
                     <div className="mb-8 md:mb-12 relative px-2 md:px-8">
-                      <h2 className={`${readerMode ? (isLongText ? 'text-2xl md:text-4xl' : 'text-3xl md:text-5xl') : mainTextSizeClass} font-normal ${theme === 'dark' ? 'text-amber-50' : 'text-amber-950'} leading-relaxed bn-serif drop-shadow-sm max-w-4xl mx-auto relative z-10 text-justify transition-all duration-300`}>
+                      <h2 className={`${readerMode ? (isLongText ? 'text-2xl md:text-4xl' : 'text-3xl md:text-5xl') : mainTextSizeClass} font-normal ${theme === 'dark' ? 'text-amber-50' : 'text-body'} leading-relaxed bn-serif drop-shadow-sm max-w-4xl mx-auto relative z-10 text-justify transition-all duration-300`}>
                         {renderVerseText(currentVerse.text)}
                       </h2>
                     </div>
@@ -1180,13 +1180,13 @@ export default function App() {
                       <div className="space-y-3 md:space-y-4">
                         {!readerMode && <h4 className={`text-lg md:text-xl font-black text-amber-400 bn-serif`}>{t.versionLabels[languageVersion].theologicalMeaning}</h4>}
                         <div className="h-0.5 w-10 bg-amber-500/20 rounded-full"></div>
-                        <div className={`${readerMode ? 'text-lg md:text-xl' : explanationSizeClass} ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'} leading-relaxed bn-serif font-medium text-justify transition-all duration-300`}>
+                        <div className={`${readerMode ? 'text-lg md:text-xl' : explanationSizeClass} ${theme === 'dark' ? 'text-slate-300' : 'text-body'} leading-relaxed bn-serif font-medium text-justify transition-all duration-300`}>
                           {renderVerseText(currentVerse.explanation.theologicalMeaning, 'amber', true)}
                         </div>
                       </div>
                     </div>
                     <div className="mt-6 md:mt-8 pt-4 md:pt-6 border-t border-white/5">
-                       <p className={`text-[9px] md:text-[10px] font-black uppercase tracking-widest ${theme === 'dark' ? 'text-amber-400/70' : 'text-amber-400/70'} flex items-center gap-2`}>
+                       <p className={`text-[9px] md:text-[10px] font-black uppercase tracking-widest ${theme === 'dark' ? 'text-amber-400/70' : 'text-amber-600/70'} flex items-center gap-2`}>
                          <Bookmark size={10} />
                          সূত্র: {currentVerse.explanation.theologicalReference}
                        </p>
@@ -1220,13 +1220,13 @@ export default function App() {
                       <div className="space-y-3 md:space-y-4">
                         {!readerMode && <h4 className="text-lg md:text-xl font-black text-amber-400 bn-serif">{t.versionLabels[languageVersion].historicalContext}</h4>}
                         <div className="h-0.5 w-10 bg-blue-500/20 rounded-full"></div>
-                        <div className={`${readerMode ? 'text-lg md:text-xl' : explanationSizeClass} ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'} leading-relaxed bn-serif font-medium text-justify transition-all duration-300`}>
+                        <div className={`${readerMode ? 'text-lg md:text-xl' : explanationSizeClass} ${theme === 'dark' ? 'text-slate-300' : 'text-body'} leading-relaxed bn-serif font-medium text-justify transition-all duration-300`}>
                           {renderVerseText(currentVerse.explanation.historicalContext, 'blue', true)}
                         </div>
                       </div>
                     </div>
                     <div className="mt-6 md:mt-8 pt-4 md:pt-6 border-t border-white/5">
-                       <p className={`text-[9px] md:text-[10px] font-black uppercase tracking-widest ${theme === 'dark' ? 'text-blue-400/70' : 'text-blue-700/60'} flex items-center gap-2`}>
+                       <p className={`text-[9px] md:text-[10px] font-black uppercase tracking-widest ${theme === 'dark' ? 'text-blue-400/70' : 'text-blue-600/70'} flex items-center gap-2`}>
                          <Bookmark size={10} />
                          সূত্র: {currentVerse.explanation.historicalReference}
                        </p>
@@ -1260,13 +1260,13 @@ export default function App() {
                       <div className="space-y-3 md:space-y-4">
                         {!readerMode && <h4 className="text-lg md:text-xl font-black text-amber-400 bn-serif">{t.versionLabels[languageVersion].practicalApplication}</h4>}
                         <div className="h-0.5 w-10 bg-emerald-500/20 rounded-full"></div>
-                        <div className={`${readerMode ? 'text-lg md:text-xl' : explanationSizeClass} ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'} leading-relaxed bn-serif font-medium text-justify transition-all duration-300`}>
+                        <div className={`${readerMode ? 'text-lg md:text-xl' : explanationSizeClass} ${theme === 'dark' ? 'text-slate-300' : 'text-body'} leading-relaxed bn-serif font-medium text-justify transition-all duration-300`}>
                           {renderVerseText(currentVerse.explanation.practicalApplication, 'emerald', true)}
                         </div>
                       </div>
                     </div>
                     <div className="mt-6 md:mt-8 pt-4 md:pt-6 border-t border-white/5">
-                       <p className={`text-[9px] md:text-[10px] font-black uppercase tracking-widest ${theme === 'dark' ? 'text-emerald-400/70' : 'text-emerald-700/60'} flex items-center gap-2`}>
+                       <p className={`text-[9px] md:text-[10px] font-black uppercase tracking-widest ${theme === 'dark' ? 'text-emerald-400/70' : 'text-emerald-600/70'} flex items-center gap-2`}>
                          <Bookmark size={10} />
                          সূত্র: {currentVerse.explanation.practicalReference}
                        </p>
@@ -1321,7 +1321,7 @@ export default function App() {
                           theme={theme}
                         />
                       </div>
-                      <div className={`${readerMode ? 'text-lg md:text-xl' : explanationSizeClass} ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'} leading-relaxed bn-serif font-medium italic transition-all duration-300`}>
+                      <div className={`${readerMode ? 'text-lg md:text-xl' : explanationSizeClass} ${theme === 'dark' ? 'text-slate-300' : 'text-body'} leading-relaxed bn-serif font-medium italic transition-all duration-300`}>
                         {renderVerseText(currentVerse.explanation.meditationPoint, 'rose', true)}
                       </div>
                     </div>
@@ -1352,7 +1352,7 @@ export default function App() {
                         theme={theme}
                       />
                     </div>
-                    <div className={`${readerMode ? 'text-lg md:text-xl' : explanationSizeClass} ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'} leading-relaxed bn-serif font-medium transition-all duration-300`}>
+                    <div className={`${readerMode ? 'text-lg md:text-xl' : explanationSizeClass} ${theme === 'dark' ? 'text-slate-300' : 'text-body'} leading-relaxed bn-serif font-medium transition-all duration-300`}>
                       {renderVerseText(currentVerse.explanation.originalInsight, 'indigo', true)}
                     </div>
                   </div>
@@ -1385,7 +1385,7 @@ export default function App() {
                     </motion.div>
                     <h4 className={`text-xl md:text-2xl font-black text-amber-400 bn-serif`}>ঐশ্বরিক প্রার্থনা</h4>
                   </div>
-                  <div className={`${readerMode ? 'text-lg md:text-xl' : explanationSizeClass} ${theme === 'dark' ? 'text-slate-200' : 'text-slate-800'} leading-relaxed bn-serif font-medium text-center sm:text-justify relative z-10 px-2 md:px-4 transition-all duration-300`}>
+                  <div className={`${readerMode ? 'text-lg md:text-xl' : explanationSizeClass} ${theme === 'dark' ? 'text-slate-200' : 'text-body'} leading-relaxed bn-serif font-medium text-center sm:text-justify relative z-10 px-2 md:px-4 transition-all duration-300`}>
                     {renderVerseText(currentVerse.prayer, 'amber', true)}
                   </div>
                   <p className={`${theme === 'dark' ? 'text-amber-400/60' : 'text-amber-400/70'} font-black text-[10px] md:text-xs uppercase tracking-[0.4em] bn-serif`}>আমেন</p>
@@ -1610,7 +1610,7 @@ export default function App() {
                             </button>
                           </div>
                         </div>
-                        <p className={`${theme === 'dark' ? 'text-slate-200' : 'text-amber-950'} bn-serif text-base md:text-lg leading-relaxed line-clamp-4 font-medium text-justify transition-colors duration-300`}>{renderVerseText(v.text)}</p>
+                        <p className={`${theme === 'dark' ? 'text-slate-200' : 'text-body'} bn-serif text-base md:text-lg leading-relaxed line-clamp-4 font-medium text-justify transition-colors duration-300`}>{renderVerseText(v.text)}</p>
                       </div>
 
                       <div className="mt-8 md:mt-10 space-y-4">
@@ -1696,8 +1696,8 @@ export default function App() {
                               <Trash2 size={14} />
                             </button>
                           </div>
-                          <p className={`text-sm md:text-base leading-relaxed bn-serif font-medium ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'} transition-colors duration-300 text-justify`}>
-                            {renderVerseText(snippet.content, snippet.type === 'lyric' ? 'amber' : 'blue')}
+<p className={`text-sm md:text-base leading-relaxed bn-serif font-medium ${theme === 'dark' ? 'text-slate-300' : 'text-body'} transition-colors duration-300 text-justify`}>
+                            {snippet.content.length > 200 ? snippet.content.substring(0, 200) + '...' : snippet.content}
                           </p>
                         </div>
                         <div className="mt-8 flex justify-end">

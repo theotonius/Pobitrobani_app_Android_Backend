@@ -8,35 +8,41 @@
 @layer base {
   :root {
     --bg-color: #f5f4f0;
-    --text-color: #1a1a1a;
+    --text-color: #f5f4f0;
+    --text-main: #1c1917;
+    --text-body: #292524;
     --card-bg: rgba(255, 255, 255, 0.85);
     --glass-bg: rgba(255, 255, 255, 0.7);
     --border-color: rgba(139, 115, 85, 0.12);
     --accent-gold: #8b7355;
     --accent-amber: #d97706;
     --accent-amber-light: #f59e0b;
-    --text-secondary: #525252;
-    --text-muted: #737373;
+    --text-secondary: #57534e;
+    --text-muted: #78716c;
     --app-font: 'SolaimanLipi', 'Nikosh', 'Noto Sans Bengali', 'Hind Siliguri', sans-serif;
   }
 
   .light-theme {
     --bg-color: #f8f7f4;
-    --text-color: #1c1917;
+    --text-color: #f8f7f4;
+    --text-main: #1c1917;
+    --text-body: #292524;
     --card-bg: rgba(255, 255, 255, 0.9);
     --glass-bg: rgba(255, 255, 255, 0.8);
     --border-color: rgba(180, 160, 130, 0.2);
     --accent-gold: #a08050;
     --accent-amber: #c2410c;
     --accent-amber-light: #f59e0b;
-    --text-secondary: #44403c;
+    --text-secondary: #57534e;
     --text-muted: #78716c;
     --app-font: 'SolaimanLipi', 'Nikosh', 'Noto Sans Bengali', 'Hind Siliguri', sans-serif;
   }
 
   .dark-theme {
     --bg-color: #0a0a0a;
-    --text-color: #f5f5f4;
+    --text-color: #0a0a0a;
+    --text-main: #e7e5e4;
+    --text-body: #d6d3d1;
     --card-bg: rgba(25, 25, 20, 0.9);
     --glass-bg: rgba(30, 30, 25, 0.75);
     --border-color: rgba(251, 191, 36, 0.1);
@@ -112,6 +118,14 @@
   .bn-serif {
     font-family: var(--app-font, 'Noto Sans Bengali', 'Hind Siliguri', system-ui, sans-serif);
     font-weight: 400;
+  }
+
+  .text-main {
+    color: var(--text-main);
+  }
+
+  .text-body {
+    color: var(--text-body);
   }
 
   .text-divine-gold {
