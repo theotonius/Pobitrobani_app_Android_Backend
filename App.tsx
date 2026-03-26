@@ -605,6 +605,7 @@ export default function App() {
     const labels = t.versionLabels[languageVersion];
     shareText += `✨ ${labels.theologicalMeaning}:\n${currentVerse.explanation.theologicalMeaning}\n\n`;
     shareText += `🏛️ ${labels.historicalContext}:\n${currentVerse.explanation.historicalContext}\n\n`;
+    shareText += `🎭 ${labels.metaphoricalMeaning}:\n${currentVerse.explanation.metaphoricalMeaning}\n\n`;
     shareText += `💡 ${labels.practicalApplication}:\n${currentVerse.explanation.practicalApplication}\n\n`;
     
     if (currentVerse.explanation.meditationPoint) {
@@ -1262,9 +1263,49 @@ export default function App() {
                          <Bookmark size={10} />
                          সূত্র: {currentVerse.explanation.practicalReference}
                        </p>
-                    </div>
-                  </div>
-                </div>
+                     </div>
+                   </div>
+                 </div>
+
+                 <div className={`divine-card ${readerMode ? 'p-10 md:p-16' : 'p-8 md:p-10'} rounded-[2rem] md:rounded-[3rem] flex flex-col justify-between hover:border-violet-500/20 transition-all duration-300 group`}>
+                   <div className="space-y-4 md:space-y-6">
+                     <div className="flex items-center justify-between gap-4">
+                       <div className="flex items-center gap-4">
+                         <div className="w-12 h-12 md:w-16 md:h-16 bg-violet-500/10 rounded-xl md:rounded-2xl flex items-center justify-center text-violet-600 shadow-inner group-hover:scale-110 transition-transform">
+                           <Lightbulb size={24} />
+                         </div>
+                         {readerMode && <h4 className="text-xl md:text-2xl font-black text-amber-400 bn-serif">{t.versionLabels[languageVersion].metaphoricalMeaning}</h4>}
+                       </div>
+                       <SnippetBookmark 
+                         saved={isSnippetSaved(currentVerse.explanation.metaphoricalMeaning, 'insight')}
+                         onClick={(e) => {
+                           e.stopPropagation();
+                           toggleSnippet({
+                             verseId: currentVerse.id,
+                             reference: currentVerse.reference,
+                             type: 'insight',
+                             content: currentVerse.explanation.metaphoricalMeaning,
+                             label: t.versionLabels[languageVersion].metaphoricalMeaning
+                           });
+                         }}
+                         theme={theme}
+                       />
+                     </div>
+                     <div className="space-y-3 md:space-y-4">
+                       {!readerMode && <h4 className="text-lg md:text-xl font-black text-amber-400 bn-serif">{t.versionLabels[languageVersion].metaphoricalMeaning}</h4>}
+                       <div className="h-0.5 w-10 bg-violet-500/20 rounded-full"></div>
+                       <div className={`${readerMode ? 'text-lg md:text-xl' : explanationSizeClass} ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'} leading-relaxed bn-serif font-medium text-justify transition-all duration-300`}>
+                         {renderVerseText(currentVerse.explanation.metaphoricalMeaning, 'violet', true)}
+                       </div>
+                     </div>
+                   </div>
+                   <div className="mt-6 md:mt-8 pt-4 md:pt-6 border-t border-white/5">
+                      <p className={`text-[9px] md:text-[10px] font-black uppercase tracking-widest ${theme === 'dark' ? 'text-violet-400/70' : 'text-violet-700/60'} flex items-center gap-2`}>
+                        <Bookmark size={10} />
+                        সূত্র: {currentVerse.explanation.metaphoricalReference}
+                      </p>
+                   </div>
+                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
                   <div className="divine-card p-8 md:p-10 rounded-[2rem] md:rounded-[3rem] border-violet-500/10 hover:border-violet-500/30 transition-all duration-300 group">
