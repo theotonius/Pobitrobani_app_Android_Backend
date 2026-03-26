@@ -97,7 +97,7 @@ export default async function handler(
         'Authorization': `Bearer ${openrouterKey}`,
         ...baseHeaders
       },
-      request.body
+      { ...request.body, max_tokens: 7500 }
     );
 
     const primaryResult = parseAndReturnResponse(openrouterRes, 'OpenRouter');
@@ -123,7 +123,8 @@ export default async function handler(
 
     const body = {
       ...request.body,
-      model: fallback.model
+      model: fallback.model,
+      max_tokens: 7500
     };
 
     const fallbackRes = await makeRequest(
