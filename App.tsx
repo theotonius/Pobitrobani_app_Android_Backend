@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Bird, Cross, Search, Bookmark, Settings, Sparkles, Quote, Share2, ArrowUp, RefreshCcw, BookOpen, Book, Church, Link as LinkIcon, Lightbulb, Languages, HandHeart, XCircle, CircleAlert, Loader2, History, ArrowRight, Trash2, Info as CircleInfo, Phone, Github, Linkedin, Mail, Check, Globe } from 'lucide-react';
+import { Bird, Cross, Search, Bookmark, Settings, Sparkles, Quote, Share2, ArrowUp, RefreshCcw, BookOpen, Book, Church, Link as LinkIcon, Lightbulb, Languages, HandHeart, XCircle, CircleAlert, Loader2, History, ArrowRight, Trash2, Info as CircleInfo, Phone, Github, Linkedin, Mail, Check, Globe, Moon, Sun } from 'lucide-react';
 import Fuse from 'fuse.js';
 import { geminiService } from './services/geminiService';
 import { VerseData, AppState, View, SnippetData, Language } from './types';
@@ -193,7 +193,10 @@ export default function App() {
   const [savedSnippets, setSavedSnippets] = useState<SnippetData[]>([]);
   const [fontSize, setFontSize] = useState('base'); 
   const [fontFamily, setFontFamily] = useState('SolaimanLipi');
-  const theme = 'dark';
+  const [theme, setTheme] = useState<'dark' | 'light'>(() => {
+    const stored = localStorage.getItem('sacred_word_theme');
+    return (stored === 'light' || stored === 'dark') ? stored : 'dark';
+  });
   const [languageVersion, setLanguageVersion] = useState<'modern' | 'carey' | 'kitabul'>('modern');
   const [appLang, setAppLang] = useState<Language>('bn');
   const [error, setError] = useState('');
@@ -264,8 +267,8 @@ export default function App() {
   }, [appLang]);
 
   useEffect(() => {
-    document.body.className = 'dark-theme';
-  }, []);
+    document.body.className = theme === 'dark' ? 'dark-theme' : 'light-theme';
+  }, [theme]);
 
   useEffect(() => {
     document.documentElement.style.setProperty('--app-font', `'${fontFamily}', 'Noto Sans Bengali', 'Hind Siliguri', system-ui, -apple-system, sans-serif`);
@@ -378,6 +381,11 @@ export default function App() {
   const handleLangVersionChange = (version: 'modern' | 'carey' | 'kitabul') => {
     setLanguageVersion(version);
     localStorage.setItem('sacred_word_lang_version', version);
+  };
+
+  const handleThemeChange = (newTheme: 'dark' | 'light') => {
+    setTheme(newTheme);
+    localStorage.setItem('sacred_word_theme', newTheme);
   };
 
   const handleSearch = async (searchQuery?: string) => {
@@ -1749,6 +1757,29 @@ export default function App() {
                             <Languages size={24} className="opacity-50" />
                             <span className="font-black tracking-[0.2em] text-[10px] md:text-[11px] uppercase bn-serif">{t.english}</span>
                           </button>
+                      </div>
+                    </div>
+
+                    <div className={`pt-10 md:pt-12 border-t ${theme === 'dark' ? 'border-white/5' : 'border-black/5'} space-y-6 md:space-y-8 transition-colors duration-300`}>
+                      <div className="flex items-center gap-4">
+                        <div className="h-2 w-2 bg-amber-500 rounded-full"></div>
+                        <h4 className="text-xs md:text-base font-black text-amber-700 uppercase tracking-[0.4em]">{appLang === 'bn' ? 'থিম' : 'Theme'}</h4>
+                      </div>
+                      <div className="grid grid-cols-2 gap-4 md:gap-6">
+                        <button 
+                          onClick={() => handleThemeChange('dark')} 
+                          className={`p-6 md:p-10 rounded-2xl md:rounded-[2.5rem] border-2 transition-all duration-300 flex flex-col items-center gap-3 md:gap-4 ${theme === 'dark' ? 'bg-amber-500/10 border-amber-500/50 text-amber-700 shadow-[0_0_50px_rgba(251,191,36,0.15)]' : `bg-white/5 border-transparent ${theme === 'dark' ? 'text-slate-300' : 'text-slate-600'} hover:bg-white/10`}`}
+                        >
+                          <Moon size={24} className="opacity-50" />
+                          <span className="font-black tracking-[0.2em] text-[10px] md:text-[11px] uppercase bn-serif">{appLang === 'bn' ? 'ডার্ক' : 'Dark'}</span>
+                        </button>
+                        <button 
+                          onClick={() => handleThemeChange('light')} 
+                          className={`p-6 md:p-10 rounded-2xl md:rounded-[2.5rem] border-2 transition-all duration-300 flex flex-col items-center gap-3 md:gap-4 ${theme === 'light' ? 'bg-amber-500/10 border-amber-500/50 text-amber-700 shadow-[0_0_50px_rgba(251,191,36,0.15)]' : `bg-white/5 border-transparent ${theme === 'dark' ? 'text-slate-300' : 'text-slate-600'} hover:bg-white/10`}`}
+                        >
+                          <Sun size={24} className="opacity-50" />
+                          <span className="font-black tracking-[0.2em] text-[10px] md:text-[11px] uppercase bn-serif">{appLang === 'bn' ? 'লাইট' : 'Light'}</span>
+                        </button>
                       </div>
                     </div>
 

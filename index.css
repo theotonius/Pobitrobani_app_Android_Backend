@@ -16,13 +16,23 @@
     --app-font: 'SolaimanLipi', 'Nikosh', 'Noto Sans Bengali', 'Hind Siliguri', sans-serif;
   }
 
-  .dark-theme {
+  .light-theme {
     --bg-color: #000000;
     --text-color: #FFFFFF;
     --card-bg: rgba(15, 15, 10, 0.8);
     --glass-bg: rgba(20, 20, 15, 0.6);
     --border-color: rgba(245, 158, 11, 0.15);
     --accent-gold: #f59e0b;
+    --app-font: 'SolaimanLipi', 'Nikosh', 'Noto Sans Bengali', 'Hind Siliguri', sans-serif;
+  }
+
+  .light-theme {
+    --bg-color: #fcfbf8;
+    --text-color: #2c2c2c;
+    --card-bg: rgba(255, 255, 255, 0.75);
+    --glass-bg: rgba(255, 255, 255, 0.45);
+    --border-color: rgba(139, 115, 85, 0.15);
+    --accent-gold: #8b7355;
     --app-font: 'SolaimanLipi', 'Nikosh', 'Noto Sans Bengali', 'Hind Siliguri', sans-serif;
   }
 
