@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Bird, Cross, Search, Bookmark, Settings, Sparkles, Quote, Share2, ArrowUp, RefreshCcw, BookOpen, Book, Church, Link as LinkIcon, Lightbulb, Languages, HandHeart, XCircle, CircleAlert, Loader2, History, ArrowRight, Trash2, Info as CircleInfo, Phone, Github, Linkedin, Mail, Check, Globe, Moon, Sun } from 'lucide-react';
+import { Bird, Cross, Search, Bookmark, Settings, Sparkles, Quote, Share2, ArrowUp, RefreshCcw, BookOpen, Book, Church, Link as LinkIcon, Lightbulb, Languages, HandHeart, XCircle, CircleAlert, Loader2, History, ArrowRight, Trash2, Info as CircleInfo, Phone, Github, Linkedin, Mail, Check, Globe, Moon, Sun, Menu } from 'lucide-react';
 import Fuse from 'fuse.js';
 import { geminiService } from './services/geminiService';
 import { VerseData, AppState, View, SnippetData, Language } from './types';
@@ -22,7 +22,7 @@ const NavItem: React.FC<{ icon: React.ReactNode; label: string; active: boolean;
     )}
     <span className="relative z-10 flex items-center gap-2">
       <span className="group-hover:scale-110 transition-transform">{icon}</span>
-      <span className="text-[10px] lg:text-xs font-bold uppercase tracking-widest">{label}</span>
+      <span className="text-[10px] lg:text-xs font-bold uppercase tracking-wide">{label}</span>
     </span>
   </button>
 );
@@ -195,7 +195,7 @@ export default function App() {
   const [fontFamily, setFontFamily] = useState('SolaimanLipi');
   const [theme, setTheme] = useState<'dark' | 'light'>(() => {
     const stored = localStorage.getItem('sacred_word_theme');
-    return (stored === 'light' || stored === 'dark') ? stored : 'dark';
+    return (stored === 'light' || stored === 'dark') ? stored : 'light';
   });
   const [languageVersion, setLanguageVersion] = useState<'modern' | 'carey' | 'kitabul'>('modern');
   const [appLang, setAppLang] = useState<Language>('bn');
@@ -212,6 +212,7 @@ export default function App() {
   const [dailyQuote, setDailyQuote] = useState<{ text: string; author: string } | null>(null);
   const [searchHistory, setSearchHistory] = useState<string[]>([]);
   const [readerMode, setReaderMode] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // Pull to refresh states
   const [pullDistance, setPullDistance] = useState(0);
@@ -754,7 +755,7 @@ export default function App() {
 
   if (isStartup) {
     return (
-      <div className={`fixed inset-0 z-[1000] flex flex-col items-center justify-center bg-[#0a0a05] transition-all duration-500 ease-in-out ${startupExit ? 'opacity-0 scale-105 pointer-events-none' : 'opacity-100 scale-100'}`}>
+      <div className={`fixed inset-0 z-[1000] flex flex-col items-center justify-center ${theme === 'dark' ? 'bg-[#0a0a05]' : 'bg-[#fafaf9]'} transition-all duration-500 ease-in-out ${startupExit ? 'opacity-0 scale-105 pointer-events-none' : 'opacity-100 scale-100'}`}>
         {/* Animated background elements */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <motion.div 
@@ -873,7 +874,7 @@ export default function App() {
               transition={{ delay: 0.8, duration: 0.6 }}
               className="h-px bg-gradient-to-r from-transparent to-amber-500/40" 
             />
-            <p className="text-amber-200/70 font-bold tracking-[0.3em] text-[10px] md:text-xs uppercase bn-serif">Sacred Word</p>
+            <p className="text-amber-200/70 font-bold tracking-wide text-[10px] md:text-xs uppercase bn-serif">Sacred Word</p>
             <motion.div 
               initial={{ width: 0 }} 
               animate={{ width: 30 }} 
@@ -925,11 +926,11 @@ export default function App() {
         />
       </div>
 
-      <header className="w-full max-w-7xl mx-auto px-4 md:px-6 pt-6 md:pt-10 pb-6 flex justify-between items-center z-20">
+      <header className="w-full max-w-7xl mx-auto px-4 md:px-6 pt-6 md:pt-10 pb-6 flex md:justify-between items-center z-20">
         <motion.div 
           initial={{ x: -20, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
-          className="flex items-center gap-3 md:gap-5"
+          className="hidden md:flex items-center gap-3 md:gap-5"
         >
           <div className="w-10 h-10 md:w-14 md:h-14 bg-gradient-to-br from-amber-400 via-amber-600 to-amber-800 rounded-xl md:rounded-2xl flex items-center justify-center shadow-[0_0_30px_rgba(139,115,85,0.3)]">
             <Cross className="text-white w-6 h-6 md:w-8 md:h-8" />
@@ -942,6 +943,22 @@ export default function App() {
           </div>
         </motion.div>
         
+        {/* Mobile centered logo and title */}
+        <motion.div 
+          initial={{ x: -20, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          className="flex md:hidden items-center gap-3 absolute left-1/2 -translate-x-1/2"
+        >
+          <div className="w-8 h-8 bg-gradient-to-br from-amber-400 via-amber-600 to-amber-800 rounded-lg flex items-center justify-center shadow-[0_0_20px_rgba(139,115,85,0.3)]">
+            <Cross className="text-white w-5 h-5" />
+          </div>
+          <div>
+            <h1 className={`text-lg font-black ${theme === 'dark' ? 'text-amber-100' : 'text-amber-900'} leading-none bn-serif tracking-tight transition-colors duration-300`}>
+              {t.appName.split(' ')[0]} <span className="text-divine-gold">{t.appName.split(' ')[1] || ''}</span>
+            </h1>
+          </div>
+        </motion.div>
+        
         <div className="flex items-center gap-2 md:gap-4">
           <div className="hidden md:flex divine-glass px-2 py-2 rounded-3xl gap-1">
             <NavItem icon={<Search size={18} />} label={t.navSearch} active={activeView === 'SEARCH'} onClick={() => setActiveView('SEARCH')} theme={theme} />
@@ -951,7 +968,7 @@ export default function App() {
         </div>
       </header>
 
-      <main className="flex-1 w-full max-w-7xl mx-auto p-4 md:p-6 pb-24 md:pb-10 relative z-10">
+      <main className="flex-1 w-full max-w-7xl mx-auto p-4 md:p-6 pb-8 md:pb-10 relative z-10">
         {activeView === 'SEARCH' && (
           <div className="space-y-8 md:space-y-16 animate-in fade-in slide-in-from-bottom-8 duration-300">
             <div className="max-w-4xl mx-auto mt-2 md:mt-8 relative" ref={suggestionRef}>
@@ -991,7 +1008,7 @@ export default function App() {
               {showSuggestions && filteredAutoSuggestions.length > 0 && (
                 <div className="absolute top-full left-0 right-0 mt-3 md:mt-4 divine-glass rounded-[1.5rem] md:rounded-[2rem] p-3 md:p-4 shadow-3xl z-50 animate-in fade-in slide-in-from-top-4 duration-300">
                   <div className="flex justify-between items-center px-4 py-2">
-                    <p className="text-[9px] md:text-[10px] font-black uppercase tracking-[0.3em] text-amber-600/60">প্রস্তাবিত বিষয়সমূহ</p>
+                    <p className="text-[9px] md:text-[10px] font-black uppercase tracking-wide text-amber-600/60">প্রস্তাবিত বিষয়সমূহ</p>
                     {searchHistory.length > 0 && (
                       <button 
                         onClick={(e) => { e.stopPropagation(); setSearchHistory([]); localStorage.removeItem('sacred_word_search_history'); }}
@@ -1091,7 +1108,7 @@ export default function App() {
                   <div className={`relative ${theme === 'dark' ? 'bg-slate-900/50' : 'bg-white/70'} backdrop-blur-3xl p-6 md:p-16 lg:p-20 rounded-[2rem] md:rounded-[4rem] border border-white/5 overflow-hidden text-center shadow-3xl transition-all duration-300 ${readerMode ? 'max-w-4xl mx-auto' : ''}`}>
                     <div className="flex flex-col md:flex-row md:justify-between items-center gap-6 mb-8 md:mb-12">
                       <div className="divine-glass px-4 py-2 rounded-xl flex items-center gap-2">
-                        <span className="text-[10px] font-black uppercase tracking-widest text-amber-400/70">
+                        <span className="text-[10px] font-black uppercase tracking-wide text-amber-400/70">
                           {languageVersion === 'modern' ? t.modernVersion : languageVersion === 'carey' ? t.careyVersion : t.kitabulVersion}
                         </span>
                       </div>
@@ -1100,7 +1117,7 @@ export default function App() {
                         className={`flex items-center gap-2 px-4 py-2 rounded-xl border-2 transition-all duration-500 ${readerMode ? 'bg-amber-700 text-white border-amber-700 shadow-lg' : 'text-amber-700 border-amber-500/20 hover:border-amber-500/40'}`}
                       >
                         {readerMode ? <BookOpen size={14} /> : <Book size={14} />}
-                        <span className="text-[10px] font-black uppercase tracking-widest">{readerMode ? 'সাধারণ মোড' : 'রিডার মোড'}</span>
+                        <span className="text-[10px] font-black uppercase tracking-wide">{readerMode ? 'সাধারণ মোড' : 'রিডার মোড'}</span>
                       </button>
                     </div>
 
@@ -1127,7 +1144,7 @@ export default function App() {
                           animate={{ opacity: [0, 0.3, 0] }}
                           transition={{ repeat: Infinity, duration: 2 }}
                         />
-                        <p className={`relative z-10 text-amber-900 font-black tracking-[0.1em] md:tracking-[0.2em] text-base md:text-xl lg:text-2xl bn-serif drop-shadow-sm`}>{currentVerse.reference}</p>
+                        <p className={`relative z-10 text-amber-900 font-black tracking-wide md:tracking-wide text-base md:text-xl lg:text-2xl bn-serif drop-shadow-sm`}>{currentVerse.reference}</p>
                       </motion.div>
                       <motion.div 
                         animate={{ scale: [1, 1.05, 1], boxShadow: ['0 0 0 0 rgba(251, 191, 36, 0)', '0 0 20px 5px rgba(251, 191, 36, 0.3)', '0 0 0 0 rgba(251, 191, 36, 0)'] }}
@@ -1186,7 +1203,7 @@ export default function App() {
                       </div>
                     </div>
                     <div className="mt-6 md:mt-8 pt-4 md:pt-6 border-t border-white/5">
-                       <p className={`text-[9px] md:text-[10px] font-black uppercase tracking-widest ${theme === 'dark' ? 'text-amber-400/70' : 'text-amber-600/70'} flex items-center gap-2`}>
+                       <p className={`text-[9px] md:text-[10px] font-black uppercase tracking-wide ${theme === 'dark' ? 'text-amber-400/70' : 'text-amber-600/70'} flex items-center gap-2`}>
                          <Bookmark size={10} />
                          সূত্র: {currentVerse.explanation.theologicalReference}
                        </p>
@@ -1226,7 +1243,7 @@ export default function App() {
                       </div>
                     </div>
                     <div className="mt-6 md:mt-8 pt-4 md:pt-6 border-t border-white/5">
-                       <p className={`text-[9px] md:text-[10px] font-black uppercase tracking-widest ${theme === 'dark' ? 'text-blue-400/70' : 'text-blue-600/70'} flex items-center gap-2`}>
+                       <p className={`text-[9px] md:text-[10px] font-black uppercase tracking-wide ${theme === 'dark' ? 'text-blue-400/70' : 'text-blue-600/70'} flex items-center gap-2`}>
                          <Bookmark size={10} />
                          সূত্র: {currentVerse.explanation.historicalReference}
                        </p>
@@ -1266,7 +1283,7 @@ export default function App() {
                       </div>
                     </div>
                     <div className="mt-6 md:mt-8 pt-4 md:pt-6 border-t border-white/5">
-                       <p className={`text-[9px] md:text-[10px] font-black uppercase tracking-widest ${theme === 'dark' ? 'text-emerald-400/70' : 'text-emerald-600/70'} flex items-center gap-2`}>
+                       <p className={`text-[9px] md:text-[10px] font-black uppercase tracking-wide ${theme === 'dark' ? 'text-emerald-400/70' : 'text-emerald-600/70'} flex items-center gap-2`}>
                          <Bookmark size={10} />
                          সূত্র: {currentVerse.explanation.practicalReference}
                        </p>
@@ -1388,19 +1405,19 @@ export default function App() {
                   <div className={`${readerMode ? 'text-lg md:text-xl' : explanationSizeClass} ${theme === 'dark' ? 'text-slate-200' : 'text-body'} leading-relaxed bn-serif font-medium text-center sm:text-justify relative z-10 px-2 md:px-4 transition-all duration-300`}>
                     {renderVerseText(currentVerse.prayer, 'amber', true)}
                   </div>
-                  <p className={`${theme === 'dark' ? 'text-amber-400/60' : 'text-amber-400/70'} font-black text-[10px] md:text-xs uppercase tracking-[0.4em] bn-serif`}>আমেন</p>
+                  <p className={`${theme === 'dark' ? 'text-amber-400/60' : 'text-amber-400/70'} font-black text-[10px] md:text-xs uppercase tracking-wide bn-serif`}>আমেন</p>
                 </div>
 
                 <div className="flex flex-wrap justify-center gap-2 md:gap-3 pt-4">
                    {currentVerse.keyThemes.map((themeStr, i) => (
-                     <span key={i} className="px-4 md:px-6 py-2 md:py-3 rounded-full divine-glass text-[9px] md:text-xs font-black text-amber-400/80 uppercase tracking-widest border border-amber-500/10 hover:border-amber-500/40 transition-all duration-300 cursor-default shadow-sm">{themeStr}</span>
+                     <span key={i} className="px-4 md:px-6 py-2 md:py-3 rounded-full divine-glass text-[9px] md:text-xs font-black text-amber-400/80 uppercase tracking-wide border border-amber-500/10 hover:border-amber-500/40 transition-all duration-300 cursor-default shadow-sm">{themeStr}</span>
                    ))}
                 </div>
 
                 <div className="flex flex-col sm:flex-row justify-center gap-4 md:gap-6 pt-6 md:pt-10">
                   <button onClick={toggleSave} className={`w-full sm:w-auto flex items-center justify-center gap-3 md:gap-4 px-8 md:px-12 py-4 md:py-6 rounded-2xl md:rounded-[2.5rem] divine-glass transition-all duration-300 border-2 ${isCurrentVerseSaved ? 'text-amber-800 bg-amber-500/10 border-amber-500/40 shadow-[0_0_40px_rgba(139,115,85,0.2)]' : `${theme === 'dark' ? 'text-slate-300' : 'text-slate-600'} border-white/5 hover:border-amber-500/20 hover:text-slate-200`} active:scale-95`}>
                     <Bookmark size={20} className={isCurrentVerseSaved ? 'fill-current' : ''} />
-                    <span className="font-black bn-serif tracking-widest uppercase text-sm md:text-base">{isCurrentVerseSaved ? t.removeFromCollection : t.saveToCollection}</span>
+                    <span className="font-black bn-serif tracking-wide uppercase text-sm md:text-base">{isCurrentVerseSaved ? t.removeFromCollection : t.saveToCollection}</span>
                   </button>
 
                   <button onClick={handleShare} className={`w-full sm:w-auto flex items-center justify-center gap-3 md:gap-4 px-8 md:px-12 py-4 md:py-6 rounded-2xl md:rounded-[2.5rem] divine-glass transition-all duration-300 border-2 ${theme === 'dark' ? 'text-slate-300' : 'text-slate-600'} border-white/5 hover:border-amber-500/20 hover:text-slate-200 active:scale-95 relative group`}>
@@ -1410,14 +1427,14 @@ export default function App() {
                           initial={{ opacity: 0, y: 10 }}
                           animate={{ opacity: 1, y: 0 }}
                           exit={{ opacity: 0, y: -10 }}
-                          className="absolute -top-12 left-1/2 -translate-x-1/2 bg-emerald-600 text-white text-[9px] px-4 py-2 rounded-full font-black uppercase tracking-widest shadow-lg z-50"
+                          className="absolute -top-12 left-1/2 -translate-x-1/2 bg-emerald-600 text-white text-[9px] px-4 py-2 rounded-full font-black uppercase tracking-wide shadow-lg z-50"
                         >
                           {t.copied}
                         </motion.div>
                       )}
                     </AnimatePresence>
                     <Share2 size={20} className="group-hover:rotate-12 transition-transform" />
-                    <span className="font-black bn-serif tracking-widest uppercase text-sm md:text-base">{t.share}</span>
+                    <span className="font-black bn-serif tracking-wide uppercase text-sm md:text-base">{t.share}</span>
                   </button>
                 </div>
               </motion.div>
@@ -1438,7 +1455,7 @@ export default function App() {
                       <Quote size={64} className="text-amber-500" />
                     </div>
                     <div className="space-y-4 md:space-y-6 relative z-10">
-                      <p className={`${theme === 'dark' ? 'text-amber-400' : 'text-amber-700'} text-[10px] md:text-xs font-black uppercase tracking-[0.4em]`}>{t.dailyQuote}</p>
+                      <p className={`${theme === 'dark' ? 'text-amber-400' : 'text-amber-700'} text-[10px] md:text-xs font-black uppercase tracking-wide`}>{t.dailyQuote}</p>
                       <h3 className={`text-xl md:text-3xl font-bold ${theme === 'dark' ? 'text-amber-100' : 'text-amber-950'} bn-serif leading-relaxed italic text-justify transition-colors duration-300`}>
                         "{dailyQuote.text}"
                       </h3>
@@ -1452,7 +1469,7 @@ export default function App() {
                 )}
 
                 <div className="text-center opacity-40">
-                  <p className="text-[10px] md:text-[11px] font-black uppercase tracking-[0.4em] md:tracking-[0.6em] mb-4 md:mb-6 text-amber-700">{t.suggestedVerses}</p>
+                  <p className="text-[10px] md:text-[11px] font-black uppercase tracking-wide md:tracking-wide mb-4 md:mb-6 text-amber-700">{t.suggestedVerses}</p>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-8">
                   {t.recommendations.map((rec, idx) => (
@@ -1485,19 +1502,19 @@ export default function App() {
                  <Bookmark className="text-amber-500/30 w-6 h-6 md:w-8 md:h-8" />
                  <motion.div initial={{ width: 0 }} animate={{ width: 96 }} className="hidden sm:block h-px bg-gradient-to-l from-transparent via-amber-500/40 to-transparent transition-all duration-300" />
                </div>
-               <p className={`text-[9px] md:text-[11px] ${theme === 'dark' ? 'text-amber-400' : 'text-amber-700'} font-black uppercase tracking-[0.4em] md:tracking-[0.6em] bg-amber-500/5 px-6 md:px-8 py-2 md:py-2.5 rounded-full border border-amber-500/10`}>পবিত্র হৃদয়ে সংরক্ষিত জ্ঞান</p>
+               <p className={`text-[9px] md:text-[11px] ${theme === 'dark' ? 'text-amber-400' : 'text-amber-700'} font-black uppercase tracking-wide md:tracking-wide bg-amber-500/5 px-6 md:px-8 py-2 md:py-2.5 rounded-full border border-amber-500/10`}>পবিত্র হৃদয়ে সংরক্ষিত জ্ঞান</p>
             </div>
 
             <div className="flex justify-center gap-4 mb-8">
               <button 
                 onClick={() => setSavedViewMode('VERSES')}
-                className={`px-6 py-2 rounded-full transition-all duration-500 text-[10px] font-black uppercase tracking-widest border-2 ${savedViewMode === 'VERSES' ? 'bg-amber-700 text-white border-amber-700 shadow-lg' : 'text-amber-700 bg-amber-500/10 border-amber-500/20 hover:border-amber-500/40'}`}
+                className={`px-6 py-2 rounded-full transition-all duration-500 text-[10px] font-black uppercase tracking-wide border-2 ${savedViewMode === 'VERSES' ? 'bg-amber-700 text-white border-amber-700 shadow-lg' : 'text-amber-700 bg-amber-500/10 border-amber-500/20 hover:border-amber-500/40'}`}
               >
                 বাইবেলের পদ
               </button>
               <button 
                 onClick={() => setSavedViewMode('SNIPPETS')}
-                className={`px-6 py-2 rounded-full transition-all duration-500 text-[10px] font-black uppercase tracking-widest border-2 ${savedViewMode === 'SNIPPETS' ? 'bg-amber-700 text-white border-amber-700 shadow-lg' : 'text-amber-700 bg-amber-500/10 border-amber-500/20 hover:border-amber-500/40'}`}
+                className={`px-6 py-2 rounded-full transition-all duration-500 text-[10px] font-black uppercase tracking-wide border-2 ${savedViewMode === 'SNIPPETS' ? 'bg-amber-700 text-white border-amber-700 shadow-lg' : 'text-amber-700 bg-amber-500/10 border-amber-500/20 hover:border-amber-500/40'}`}
               >
                 অন্তর্দৃষ্টি ও লিরিক্স
               </button>
@@ -1511,10 +1528,10 @@ export default function App() {
                 <div className="flex flex-col lg:flex-row gap-6 items-center justify-between divine-glass p-6 md:p-8 rounded-[1.5rem] md:rounded-[3rem] border-white/5 shadow-2xl transition-all duration-300">
                    <div className="w-full lg:w-2/3 space-y-4">
                       <div className="flex justify-between items-center pr-2">
-                        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-amber-400/60 px-2 transition-colors duration-300">ট্যাগ ফিল্টার</p>
+                        <p className="text-[10px] font-black uppercase tracking-wide text-amber-400/60 px-2 transition-colors duration-300">ট্যাগ ফিল্টার</p>
                         <button 
                           onClick={exportSavedVerses}
-                          className="flex items-center gap-2 text-[9px] md:text-[10px] font-black uppercase tracking-widest text-amber-700 hover:text-amber-600 transition-colors py-1.5 px-3 divine-glass rounded-lg border-white/5"
+                          className="flex items-center gap-2 text-[9px] md:text-[10px] font-black uppercase tracking-wide text-amber-700 hover:text-amber-600 transition-colors py-1.5 px-3 divine-glass rounded-lg border-white/5"
                         >
                           <Share2 size={12} />
                           এক্সপোর্ট
@@ -1523,7 +1540,7 @@ export default function App() {
                       <div className="flex items-center gap-2 md:gap-3 overflow-x-auto pb-2 no-scrollbar scroll-smooth">
                         <button 
                           onClick={() => setFilterTag(null)}
-                          className={`whitespace-nowrap px-4 md:px-6 py-2 rounded-full transition-all duration-300 text-[10px] md:text-[11px] font-black uppercase tracking-widest border-2 ${!filterTag ? 'bg-amber-700 text-white border-amber-700 shadow-lg' : `bg-white/5 ${theme === 'dark' ? 'text-slate-300' : 'text-slate-600'} border-white/5 hover:border-amber-500/20`}`}
+                          className={`whitespace-nowrap px-4 md:px-6 py-2 rounded-full transition-all duration-300 text-[10px] md:text-[11px] font-black uppercase tracking-wide border-2 ${!filterTag ? 'bg-amber-700 text-white border-amber-700 shadow-lg' : `bg-white/5 ${theme === 'dark' ? 'text-slate-300' : 'text-slate-600'} border-white/5 hover:border-amber-500/20`}`}
                         >
                           সব ট্যাগ
                         </button>
@@ -1531,7 +1548,7 @@ export default function App() {
                           <button 
                             key={tag}
                             onClick={() => setFilterTag(tag === filterTag ? null : tag)}
-                            className={`whitespace-nowrap px-4 md:px-6 py-2 rounded-full transition-all duration-300 text-[10px] md:text-[11px] font-black uppercase tracking-widest border-2 ${filterTag === tag ? 'bg-amber-700 text-white border-amber-700 shadow-lg' : `bg-white/5 ${theme === 'dark' ? 'text-slate-300' : 'text-slate-600'} border-white/5 hover:border-amber-500/20`}`}
+                            className={`whitespace-nowrap px-4 md:px-6 py-2 rounded-full transition-all duration-300 text-[10px] md:text-[11px] font-black uppercase tracking-wide border-2 ${filterTag === tag ? 'bg-amber-700 text-white border-amber-700 shadow-lg' : `bg-white/5 ${theme === 'dark' ? 'text-slate-300' : 'text-slate-600'} border-white/5 hover:border-amber-500/20`}`}
                           >
                             {tag}
                           </button>
@@ -1540,7 +1557,7 @@ export default function App() {
                    </div>
 
                    <div className="w-full lg:w-1/3 space-y-4">
-                      <p className="text-[10px] font-black uppercase tracking-[0.3em] text-amber-400/60 px-2 transition-colors duration-300">মূল থিম ফিল্টার</p>
+                      <p className="text-[10px] font-black uppercase tracking-wide text-amber-400/60 px-2 transition-colors duration-300">মূল থিম ফিল্টার</p>
                       <div className="relative group/theme-select">
                         <select 
                           value={filterTheme || ''} 
@@ -1563,7 +1580,7 @@ export default function App() {
                   <div className="flex justify-center">
                     <button 
                       onClick={() => { setFilterTag(null); setFilterTheme(null); }}
-                      className="text-[9px] md:text-[10px] font-black uppercase tracking-[0.4em] text-amber-400/70 hover:text-amber-700 transition-colors flex items-center gap-2 group"
+                      className="text-[9px] md:text-[10px] font-black uppercase tracking-wide text-amber-400/70 hover:text-amber-700 transition-colors flex items-center gap-2 group"
                     >
                       <XCircle size={12} className="group-hover:rotate-90 transition-transform" />
                       ফিল্টার পরিষ্কার করুন
@@ -1616,13 +1633,13 @@ export default function App() {
                       <div className="mt-8 md:mt-10 space-y-4">
                         <div className="flex flex-wrap gap-2">
                            {v.keyThemes.slice(0, 3).map((themeStr, i) => (
-                             <span key={i} className="text-[9px] md:text-[10px] font-black uppercase tracking-widest text-amber-400/70 bn-serif transition-colors duration-300">{themeStr}</span>
+                             <span key={i} className="text-[9px] md:text-[10px] font-black uppercase tracking-wide text-amber-400/70 bn-serif transition-colors duration-300">{themeStr}</span>
                            ))}
                         </div>
 
                         <div className="flex flex-wrap gap-2">
                           {(v.tags || []).map(tag => (
-                            <span key={tag} className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-500/5 border border-amber-500/10 rounded-full text-[9px] md:text-[10px] font-black text-amber-700 uppercase tracking-widest group/tag hover:border-amber-500/30 transition-all duration-300 shadow-sm">
+                            <span key={tag} className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-500/5 border border-amber-500/10 rounded-full text-[9px] md:text-[10px] font-black text-amber-700 uppercase tracking-wide group/tag hover:border-amber-500/30 transition-all duration-300 shadow-sm">
                               {tag}
                               <button 
                                 onClick={(e) => { e.stopPropagation(); removeTagFromVerse(v.id, tag); }}
@@ -1669,7 +1686,7 @@ export default function App() {
                 <div className="divine-glass p-12 md:p-24 text-center rounded-[2rem] md:rounded-[4rem] opacity-50 shadow-2xl border-dashed border-2 border-white/10 transition-all duration-300">
                   <Sparkles size={48} className={`${theme === 'dark' ? 'text-slate-300/50' : 'text-slate-500/50'} mx-auto mb-6`} />
                   <p className={`text-lg md:text-xl bn-serif font-medium ${theme === 'dark' ? 'text-amber-100' : 'text-amber-950'} transition-colors duration-300`}>বর্তমানে কোনো সংরক্ষিত অন্তর্দৃষ্টি নেই</p>
-                  <button onClick={() => setActiveView('SEARCH')} className="mt-8 px-8 py-3 bg-amber-700 text-white rounded-xl font-black text-xs uppercase tracking-widest shadow-lg active:scale-95">অন্বেষণ শুরু করুন</button>
+                  <button onClick={() => setActiveView('SEARCH')} className="mt-8 px-8 py-3 bg-amber-700 text-white rounded-xl font-black text-xs uppercase tracking-wide shadow-lg active:scale-95">অন্বেষণ শুরু করুন</button>
                 </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
@@ -1686,7 +1703,7 @@ export default function App() {
                         <div>
                           <div className="flex justify-between items-start mb-6">
                             <div className="space-y-1">
-                              <span className={`text-[9px] font-black uppercase tracking-widest ${theme === 'dark' ? 'text-amber-400/70' : 'text-amber-400/70'} bn-serif`}>{snippet.label}</span>
+                              <span className={`text-[9px] font-black uppercase tracking-wide ${theme === 'dark' ? 'text-amber-400/70' : 'text-amber-400/70'} bn-serif`}>{snippet.label}</span>
                               <p className={`text-xs md:text-sm font-black ${theme === 'dark' ? 'text-amber-200' : 'text-amber-800'} bn-serif`}>{snippet.reference}</p>
                             </div>
                             <button 
@@ -1703,7 +1720,7 @@ export default function App() {
                         <div className="mt-8 flex justify-end">
                            <button 
                              onClick={() => handleSearch(snippet.reference)}
-                             className="text-[10px] font-black uppercase tracking-widest text-amber-700 hover:text-amber-600 flex items-center gap-2 group/link"
+                             className="text-[10px] font-black uppercase tracking-wide text-amber-700 hover:text-amber-600 flex items-center gap-2 group/link"
                            >
                              মূল পদে যান 
                              <ArrowRight size={12} className="group-hover/link:translate-x-1 transition-transform" />
@@ -1731,7 +1748,7 @@ export default function App() {
                </div>
                <div className="space-y-1 md:space-y-2">
                  <h2 className={`text-2xl md:text-4xl font-black ${theme === 'dark' ? 'text-amber-100' : 'text-amber-950'} bn-serif transition-colors duration-300`}>অ্যাপ সেটিংস</h2>
-                 <p className={`${theme === 'dark' ? 'text-amber-400' : 'text-amber-700'} text-[10px] md:text-xs font-black uppercase tracking-widest`}>ব্যক্তিগত পাঠ অভিজ্ঞতা কাস্টমাইজ করুন</p>
+                 <p className={`${theme === 'dark' ? 'text-amber-400' : 'text-amber-700'} text-[10px] md:text-xs font-black uppercase tracking-wide`}>ব্যক্তিগত পাঠ অভিজ্ঞতা কাস্টমাইজ করুন</p>
                </div>
              </div>
 
@@ -1740,7 +1757,7 @@ export default function App() {
                      <div className="space-y-6 md:space-y-8">
                       <div className="flex items-center gap-4">
                         <div className="h-2 w-2 bg-amber-500 rounded-full"></div>
-                        <h4 className="text-xs md:text-base font-black text-amber-700 uppercase tracking-[0.4em]">{t.language}</h4>
+                        <h4 className="text-xs md:text-base font-black text-amber-700 uppercase tracking-wide">{t.language}</h4>
                       </div>
                       <div className="grid grid-cols-2 gap-4 md:gap-6">
                           <button 
@@ -1748,14 +1765,14 @@ export default function App() {
                             className={`p-6 md:p-10 rounded-2xl md:rounded-[2.5rem] border-2 transition-all duration-300 flex flex-col items-center gap-3 md:gap-4 ${appLang === 'bn' ? 'bg-amber-500/10 border-amber-500/50 text-amber-700 shadow-[0_0_50px_rgba(251,191,36,0.15)]' : `bg-white/5 border-transparent ${theme === 'dark' ? 'text-slate-300' : 'text-slate-600'} hover:bg-white/10`}`}
                           >
                             <Languages size={24} className="opacity-50" />
-                            <span className="font-black tracking-[0.2em] text-[10px] md:text-[11px] uppercase bn-serif">{t.bengali}</span>
+                            <span className="font-black tracking-wide text-[10px] md:text-[11px] uppercase bn-serif">{t.bengali}</span>
                           </button>
                           <button 
                             onClick={() => handleAppLangChange('en')} 
                             className={`p-6 md:p-10 rounded-2xl md:rounded-[2.5rem] border-2 transition-all duration-300 flex flex-col items-center gap-3 md:gap-4 ${appLang === 'en' ? 'bg-amber-500/10 border-amber-500/50 text-amber-700 shadow-[0_0_50px_rgba(251,191,36,0.15)]' : `bg-white/5 border-transparent ${theme === 'dark' ? 'text-slate-300' : 'text-slate-600'} hover:bg-white/10`}`}
                           >
                             <Languages size={24} className="opacity-50" />
-                            <span className="font-black tracking-[0.2em] text-[10px] md:text-[11px] uppercase bn-serif">{t.english}</span>
+                            <span className="font-black tracking-wide text-[10px] md:text-[11px] uppercase bn-serif">{t.english}</span>
                           </button>
                       </div>
                     </div>
@@ -1763,7 +1780,7 @@ export default function App() {
                     <div className={`pt-10 md:pt-12 border-t ${theme === 'dark' ? 'border-white/5' : 'border-black/5'} space-y-6 md:space-y-8 transition-colors duration-300`}>
                       <div className="flex items-center gap-4">
                         <div className="h-2 w-2 bg-amber-500 rounded-full"></div>
-                        <h4 className="text-xs md:text-base font-black text-amber-700 uppercase tracking-[0.4em]">{appLang === 'bn' ? 'থিম' : 'Theme'}</h4>
+                        <h4 className="text-xs md:text-base font-black text-amber-700 uppercase tracking-wide">{appLang === 'bn' ? 'থিম' : 'Theme'}</h4>
                       </div>
                       <div className="grid grid-cols-2 gap-4 md:gap-6">
                         <button 
@@ -1771,14 +1788,14 @@ export default function App() {
                           className={`p-6 md:p-10 rounded-2xl md:rounded-[2.5rem] border-2 transition-all duration-300 flex flex-col items-center gap-3 md:gap-4 ${theme === 'dark' ? 'bg-amber-500/10 border-amber-500/50 text-amber-700 shadow-[0_0_50px_rgba(251,191,36,0.15)]' : `bg-white/5 border-transparent ${theme === 'dark' ? 'text-slate-300' : 'text-slate-600'} hover:bg-white/10`}`}
                         >
                           <Moon size={24} className="opacity-50" />
-                          <span className="font-black tracking-[0.2em] text-[10px] md:text-[11px] uppercase bn-serif">{appLang === 'bn' ? 'ডার্ক' : 'Dark'}</span>
+                          <span className="font-black tracking-wide text-[10px] md:text-[11px] uppercase bn-serif">{appLang === 'bn' ? 'ডার্ক' : 'Dark'}</span>
                         </button>
                         <button 
                           onClick={() => handleThemeChange('light')} 
                           className={`p-6 md:p-10 rounded-2xl md:rounded-[2.5rem] border-2 transition-all duration-300 flex flex-col items-center gap-3 md:gap-4 ${theme === 'light' ? 'bg-amber-500/10 border-amber-500/50 text-amber-700 shadow-[0_0_50px_rgba(251,191,36,0.15)]' : `bg-white/5 border-transparent ${theme === 'dark' ? 'text-slate-300' : 'text-slate-600'} hover:bg-white/10`}`}
                         >
                           <Sun size={24} className="opacity-50" />
-                          <span className="font-black tracking-[0.2em] text-[10px] md:text-[11px] uppercase bn-serif">{appLang === 'bn' ? 'লাইট' : 'Light'}</span>
+                          <span className="font-black tracking-wide text-[10px] md:text-[11px] uppercase bn-serif">{appLang === 'bn' ? 'লাইট' : 'Light'}</span>
                         </button>
                       </div>
                     </div>
@@ -1786,7 +1803,7 @@ export default function App() {
                       <div className={`pt-10 md:pt-12 border-t ${theme === 'dark' ? 'border-white/5' : 'border-black/5'} space-y-6 md:space-y-8 transition-colors duration-300`}>
                         <div className="flex items-center gap-4">
                           <div className="h-2 w-2 bg-amber-500 rounded-full"></div>
-                          <h4 className="text-xs md:text-base font-black text-amber-700 uppercase tracking-[0.4em]">{t.modernVersion} / {t.careyVersion} / {t.kitabulVersion}</h4>
+                          <h4 className="text-xs md:text-base font-black text-amber-700 uppercase tracking-wide">{t.modernVersion} / {t.careyVersion} / {t.kitabulVersion}</h4>
                         </div>
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6">
                             <button 
@@ -1794,21 +1811,21 @@ export default function App() {
                               className={`p-6 md:p-10 rounded-2xl md:rounded-[2.5rem] border-2 transition-all duration-300 flex flex-col items-center gap-3 md:gap-4 ${languageVersion === 'modern' ? 'bg-amber-500/10 border-amber-500/50 text-amber-700 shadow-[0_0_50px_rgba(251,191,36,0.15)]' : `bg-white/5 border-transparent ${theme === 'dark' ? 'text-slate-300' : 'text-slate-600'} hover:bg-white/10`}`}
                             >
                               <BookOpen size={24} className="opacity-50" />
-                              <span className="font-black tracking-[0.2em] text-[10px] md:text-[11px] uppercase bn-serif">{t.modernVersion}</span>
+                              <span className="font-black tracking-wide text-[10px] md:text-[11px] uppercase bn-serif">{t.modernVersion}</span>
                             </button>
                             <button 
                               onClick={() => handleLangVersionChange('carey')} 
                               className={`p-6 md:p-10 rounded-2xl md:rounded-[2.5rem] border-2 transition-all duration-300 flex flex-col items-center gap-3 md:gap-4 ${languageVersion === 'carey' ? 'bg-amber-500/10 border-amber-500/50 text-amber-700 shadow-[0_0_50px_rgba(251,191,36,0.15)]' : `bg-white/5 border-transparent ${theme === 'dark' ? 'text-slate-300' : 'text-slate-600'} hover:bg-white/10`}`}
                             >
                               <Book size={24} className="opacity-50" />
-                              <span className="font-black tracking-[0.2em] text-[10px] md:text-[11px] uppercase bn-serif">{t.careyVersion}</span>
+                              <span className="font-black tracking-wide text-[10px] md:text-[11px] uppercase bn-serif">{t.careyVersion}</span>
                             </button>
                             <button 
                               onClick={() => handleLangVersionChange('kitabul')} 
                               className={`p-6 md:p-10 rounded-2xl md:rounded-[2.5rem] border-2 transition-all duration-300 flex flex-col items-center gap-3 md:gap-4 ${languageVersion === 'kitabul' ? 'bg-amber-500/10 border-amber-500/50 text-amber-700 shadow-[0_0_50px_rgba(251,191,36,0.15)]' : `bg-white/5 border-transparent ${theme === 'dark' ? 'text-slate-300' : 'text-slate-600'} hover:bg-white/10`}`}
                             >
                               <Sparkles size={24} className="opacity-50" />
-                              <span className="font-black tracking-[0.2em] text-[10px] md:text-[11px] uppercase bn-serif">{t.kitabulVersion}</span>
+                              <span className="font-black tracking-wide text-[10px] md:text-[11px] uppercase bn-serif">{t.kitabulVersion}</span>
                             </button>
                         </div>
                       </div>
@@ -1816,7 +1833,7 @@ export default function App() {
                     <div className={`pt-10 md:pt-12 border-t border-black/5 space-y-6 md:space-y-8 transition-colors duration-300`}>
                       <div className="flex items-center gap-4">
                         <div className="h-2 w-2 bg-amber-500 rounded-full"></div>
-                        <h4 className="text-xs md:text-base font-black text-amber-700 uppercase tracking-[0.4em]">{t.fontFamily}</h4>
+                        <h4 className="text-xs md:text-base font-black text-amber-700 uppercase tracking-wide">{t.fontFamily}</h4>
                       </div>
                       <div className="relative group/select">
                         <select 
@@ -1838,7 +1855,7 @@ export default function App() {
                     <div className={`pt-10 md:pt-12 border-t ${theme === 'dark' ? 'border-white/5' : 'border-black/5'} space-y-6 md:space-y-8 transition-colors duration-300`}>
                       <div className="flex items-center gap-4">
                         <div className="h-2 w-2 bg-rose-500 rounded-full"></div>
-                        <h4 className="text-xs md:text-base font-black text-amber-600 uppercase tracking-[0.4em]">{t.fontSize}</h4>
+                        <h4 className="text-xs md:text-base font-black text-amber-600 uppercase tracking-wide">{t.fontSize}</h4>
                       </div>
                       <div className="flex flex-wrap gap-3 md:gap-4">
                           {[{ id: 'sm', label: t.small }, { id: 'base', label: t.base }, { id: 'lg', label: t.large }, { id: 'xl', label: 'Extra' }].map(size => (
@@ -1873,13 +1890,13 @@ export default function App() {
                             }}
                           />
                         </div>
-                        <div className="absolute -bottom-2 -right-2 md:-bottom-4 md:-right-4 bg-amber-700 text-white px-3 md:px-5 py-1.5 md:py-2 rounded-xl md:rounded-2xl font-black text-[8px] md:text-[10px] uppercase tracking-widest shadow-lg border-2 md:border-4 border-slate-900 transition-transform">Lead Engineer</div>
+                        <div className="absolute -bottom-2 -right-2 md:-bottom-4 md:-right-4 bg-amber-700 text-white px-3 md:px-5 py-1.5 md:py-2 rounded-xl md:rounded-2xl font-black text-[8px] md:text-[10px] uppercase tracking-wide shadow-lg border-2 md:border-4 border-slate-900 transition-transform">Lead Engineer</div>
                       </div>
 
                       <div className="space-y-6 md:space-y-8 text-center md:text-left flex-1">
                          <div className="space-y-2 md:space-y-3">
                            <h3 className={`text-2xl md:text-4xl font-black ${theme === 'dark' ? 'text-amber-100' : 'text-amber-950'} bn-serif tracking-tight transition-colors duration-300`}>ডেভলপার <span className="text-amber-500">টিম</span></h3>
-                           <p className={`${theme === 'dark' ? 'text-amber-400' : 'text-amber-700'} font-black text-[9px] md:text-xs uppercase tracking-[0.5em]`}>শান্তি ও প্রজ্ঞার কারিগর</p>
+                           <p className={`${theme === 'dark' ? 'text-amber-400' : 'text-amber-700'} font-black text-[9px] md:text-xs uppercase tracking-wide`}>শান্তি ও প্রজ্ঞার কারিগর</p>
                          </div>
                          
                          <p className={`${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'} leading-relaxed bn-serif text-base md:text-lg font-medium text-justify transition-colors duration-300`}>
@@ -1907,14 +1924,61 @@ export default function App() {
         )}
       </main>
 
-      {/* Mobile Bottom Navigation */}
-      <nav className="fixed bottom-0 left-0 right-0 md:hidden z-50">
-        <div className="divine-glass flex justify-between items-center px-2 pt-2 pb-6 rounded-t-[2rem] shadow-[0_-10px_40px_rgba(0,0,0,0.15)] border-t border-white/10 backdrop-blur-3xl transition-all duration-300 bg-gradient-to-t from-black/20 to-transparent w-full">
-          <MobileNavItem icon={<Search size={22} />} active={activeView === 'SEARCH'} onClick={() => setActiveView('SEARCH')} label={t.navSearch} theme={theme} />
-          <MobileNavItem icon={<Bookmark size={22} />} active={activeView === 'SAVED'} onClick={() => setActiveView('SAVED')} label={t.navSaved} theme={theme} />
-          <MobileNavItem icon={<Settings size={22} />} active={activeView === 'SETTINGS'} onClick={() => setActiveView('SETTINGS')} label={t.navSettings} theme={theme} />
-        </div>
-      </nav>
+      {/* Mobile Sidebar Navigation */}
+      {mobileMenuOpen && (
+        <motion.div 
+          initial={{ x: -300, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          exit={{ x: -300, opacity: 0 }}
+          transition={{ type: "spring", damping: 25, stiffness: 300 }}
+          className="fixed inset-y-0 left-0 w-72 z-[100] md:hidden"
+        >
+          <div className={`h-full ${theme === 'dark' ? 'bg-[#0a0a05]/95' : 'bg-[#fafaf9]/95'} backdrop-blur-3xl p-6 pt-20`}>
+            <div className="space-y-2">
+              <button 
+                onClick={() => { setActiveView('SEARCH'); setMobileMenuOpen(false); }}
+                className={`w-full flex items-center gap-4 px-6 py-4 rounded-2xl transition-all duration-300 ${activeView === 'SEARCH' ? 'bg-amber-500 text-white shadow-lg' : (theme === 'dark' ? 'text-slate-300 hover:bg-white/5' : 'text-slate-700 hover:bg-black/5')}`}
+              >
+                <Search size={22} />
+                <span className="font-bold">{t.navSearch}</span>
+              </button>
+              <button 
+                onClick={() => { setActiveView('SAVED'); setMobileMenuOpen(false); }}
+                className={`w-full flex items-center gap-4 px-6 py-4 rounded-2xl transition-all duration-300 ${activeView === 'SAVED' ? 'bg-amber-500 text-white shadow-lg' : (theme === 'dark' ? 'text-slate-300 hover:bg-white/5' : 'text-slate-700 hover:bg-black/5')}`}
+              >
+                <Bookmark size={22} />
+                <span className="font-bold">{t.navSaved}</span>
+              </button>
+              <button 
+                onClick={() => { setActiveView('SETTINGS'); setMobileMenuOpen(false); }}
+                className={`w-full flex items-center gap-4 px-6 py-4 rounded-2xl transition-all duration-300 ${activeView === 'SETTINGS' ? 'bg-amber-500 text-white shadow-lg' : (theme === 'dark' ? 'text-slate-300 hover:bg-white/5' : 'text-slate-700 hover:bg-black/5')}`}
+              >
+                <Settings size={22} />
+                <span className="font-bold">{t.navSettings}</span>
+              </button>
+            </div>
+          </div>
+        </motion.div>
+      )}
+
+      {/* Mobile Sidebar Overlay */}
+      {mobileMenuOpen && (
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          onClick={() => setMobileMenuOpen(false)}
+          className="fixed inset-0 bg-black/50 z-[90] md:hidden"
+        />
+      )}
+
+      {/* Mobile Hamburger Button */}
+      <button 
+        onClick={() => setMobileMenuOpen(true)}
+        className={`fixed top-4 left-4 z-[80] md:hidden p-3 rounded-xl ${theme === 'dark' ? 'bg-white/5 text-slate-300' : 'bg-black/5 text-slate-700'} backdrop-blur-xl`}
+      >
+        <Menu size={24} />
+      </button>
     </div>
   );
 }
@@ -1931,7 +1995,7 @@ const RecommendItem: React.FC<{ title: string; desc: string; icon: React.ReactNo
          {icon}
        </div>
        <div className="space-y-1">
-         <p className="text-[9px] md:text-[11px] font-black uppercase tracking-[0.3em] text-amber-400/60">{desc}</p>
+         <p className="text-[9px] md:text-[11px] font-black uppercase tracking-wide text-amber-400/60">{desc}</p>
          <h4 className={`text-base md:text-2xl font-bold ${theme === 'dark' ? 'text-slate-200' : 'text-amber-950'} bn-serif group-hover:text-amber-600 transition-colors duration-300`}>{title}</h4>
        </div>
     </div>
