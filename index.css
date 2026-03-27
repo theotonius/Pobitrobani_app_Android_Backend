@@ -7,6 +7,20 @@
 
 @layer base {
   :root {
+    --light-primary: #a16207;
+    --light-primary-light: #f59e0b;
+    --light-primary-dark: #78350f;
+    --light-accent: #d97706;
+    --light-accent-light: #f59e0b;
+    --light-text-primary: #1c1917;
+    --light-text-secondary: #57534e;
+    --light-text-muted: #78716c;
+    --light-background: #fafaf9;
+    --light-background-alt: #f5f4f0;
+    --light-card-bg: rgba(255, 255, 255, 0.95);
+    --light-glass-bg: rgba(255, 255, 255, 0.85);
+    --light-border: rgba(120, 113, 108, 0.12);
+
     --bg-color: #f5f4f0;
     --text-color: #f5f4f0;
     --text-main: #1c1917;
@@ -23,18 +37,18 @@
   }
 
   .light-theme {
-    --bg-color: #fafaf9;
-    --text-color: #fafaf9;
-    --text-main: #1c1917;
-    --text-body: #44403c;
-    --card-bg: rgba(255, 255, 255, 0.95);
-    --glass-bg: rgba(255, 255, 255, 0.85);
-    --border-color: rgba(120, 113, 108, 0.12);
-    --accent-gold: #a16207;
-    --accent-amber: #d97706;
-    --accent-amber-light: #f59e0b;
-    --text-secondary: #57534e;
-    --text-muted: #78716c;
+    --bg-color: var(--light-background);
+    --text-color: var(--light-background);
+    --text-main: var(--light-text-primary);
+    --text-body: var(--light-text-secondary);
+    --card-bg: var(--light-card-bg);
+    --glass-bg: var(--light-glass-bg);
+    --border-color: var(--light-border);
+    --accent-gold: var(--light-primary);
+    --accent-amber: var(--light-accent);
+    --accent-amber-light: var(--light-accent-light);
+    --text-secondary: var(--light-text-secondary);
+    --text-muted: var(--light-text-muted);
     --app-font: 'SolaimanLipi', 'Nikosh', 'Noto Sans Bengali', 'Hind Siliguri', sans-serif;
   }
 

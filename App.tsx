@@ -7,6 +7,7 @@ import { geminiService } from './services/geminiService';
 import { VerseData, AppState, View, SnippetData, Language } from './types';
 import { translations } from './translations';
 import { normalizeBengali, transliterateToBengali, BENGALI_SEARCH_INDEX } from './src/lib/bengaliSearch';
+import { lightThemePresets, applyLightThemeColors, getThemeColorsFromStorage, saveThemeColorsToStorage, ThemeColors } from './src/config/themeConfig';
 
 const NavItem: React.FC<{ icon: React.ReactNode; label: string; active: boolean; onClick: () => void; theme: string }> = ({ icon, label, active, onClick, theme }) => (
   <button 
@@ -195,7 +196,8 @@ export default function App() {
   const [fontFamily, setFontFamily] = useState('SolaimanLipi');
   const [theme, setTheme] = useState<'dark' | 'light'>(() => {
     const stored = localStorage.getItem('sacred_word_theme');
-    return (stored === 'light' || stored === 'dark') ? stored : 'light';
+    if (!stored) localStorage.setItem('sacred_word_theme', 'dark');
+    return (stored === 'light' || stored === 'dark') ? stored : 'dark';
   });
   const [languageVersion, setLanguageVersion] = useState<'modern' | 'carey' | 'kitabul'>('modern');
   const [appLang, setAppLang] = useState<Language>('bn');
@@ -213,6 +215,9 @@ export default function App() {
   const [searchHistory, setSearchHistory] = useState<string[]>([]);
   const [readerMode, setReaderMode] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [lightThemeColors, setLightThemeColors] = useState<ThemeColors | null>(null);
+  const [lightThemePreset, setLightThemePreset] = useState<string>('default');
+  const [userApiKey, setUserApiKey] = useState<string>('');
 
   // Pull to refresh states
   const [pullDistance, setPullDistance] = useState(0);
@@ -245,6 +250,8 @@ export default function App() {
     if (storedHistory) {
       try { setSearchHistory(JSON.parse(storedHistory)); } catch (e) { setSearchHistory([]); }
     }
+    const storedApiKey = localStorage.getItem('sacred_word_user_api_key');
+    if (storedApiKey) setUserApiKey(storedApiKey);
 
     // Startup animation timer
     const timer = setTimeout(() => {
@@ -270,6 +277,22 @@ export default function App() {
   useEffect(() => {
     document.body.className = theme === 'dark' ? 'dark-theme' : 'light-theme';
   }, [theme]);
+
+  useEffect(() => {
+    const storedColors = getThemeColorsFromStorage();
+    if (storedColors) {
+      setLightThemeColors(storedColors);
+      setLightThemePreset('custom');
+      applyLightThemeColors(storedColors);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (lightThemeColors && lightThemePreset === 'custom') {
+      applyLightThemeColors(lightThemeColors);
+      saveThemeColorsToStorage(lightThemeColors);
+    }
+  }, [lightThemeColors, lightThemePreset]);
 
   useEffect(() => {
     document.documentElement.style.setProperty('--app-font', `'${fontFamily}', 'Noto Sans Bengali', 'Hind Siliguri', system-ui, -apple-system, sans-serif`);
@@ -1863,6 +1886,140 @@ export default function App() {
                           ))}
                       </div>
                     </div>
+
+                    {theme === 'light' && (
+                      <div className={`pt-10 md:pt-12 border-t ${theme === 'dark' ? 'border-white/5' : 'border-black/5'} space-y-6 md:space-y-8 transition-colors duration-300`}>
+                        <div className="flex items-center gap-4">
+                          <div className="h-2 w-2 bg-gradient-to-r from-amber-400 to-amber-600 rounded-full"></div>
+                          <h4 className="text-xs md:text-base font-black text-amber-600 uppercase tracking-wide">লাইট থিম রঙ</h4>
+                        </div>
+                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 md:gap-4">
+                          {Object.entries(lightThemePresets).map(([key, colors]) => (
+                            <button
+                              key={key}
+                              onClick={() => {
+                                setLightThemePreset(key);
+                                setLightThemeColors(colors);
+                                applyLightThemeColors(colors);
+                              }}
+                              className={`p-4 rounded-xl border-2 transition-all flex flex-col items-center gap-2 ${lightThemePreset === key ? 'border-amber-500 bg-amber-500/10' : 'border-transparent hover:border-amber-300'}`}
+                            >
+                              <div className="flex gap-1">
+                                <div className="w-6 h-6 rounded-full" style={{ backgroundColor: colors.primary }}></div>
+                                <div className="w-6 h-6 rounded-full" style={{ backgroundColor: colors.accent }}></div>
+                                <div className="w-6 h-6 rounded-full" style={{ backgroundColor: colors.background }}></div>
+                              </div>
+                              <span className={`text-xs font-black uppercase tracking-wide ${theme === 'dark' ? 'text-slate-300' : 'text-slate-600'}`}>
+                                {key === 'default' ? 'ডিফল্ট' : key === 'warm' ? 'উarm' : key === 'ocean' ? 'সমুদ্র' : key === 'forest' ? 'বন' : key === 'royal' ? 'রাজকীয়' : 'আধুনিক'}
+                              </span>
+                            </button>
+                          ))}
+                        </div>
+                        <div className="space-y-4">
+                          <div className="flex flex-wrap gap-3">
+                            <div className="flex-1 min-w-[120px]">
+                              <label className={`text-xs font-bold uppercase tracking-wide ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'} block mb-2`}>প্রাথমিক রঙ</label>
+                              <div className="flex items-center gap-2">
+                                <input
+                                  type="color"
+                                  value={lightThemeColors?.primary || lightThemePresets.default.primary}
+                                  onChange={(e) => {
+                                    const newColors = { ...(lightThemeColors || lightThemePresets.default), primary: e.target.value, accent: e.target.value };
+                                    setLightThemePreset('custom');
+                                    setLightThemeColors(newColors);
+                                  }}
+                                  className="w-10 h-10 rounded-lg cursor-pointer border-0"
+                                />
+                                <input
+                                  type="text"
+                                  value={lightThemeColors?.primary || lightThemePresets.default.primary}
+                                  onChange={(e) => {
+                                    if (/^#[0-9A-Fa-f]{6}$/.test(e.target.value)) {
+                                      const newColors = { ...(lightThemeColors || lightThemePresets.default), primary: e.target.value, accent: e.target.value };
+                                      setLightThemePreset('custom');
+                                      setLightThemeColors(newColors);
+                                    }
+                                  }}
+                                  className={`flex-1 p-2 rounded-lg border-2 text-xs font-mono ${theme === 'dark' ? 'bg-slate-900 border-white/10 text-slate-200' : 'bg-white border-black/5 text-slate-800'}`}
+                                />
+                              </div>
+                            </div>
+                            <div className="flex-1 min-w-[120px]">
+                              <label className={`text-xs font-bold uppercase tracking-wide ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'} block mb-2`}>টেক্সট রঙ</label>
+                              <div className="flex items-center gap-2">
+                                <input
+                                  type="color"
+                                  value={lightThemeColors?.textPrimary || lightThemePresets.default.textPrimary}
+                                  onChange={(e) => {
+                                    const newColors = { ...(lightThemeColors || lightThemePresets.default), textPrimary: e.target.value, textSecondary: e.target.value };
+                                    setLightThemePreset('custom');
+                                    setLightThemeColors(newColors);
+                                  }}
+                                  className="w-10 h-10 rounded-lg cursor-pointer border-0"
+                                />
+                                <input
+                                  type="text"
+                                  value={lightThemeColors?.textPrimary || lightThemePresets.default.textPrimary}
+                                  onChange={(e) => {
+                                    if (/^#[0-9A-Fa-f]{6}$/.test(e.target.value)) {
+                                      const newColors = { ...(lightThemeColors || lightThemePresets.default), textPrimary: e.target.value, textSecondary: e.target.value };
+                                      setLightThemePreset('custom');
+                                      setLightThemeColors(newColors);
+                                    }
+                                  }}
+                                  className={`flex-1 p-2 rounded-lg border-2 text-xs font-mono ${theme === 'dark' ? 'bg-slate-900 border-white/10 text-slate-200' : 'bg-white border-black/5 text-slate-800'}`}
+                                />
+                              </div>
+                            </div>
+                          </div>
+                          <div className="flex flex-wrap gap-3">
+                            <div className="flex-1 min-w-[120px]">
+                              <label className={`text-xs font-bold uppercase tracking-wide ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'} block mb-2`}>ব্যাকগ্রাউন্ড</label>
+                              <div className="flex items-center gap-2">
+                                <input
+                                  type="color"
+                                  value={lightThemeColors?.background || lightThemePresets.default.background}
+                                  onChange={(e) => {
+                                    const newColors = { ...(lightThemeColors || lightThemePresets.default), background: e.target.value, backgroundAlt: e.target.value };
+                                    setLightThemePreset('custom');
+                                    setLightThemeColors(newColors);
+                                  }}
+                                  className="w-10 h-10 rounded-lg cursor-pointer border-0"
+                                />
+                                <input
+                                  type="text"
+                                  value={lightThemeColors?.background || lightThemePresets.default.background}
+                                  onChange={(e) => {
+                                    if (/^#[0-9A-Fa-f]{6}$/.test(e.target.value)) {
+                                      const newColors = { ...(lightThemeColors || lightThemePresets.default), background: e.target.value, backgroundAlt: e.target.value };
+                                      setLightThemePreset('custom');
+                                      setLightThemeColors(newColors);
+                                    }
+                                  }}
+                                  className={`flex-1 p-2 rounded-lg border-2 text-xs font-mono ${theme === 'dark' ? 'bg-slate-900 border-white/10 text-slate-200' : 'bg-white border-black/5 text-slate-800'}`}
+                                />
+                              </div>
+                            </div>
+                            <div className="flex-1 min-w-[120px]">
+                              <label className={`text-xs font-bold uppercase tracking-wide ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'} block mb-2`}>কার্ড রঙ</label>
+                              <div className="flex items-center gap-2">
+                                <input
+                                  type="color"
+                                  value={lightThemeColors?.cardBg ? lightThemeColors.cardBg.slice(0, 7) === 'rgba(' ? '#ffffff' : lightThemeColors.cardBg : lightThemePresets.default.cardBg.slice(0, 7) === 'rgba(' ? '#ffffff' : lightThemePresets.default.cardBg}
+                                  onChange={(e) => {
+                                    const newColors = { ...(lightThemeColors || lightThemePresets.default), cardBg: e.target.value + 'f2', glassBg: e.target.value + 'd9' };
+                                    setLightThemePreset('custom');
+                                    setLightThemeColors(newColors);
+                                  }}
+                                  className="w-10 h-10 rounded-lg cursor-pointer border-0"
+                                />
+                                <span className={`text-xs ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>অপ্যাসিটি সহ</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
 
                 </div>
 
