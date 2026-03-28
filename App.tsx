@@ -17,12 +17,12 @@ import { SyncIndicator, UserAvatar } from './src/components/SyncStatus';
 const NavItem = memo<{ icon: React.ReactNode; label: string; active: boolean; onClick: () => void; theme: string }>(({ icon, label, active, onClick, theme }) => (
   <button 
     onClick={onClick}
-    className={`flex items-center gap-2 lg:gap-3 transition-all px-4 lg:px-6 py-3 rounded-2xl group relative ${active ? (theme === 'dark' ? 'text-amber-400' : 'text-amber-700') : (theme === 'dark' ? 'text-slate-300 hover:text-slate-200' : 'text-slate-500 hover:text-slate-800')}`}
+    className={`flex items-center gap-2 lg:gap-3 transition-all px-4 lg:px-6 py-3 rounded-2xl group relative ${active ? (theme === 'dark' ? 'text-amber-400' : 'text-amber-700') : (theme === 'dark' ? 'text-slate-300 hover:text-slate-200' : 'text-slate-500 hover:text-amber-700')}`}
   >
     {active && (
       <motion.div 
         layoutId="nav-pill"
-        className="absolute inset-0 bg-amber-500/10 rounded-2xl shadow-[0_0_20px_rgba(139,115,85,0.1)]"
+        className={`absolute inset-0 rounded-2xl ${theme === 'dark' ? 'bg-amber-500/10 shadow-[0_0_20px_rgba(139,115,85,0.1)]' : 'bg-amber-100/80 shadow-[0_0_20px_rgba(251,191,36,0.1)]'}`}
         transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
       />
     )}
@@ -1064,7 +1064,7 @@ export default function App() {
             y: [0, -20, 0]
           }}
           transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-          className={`absolute top-0 left-1/2 -translate-x-1/2 w-[120vw] h-[80vh] md:w-[80vw] md:h-[600px] ${theme === 'dark' ? 'bg-amber-900/10' : 'bg-amber-500/5'} blur-[100px] rounded-full`}
+          className={`absolute top-0 left-1/2 -translate-x-1/2 w-[120vw] h-[80vh] md:w-[80vw] md:h-[600px] ${theme === 'dark' ? 'bg-amber-900/10' : 'bg-amber-100/80'} blur-[100px] rounded-full`}
         />
         <motion.div 
           animate={{ 
@@ -1073,7 +1073,7 @@ export default function App() {
             y: [0, 30, 0]
           }}
           transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-          className={`absolute bottom-0 right-0 w-[60vw] h-[60vh] ${theme === 'dark' ? 'bg-olive-900/10' : 'bg-emerald-500/5'} blur-[120px] rounded-full`}
+          className={`absolute bottom-0 right-0 w-[60vw] h-[60vh] ${theme === 'dark' ? 'bg-olive-900/10' : 'bg-amber-50/80'} blur-[120px] rounded-full`}
         />
       </div>
 
@@ -1189,14 +1189,14 @@ export default function App() {
           <div className="space-y-8 md:space-y-16 animate-in fade-in slide-in-from-bottom-8 duration-300">
             <div className="max-w-4xl mx-auto mt-2 md:mt-8 relative" ref={suggestionRef}>
               <form onSubmit={(e) => { e.preventDefault(); handleSearch(); }} className="relative group">
-                <div className="absolute -inset-1 bg-gradient-to-r from-amber-500/15 to-amber-200/15 rounded-[1.5rem] md:rounded-[2.5rem] blur-xl opacity-0 group-focus-within:opacity-100 transition-all duration-300"></div>
+                <div className="absolute -inset-1 bg-gradient-to-r from-amber-400/20 to-amber-300/10 rounded-[1.5rem] md:rounded-[2.5rem] blur-xl opacity-0 group-focus-within:opacity-100 transition-all duration-300"></div>
                 <div className="relative">
                   <input 
                     value={query} 
                     onChange={e => { setQuery(e.target.value); setShowSuggestions(true); }}
                     onFocus={() => setShowSuggestions(true)}
                     placeholder={t.searchPlaceholder}
-                    className={`w-full ${theme === 'dark' ? 'bg-slate-900/60' : 'bg-white/80'} backdrop-blur-3xl border border-white/10 pl-5 pr-20 sm:pr-24 md:pl-10 md:pr-64 py-4 sm:py-5 md:py-8 rounded-[1.5rem] md:rounded-[2.5rem] text-base sm:text-lg md:text-2xl outline-none focus:ring-2 ring-amber-500/50 transition-all duration-300 ${theme === 'dark' ? 'placeholder-slate-400 text-amber-50' : 'placeholder-slate-400 text-slate-900'} font-bold shadow-2xl md:shadow-3xl bn-serif`}
+                    className={`w-full ${theme === 'dark' ? 'bg-slate-900/60' : 'bg-white/95'} backdrop-blur-xl border ${theme === 'dark' ? 'border-white/10' : 'border-amber-200/50'} pl-5 pr-20 sm:pr-24 md:pl-10 md:pr-64 py-4 sm:py-5 md:py-8 rounded-[1.5rem] md:rounded-[2.5rem] text-base sm:text-lg md:text-2xl outline-none focus:ring-2 ring-amber-500/50 transition-all duration-300 ${theme === 'dark' ? 'placeholder-slate-400 text-amber-50' : 'placeholder-amber-400/60 text-slate-800'} font-bold shadow-2xl md:shadow-3xl bn-serif ${theme === 'light' ? 'shadow-amber-100/50' : ''}`}
                   />
                   <div className="absolute right-2 md:right-3 top-1/2 -translate-y-1/2 flex items-center gap-1 md:gap-2">
                     {query && (

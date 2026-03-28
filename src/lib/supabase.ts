@@ -61,10 +61,11 @@ export const auth = {
   // Sign in with Google
   signInWithGoogle: async (): Promise<{ user: User | null; error: Error | null }> => {
     try {
+      const redirectUrl = import.meta.env.VITE_REDIRECT_URL || window.location.origin;
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: window.location.origin,
+          redirectTo: redirectUrl,
           queryParams: {
             access_type: 'offline',
             prompt: 'consent',
