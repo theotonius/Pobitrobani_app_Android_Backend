@@ -27,6 +27,10 @@ async function startServer() {
     console.log(`AI Proxy: Sending request to OpenRouter for model: ${req.body.model}`);
 
     try {
+      const requestBody = { ...req.body };
+      if (!requestBody.max_tokens || requestBody.max_tokens > 10000) {
+        requestBody.max_tokens = 10000;
+      }
       const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
         method: "POST",
         headers: {
@@ -35,7 +39,7 @@ async function startServer() {
           "HTTP-Referer": req.headers.referer || "https://sacred-word.app",
           "X-Title": "Sacred Word"
         },
-        body: JSON.stringify(req.body)
+        body: JSON.stringify(requestBody)
       });
 
       const responseText = await response.text();
