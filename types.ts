@@ -22,6 +22,8 @@ export interface VerseData {
     practicalReference: string;
     crossReferences: string[];
     meditationPoint: string;
+    metaphoricalMeaning: string;
+    metaphoricalReference: string;
     originalInsight?: string;
   };
   prayer: string;

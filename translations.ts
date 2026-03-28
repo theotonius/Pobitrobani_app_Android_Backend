@@ -16,7 +16,8 @@ export const translations = {
     historicalContext: "শাস্ত্রীয় প্রেক্ষাপট",
     practicalApplication: "খ্রিস্টীয় জীবনচর্চা",
     crossReferences: "অন্যান্য প্রাসঙ্গিক পদ",
-    meditationPoint: "ধ্যানের বিষয়",
+    meditationPoint: "ধ্যানের বিষয়",
+    metaphoricalMeaning: "রূপকার্থ",
     originalInsight: "মূল ভাষার অন্তর্দৃষ্টি",
     prayer: "ঐশ্বরিক প্রার্থনা",
     versionLabels: {
@@ -26,7 +27,8 @@ export const translations = {
         practicalApplication: "খ্রিস্টীয় জীবনচর্চা",
         prayer: "ঐশ্বরিক প্রার্থনা",
         crossReferences: "অন্যান্য প্রাসঙ্গিক পদ",
-        meditationPoint: "ধ্যানের বিষয়",
+        meditationPoint: "ধ্যানের বিষয়",
+        metaphoricalMeaning: "রূপকার্থ",
         originalInsight: "মূল ভাষার অন্তর্দৃষ্টি",
       },
       carey: {
@@ -35,7 +37,8 @@ export const translations = {
         practicalApplication: "খ্রিস্টীয় জীবনচর্চা",
         prayer: "ঐশ্বরিক প্রার্থনা",
         crossReferences: "অন্যান্য প্রাসঙ্গিক পদ",
-        meditationPoint: "ধ্যানের বিষয়",
+        meditationPoint: "ধ্যানের বিষয়",
+        metaphoricalMeaning: "রূপকার্থ",
         originalInsight: "মূল ভাষার অন্তর্দৃষ্টি",
       },
       kitabul: {
@@ -43,8 +46,9 @@ export const translations = {
         historicalContext: "পাক-কালামের প্রেক্ষাপট",
         practicalApplication: "ঈমানী জীবনচর্চা",
         prayer: "মোনাজাত",
-        crossReferences: "প্রাসঙ্গিক আয়াত",
-        meditationPoint: "ধ্যানের বিষয়",
+        crossReferences: "প্রাসঙ্গিক আয়াত",
+        meditationPoint: "ধ্যানের বিষয়",
+        metaphoricalMeaning: "মাজাহী তাৎপর্য",
         originalInsight: "মূল ভাষার অন্তর্দৃষ্টি",
       }
     },
@@ -131,6 +135,7 @@ export const translations = {
     practicalApplication: "Christian Living",
     crossReferences: "Cross References",
     meditationPoint: "Point of Meditation",
+    metaphoricalMeaning: "Metaphorical Meaning",
     originalInsight: "Original Language Insight",
     prayer: "Divine Prayer",
     versionLabels: {
@@ -141,6 +146,7 @@ export const translations = {
         prayer: "Divine Prayer",
         crossReferences: "Cross References",
         meditationPoint: "Point of Meditation",
+        metaphoricalMeaning: "Metaphorical Meaning",
         originalInsight: "Original Language Insight",
       },
       carey: {
@@ -150,6 +156,7 @@ export const translations = {
         prayer: "Divine Prayer",
         crossReferences: "Cross References",
         meditationPoint: "Point of Meditation",
+        metaphoricalMeaning: "Metaphorical Meaning",
         originalInsight: "Original Language Insight",
       },
       kitabul: {
@@ -159,6 +166,7 @@ export const translations = {
         prayer: "Supplication (Munajat)",
         crossReferences: "Relevant Verses (Ayat)",
         meditationPoint: "Point of Meditation",
+        metaphoricalMeaning: "Spiritual Allegory",
         originalInsight: "Original Language Insight",
       }
     },
