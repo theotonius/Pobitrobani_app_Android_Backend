@@ -1,15 +1,20 @@
 
-import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo, memo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Bird, Cross, Search, Bookmark, Settings, Sparkles, Quote, Share2, ArrowUp, RefreshCcw, BookOpen, Book, Church, Link as LinkIcon, Lightbulb, Languages, HandHeart, XCircle, CircleAlert, Loader2, History, ArrowRight, Trash2, Info as CircleInfo, Phone, Github, Linkedin, Mail, Check, Globe, Moon, Sun, Menu } from 'lucide-react';
+import { Bird, Cross, Search, Bookmark, Settings, Sparkles, Quote, Share2, ArrowUp, RefreshCcw, BookOpen, Book, Church, Link as LinkIcon, Lightbulb, Languages, HandHeart, XCircle, CircleAlert, Loader2, History, ArrowRight, Trash2, Info as CircleInfo, Phone, Github, Linkedin, Mail, Check, Globe, Moon, Sun, Menu, User, Cloud } from 'lucide-react';
 import Fuse from 'fuse.js';
 import { geminiService } from './services/geminiService';
 import { VerseData, AppState, View, SnippetData, Language } from './types';
 import { translations } from './translations';
 import { normalizeBengali, transliterateToBengali, BENGALI_SEARCH_INDEX } from './src/lib/bengaliSearch';
 import { lightThemePresets, applyLightThemeColors, getThemeColorsFromStorage, saveThemeColorsToStorage, ThemeColors } from './src/config/themeConfig';
+import { useAuth } from './src/hooks/useAuth';
+import { useSync } from './src/hooks/useSync';
+import { LoginModal } from './src/components/Auth';
+import { Dashboard } from './src/components/Dashboard';
+import { SyncIndicator, UserAvatar } from './src/components/SyncStatus';
 
-const NavItem: React.FC<{ icon: React.ReactNode; label: string; active: boolean; onClick: () => void; theme: string }> = ({ icon, label, active, onClick, theme }) => (
+const NavItem = memo<{ icon: React.ReactNode; label: string; active: boolean; onClick: () => void; theme: string }>(({ icon, label, active, onClick, theme }) => (
   <button 
     onClick={onClick}
     className={`flex items-center gap-2 lg:gap-3 transition-all px-4 lg:px-6 py-3 rounded-2xl group relative ${active ? (theme === 'dark' ? 'text-amber-400' : 'text-amber-700') : (theme === 'dark' ? 'text-slate-300 hover:text-slate-200' : 'text-slate-500 hover:text-slate-800')}`}
@@ -26,22 +31,22 @@ const NavItem: React.FC<{ icon: React.ReactNode; label: string; active: boolean;
       <span className="text-[10px] lg:text-xs font-bold uppercase tracking-wide">{label}</span>
     </span>
   </button>
-);
+));
 
-const SnippetBookmark: React.FC<{ 
+const SnippetBookmark = memo<{ 
   saved: boolean; 
   onClick: (e: React.MouseEvent) => void;
   theme: string;
-}> = ({ saved, onClick, theme }) => (
+}>(({ saved, onClick, theme }) => (
   <button 
     onClick={onClick}
     className={`p-2 rounded-xl transition-all duration-300 ${saved ? 'bg-amber-500 text-white shadow-lg scale-110' : (theme === 'dark' ? 'bg-white/5 text-slate-300 hover:text-amber-500 hover:bg-white/10' : 'bg-black/5 text-slate-600 hover:text-amber-600 hover:bg-black/10')}`}
   >
     <Bookmark size={14} fill={saved ? "currentColor" : "none"} />
   </button>
-);
+));
 
-const HolyDove: React.FC<{ size?: number; className?: string; isSearching?: boolean }> = ({ size = 24, className = "", isSearching = false }) => (
+const HolyDove = memo<{ size?: number; className?: string; isSearching?: boolean }>(({ size = 24, className = "", isSearching = false }) => (
   <motion.div
     className={`relative flex items-center justify-center ${className}`}
     animate={isSearching ? { 
@@ -161,7 +166,7 @@ const HolyDove: React.FC<{ size?: number; className?: string; isSearching?: bool
       )}
     </div>
   </motion.div>
-);
+));
 
 const fonts = [
   { id: 'SolaimanLipi', name: 'সোলায়মান লিপি' },
@@ -184,6 +189,28 @@ const SPIRITUAL_SUGGESTIONS = [
 ];
 
 export default function App() {
+  // Auth & Sync hooks
+  const { 
+    user, 
+    profile, 
+    isLoading: authLoading, 
+    isAuthenticated, 
+    isAnonymous, 
+    error: authError, 
+    signInWithGoogle, 
+    signInAnonymously, 
+    signOut 
+  } = useAuth();
+
+  const { 
+    syncStatus, 
+    syncNow, 
+    exportData, 
+    importData, 
+    clearLocalData 
+  } = useSync(user?.id || null);
+
+  
   const [activeView, setActiveView] = useState<View>('SEARCH');
   const [savedViewMode, setSavedViewMode] = useState<'VERSES' | 'SNIPPETS'>('VERSES');
   const [query, setQuery] = useState('');
@@ -218,6 +245,10 @@ export default function App() {
   const [lightThemeColors, setLightThemeColors] = useState<ThemeColors | null>(null);
   const [lightThemePreset, setLightThemePreset] = useState<string>('default');
   const [userApiKey, setUserApiKey] = useState<string>('');
+
+  // Login & Dashboard modal states
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const [showDashboard, setShowDashboard] = useState(false);
 
   // Pull to refresh states
   const [pullDistance, setPullDistance] = useState(0);
@@ -271,8 +302,98 @@ export default function App() {
 
     return () => {
       clearTimeout(timer);
+      if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current);
+      if (abortControllerRef.current) abortControllerRef.current.abort();
     };
   }, [appLang]);
+
+  // Auth handlers
+  const handleOpenLogin = useCallback(() => {
+    setShowLoginModal(true);
+  }, []);
+
+  const handleCloseLogin = useCallback(() => {
+    setShowLoginModal(false);
+  }, []);
+
+  const handleGoogleSignIn = useCallback(async () => {
+    await signInWithGoogle();
+  }, [signInWithGoogle]);
+
+  const handleAnonymousSignIn = useCallback(async () => {
+    await signInAnonymously();
+    setShowLoginModal(false);
+  }, [signInAnonymously]);
+
+  const handleSignOut = useCallback(async () => {
+    await signOut();
+    setShowDashboard(false);
+  }, [signOut]);
+
+  const handleOpenDashboard = useCallback(() => {
+    setShowDashboard(true);
+  }, []);
+
+  const handleCloseDashboard = useCallback(() => {
+    setShowDashboard(false);
+  }, []);
+
+  const handleSync = useCallback(async () => {
+    await syncNow();
+  }, [syncNow]);
+
+  const handleExportData = useCallback(async () => {
+    try {
+      const data = await exportData();
+      const blob = new Blob([data], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `sacred_word_backup_${new Date().toISOString().split('T')[0]}.json`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error('Export failed:', err);
+    }
+  }, [exportData]);
+
+  const handleImportData = useCallback(async () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.json';
+    input.onchange = async (e: any) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      
+      const reader = new FileReader();
+      reader.onload = async (event: any) => {
+        const success = await importData(event.target.result);
+        if (success) {
+          // Reload saved data
+          const storedVerses = localStorage.getItem('sacred_word_verses');
+          if (storedVerses) {
+            try { setSavedVerses(JSON.parse(storedVerses)); } catch (e) {}
+          }
+          const storedSnippets = localStorage.getItem('sacred_word_snippets');
+          if (storedSnippets) {
+            try { setSavedSnippets(JSON.parse(storedSnippets)); } catch (e) {}
+          }
+        }
+      };
+      reader.readAsText(file);
+    };
+    input.click();
+  }, [importData]);
+
+  const handleClearData = useCallback(async () => {
+    if (confirm('সতর্কতা: স্থানীয় ডেটা মুছে যাবে। আপনি কি নিশ্চিত?')) {
+      await clearLocalData();
+      setSavedVerses([]);
+      setSavedSnippets([]);
+    }
+  }, [clearLocalData]);
 
   useEffect(() => {
     document.body.className = theme === 'dark' ? 'dark-theme' : 'light-theme';
@@ -412,11 +533,54 @@ export default function App() {
     localStorage.setItem('sacred_word_theme', newTheme);
   };
 
-  const handleSearch = async (searchQuery?: string) => {
+  // Memoized Fuse instances for better performance
+  const indexFuse = useMemo(() => new Fuse(BENGALI_SEARCH_INDEX, {
+    keys: [
+      { name: 'reference', weight: 0.4 },
+      { name: 'themes', weight: 0.3 },
+      { name: 'text', weight: 0.3 }
+    ],
+    threshold: 0.3,
+    getFn: (obj: any, path: string | string[]) => {
+      const val = obj[path as string];
+      if (Array.isArray(val)) return val.map(v => normalizeBengali(v));
+      return normalizeBengali(val as string);
+    }
+  }), []);
+
+  const localFuse = useMemo(() => new Fuse(savedVerses, {
+    keys: [
+      { name: 'reference', weight: 0.4 },
+      { name: 'text', weight: 0.3 },
+      { name: 'keyThemes', weight: 0.2 },
+      { name: 'tags', weight: 0.1 }
+    ],
+    threshold: 0.3,
+    includeScore: true,
+    getFn: (obj: any, path: string | string[]) => {
+      const val = obj[path as string];
+      if (Array.isArray(val)) return val.map(v => normalizeBengali(v));
+      return normalizeBengali(val as string);
+    }
+  }), [savedVerses]);
+
+  // Debounced search for better performance
+  const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const abortControllerRef = useRef<AbortController | null>(null);
+
+  const handleSearch = useCallback(async (searchQuery?: string) => {
+    // Cancel previous search
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
+    }
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+
     let finalQuery = (typeof searchQuery === 'string' ? searchQuery : query).trim();
     if (!finalQuery || state === AppState.SEARCHING) return;
 
-    // Transliterate if it looks like Romanized Bengali (allow numbers and basic punctuation for verse references)
+    // Transliterate if it looks like Romanized Bengali
     const isRomanizedBengali = /^[a-zA-Z0-9\s:,\-.]+$/.test(finalQuery) && appLang === 'bn';
     if (isRomanizedBengali) {
       const transliterated = transliterateToBengali(finalQuery);
@@ -438,52 +602,13 @@ export default function App() {
     // Normalize query for better matching
     const normalizedQuery = normalizeBengali(finalQuery);
 
-    // 1. Search in BENGALI_SEARCH_INDEX first (Bengali-specific search index)
-    const indexFuse = new Fuse(BENGALI_SEARCH_INDEX, {
-      keys: [
-        { name: 'reference', weight: 0.4 },
-        { name: 'themes', weight: 0.3 },
-        { name: 'text', weight: 0.3 }
-      ],
-      threshold: 0.3,
-      getFn: (obj: any, path: string | string[]) => {
-        const val = obj[path as string];
-        if (Array.isArray(val)) return val.map(v => normalizeBengali(v));
-        return normalizeBengali(val as string);
-      }
-    });
-
-    const indexResults = indexFuse.search(normalizedQuery);
-    if (indexResults.length > 0 && indexResults[0].score! < 0.1) {
-      // Very strong match in index, show it instantly
-      const item = indexResults[0].item;
-      // We need to convert it to VerseData format or just fetch AI explanation anyway for depth
-      // But for now let's prioritize speed if it's a very strong match
-      // Actually, BENGALI_SEARCH_INDEX items are not full VerseData.
-      // Let's just use it to guide AI or show as a quick result.
-      // For now, I'll just leave it as a guide and proceed to AI for full explanation.
-    }
+    // 1. Search in BENGALI_SEARCH_INDEX
+    indexFuse.search(normalizedQuery);
 
     // 2. Fuzzy search in saved verses
-    const localFuse = new Fuse(savedVerses, {
-      keys: [
-        { name: 'reference', weight: 0.4 },
-        { name: 'text', weight: 0.3 },
-        { name: 'keyThemes', weight: 0.2 },
-        { name: 'tags', weight: 0.1 }
-      ],
-      threshold: 0.3,
-      includeScore: true,
-      getFn: (obj: any, path: string | string[]) => {
-        const val = obj[path as string];
-        if (Array.isArray(val)) return val.map(v => normalizeBengali(v));
-        return normalizeBengali(val as string);
-      }
-    });
-
     const localResults = localFuse.search(normalizedQuery);
     if (localResults.length > 0 && localResults[0].score! < 0.15) {
-      setTimeout(() => {
+      searchTimeoutRef.current = setTimeout(() => {
         setCurrentVerse(localResults[0].item);
         setState(AppState.IDLE);
         setHighlightVerseNum(true);
@@ -493,6 +618,7 @@ export default function App() {
     }
     
     try {
+      abortControllerRef.current = new AbortController();
       const data = await geminiService.fetchVerseExplanation(finalQuery, languageVersion, appLang);
       setCurrentVerse(data);
       setHighlightVerseNum(true);
@@ -505,11 +631,12 @@ export default function App() {
 
       setState(AppState.IDLE);
     } catch (err: any) {
+      if (err.name === 'AbortError') return;
       console.error(err);
-      setError(err.message || 'সংযোগ বিচ্ছিন্ন হয়েছে। পুনরায় চেষ্টা করুন।');
+      setError(err.message || 'সংযোগ বিচ্ছিন্ন হয়েছে। পুনরায় চেষ্টা করুন।');
       setState(AppState.ERROR);
     }
-  };
+  }, [query, state, appLang, languageVersion, searchHistory, indexFuse, localFuse]);
 
   const filteredAutoSuggestions = useMemo(() => {
     // Combine search history, predefined suggestions, themes/references from saved verses, and the new index
@@ -950,11 +1077,12 @@ export default function App() {
         />
       </div>
 
-      <header className="w-full max-w-7xl mx-auto px-4 md:px-6 pt-6 md:pt-10 pb-6 flex md:justify-between items-center z-20">
+      <header className="w-full max-w-7xl mx-auto px-4 md:px-6 pt-6 md:pt-10 pb-6 flex flex-col md:flex-row md:justify-between items-center gap-4 z-20">
+        {/* Desktop Logo - Left Side */}
         <motion.div 
           initial={{ x: -20, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
-          className="hidden md:flex items-center gap-3 md:gap-5"
+          className="hidden md:flex items-center gap-3 md:gap-5 flex-shrink-0"
         >
           <div className="w-10 h-10 md:w-14 md:h-14 bg-gradient-to-br from-amber-400 via-amber-600 to-amber-800 rounded-xl md:rounded-2xl flex items-center justify-center shadow-[0_0_30px_rgba(139,115,85,0.3)]">
             <Cross className="text-white w-6 h-6 md:w-8 md:h-8" />
@@ -967,29 +1095,93 @@ export default function App() {
           </div>
         </motion.div>
         
-        {/* Mobile centered logo and title */}
+        {/* Desktop Navigation - Right Side */}
         <motion.div 
-          initial={{ x: -20, opacity: 0 }}
+          initial={{ x: 20, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
-          className="flex md:hidden items-center gap-3 absolute left-1/2 -translate-x-1/2"
+          className="hidden md:flex items-center gap-3 md:gap-4 flex-shrink-0"
         >
-          <div className="w-8 h-8 bg-gradient-to-br from-amber-400 via-amber-600 to-amber-800 rounded-lg flex items-center justify-center shadow-[0_0_20px_rgba(139,115,85,0.3)]">
-            <Cross className="text-white w-5 h-5" />
-          </div>
-          <div>
-            <h1 className={`text-lg font-black ${theme === 'dark' ? 'text-amber-100' : 'text-amber-900'} leading-none bn-serif tracking-tight transition-colors duration-300`}>
-              {t.appName.split(' ')[0]} <span className="text-divine-gold">{t.appName.split(' ')[1] || ''}</span>
-            </h1>
-          </div>
-        </motion.div>
-        
-        <div className="flex items-center gap-2 md:gap-4">
-          <div className="hidden md:flex divine-glass px-2 py-2 rounded-3xl gap-1">
+          {/* Sync Status (only when authenticated) */}
+          {isAuthenticated && (
+            <SyncIndicator
+              isSyncing={syncStatus.isSyncing}
+              isOnline={syncStatus.connectionStatus === 'online'}
+              lastSyncTime={syncStatus.lastSyncTime}
+              pendingChanges={syncStatus.pendingChanges}
+              onClick={handleOpenDashboard}
+              compact
+              theme={theme}
+            />
+          )}
+          
+          {/* Login Button (when not authenticated) */}
+          {!isAuthenticated && !authLoading && (
+            <button
+              onClick={handleOpenLogin}
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl font-bold text-sm transition-all ${
+                theme === 'dark'
+                  ? 'bg-amber-500 hover:bg-amber-400 text-white'
+                  : 'bg-amber-600 hover:bg-amber-500 text-white'
+              }`}
+            >
+              <User size={18} />
+              <span>লগইন</span>
+            </button>
+          )}
+          
+          {/* User Avatar (when authenticated) */}
+          {isAuthenticated && (
+            <UserAvatar
+              profile={profile}
+              isAnonymous={isAnonymous}
+              onClick={handleOpenDashboard}
+              theme={theme}
+            />
+          )}
+          
+          <div className="divine-glass px-2 py-2 rounded-3xl flex items-center gap-1">
             <NavItem icon={<Search size={18} />} label={t.navSearch} active={activeView === 'SEARCH'} onClick={() => setActiveView('SEARCH')} theme={theme} />
             <NavItem icon={<Bookmark size={18} />} label={t.navSaved} active={activeView === 'SAVED'} onClick={() => setActiveView('SAVED')} theme={theme} />
             <NavItem icon={<Settings size={18} />} label={t.navSettings} active={activeView === 'SETTINGS'} onClick={() => setActiveView('SETTINGS')} theme={theme} />
           </div>
-        </div>
+        </motion.div>
+        
+        {/* Mobile Header - Right side (after hamburger) */}
+        <motion.div 
+          initial={{ x: 20, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          className="flex md:hidden items-center justify-end gap-3 flex-1 pr-16"
+        >
+          {/* User Avatar or Login Button (Mobile) */}
+          {isAuthenticated ? (
+            <UserAvatar
+              profile={profile}
+              isAnonymous={isAnonymous}
+              onClick={handleOpenDashboard}
+              theme={theme}
+            />
+          ) : !authLoading && (
+            <button
+              onClick={handleOpenLogin}
+              className={`w-10 h-10 flex items-center justify-center rounded-xl font-bold transition-all ${
+                theme === 'dark'
+                  ? 'bg-amber-500/20 hover:bg-amber-500/30 text-amber-400'
+                  : 'bg-amber-600/20 hover:bg-amber-600/30 text-amber-600'
+              }`}
+            >
+              <User size={20} />
+            </button>
+          )}
+          
+          <div className="text-right">
+            <h1 className={`text-lg font-black ${theme === 'dark' ? 'text-amber-100' : 'text-amber-900'} leading-none bn-serif tracking-tight transition-colors duration-300`}>
+              {t.appName.split(' ')[0]} <span className="text-divine-gold">{t.appName.split(' ')[1] || ''}</span>
+            </h1>
+            <p className={`text-[9px] ${theme === 'dark' ? 'text-amber-400' : 'text-amber-700'} font-bold bn-serif transition-colors duration-300`}>
+              {t.collectionSub}
+            </p>
+          </div>
+        </motion.div>
       </header>
 
       <main className="flex-1 w-full max-w-7xl mx-auto p-4 md:p-6 pb-8 md:pb-10 relative z-10">
@@ -2122,61 +2314,151 @@ export default function App() {
         )}
       </main>
 
-      {/* Mobile Sidebar Navigation */}
-      {mobileMenuOpen && (
-        <motion.div 
-          initial={{ x: -300, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          exit={{ x: -300, opacity: 0 }}
-          transition={{ type: "spring", damping: 25, stiffness: 300 }}
-          className="fixed inset-y-0 left-0 w-72 z-[100] md:hidden"
-        >
-          <div className={`h-full ${theme === 'dark' ? 'bg-[#0a0a05]/95' : 'bg-[#fafaf9]/95'} backdrop-blur-3xl p-6 pt-20`}>
-            <div className="space-y-2">
-              <button 
-                onClick={() => { setActiveView('SEARCH'); setMobileMenuOpen(false); }}
-                className={`w-full flex items-center gap-4 px-6 py-4 rounded-2xl transition-all duration-300 ${activeView === 'SEARCH' ? 'bg-amber-500 text-white shadow-lg' : (theme === 'dark' ? 'text-slate-300 hover:bg-white/5' : 'text-slate-700 hover:bg-black/5')}`}
-              >
-                <Search size={22} />
-                <span className="font-bold">{t.navSearch}</span>
-              </button>
-              <button 
-                onClick={() => { setActiveView('SAVED'); setMobileMenuOpen(false); }}
-                className={`w-full flex items-center gap-4 px-6 py-4 rounded-2xl transition-all duration-300 ${activeView === 'SAVED' ? 'bg-amber-500 text-white shadow-lg' : (theme === 'dark' ? 'text-slate-300 hover:bg-white/5' : 'text-slate-700 hover:bg-black/5')}`}
-              >
-                <Bookmark size={22} />
-                <span className="font-bold">{t.navSaved}</span>
-              </button>
-              <button 
-                onClick={() => { setActiveView('SETTINGS'); setMobileMenuOpen(false); }}
-                className={`w-full flex items-center gap-4 px-6 py-4 rounded-2xl transition-all duration-300 ${activeView === 'SETTINGS' ? 'bg-amber-500 text-white shadow-lg' : (theme === 'dark' ? 'text-slate-300 hover:bg-white/5' : 'text-slate-700 hover:bg-black/5')}`}
-              >
-                <Settings size={22} />
-                <span className="font-bold">{t.navSettings}</span>
-              </button>
-            </div>
-          </div>
-        </motion.div>
-      )}
-
-      {/* Mobile Sidebar Overlay */}
-      {mobileMenuOpen && (
-        <motion.div 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          onClick={() => setMobileMenuOpen(false)}
-          className="fixed inset-0 bg-black/50 z-[90] md:hidden"
-        />
-      )}
-
       {/* Mobile Hamburger Button */}
       <button 
         onClick={() => setMobileMenuOpen(true)}
-        className={`fixed top-4 left-4 z-[80] md:hidden p-3 rounded-xl ${theme === 'dark' ? 'bg-white/5 text-slate-300' : 'bg-black/5 text-slate-700'} backdrop-blur-xl`}
+        className={`fixed top-4 left-4 z-[80] md:hidden p-3 rounded-xl ${theme === 'dark' ? 'bg-white/5 text-slate-300' : 'bg-black/5 text-slate-700'} backdrop-blur-xl shadow-lg border ${theme === 'dark' ? 'border-white/10' : 'border-black/5'}`}
       >
         <Menu size={24} />
       </button>
+
+      {/* Mobile Left Drawer Navigation */}
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <>
+            {/* Overlay */}
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              onClick={() => setMobileMenuOpen(false)}
+              className="fixed inset-0 bg-black/50 z-[90] md:hidden"
+            />
+            
+            {/* Drawer */}
+            <motion.div 
+              initial={{ x: -300, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: -300, opacity: 0 }}
+              transition={{ type: "spring", damping: 25, stiffness: 300 }}
+              className="fixed top-0 left-0 bottom-0 w-72 z-[100] md:hidden"
+            >
+              <div className={`h-full ${theme === 'dark' ? 'bg-[#0a0a05]/98' : 'bg-[#fafaf9]/98'} backdrop-blur-3xl p-6 pt-20 shadow-2xl`}>
+                {/* Logo in drawer */}
+                <div className="flex items-center gap-3 mb-8 pb-6 border-b ${theme === 'dark' ? 'border-white/10' : 'border-black/10'}">
+                  <div className="w-12 h-12 bg-gradient-to-br from-amber-400 via-amber-600 to-amber-800 rounded-xl flex items-center justify-center shadow-lg">
+                    <Cross className="text-white w-7 h-7" />
+                  </div>
+                  <div>
+                    <h2 className={`text-xl font-black ${theme === 'dark' ? 'text-amber-100' : 'text-amber-900'} bn-serif`}>
+                      {t.appName}
+                    </h2>
+                    <p className={`text-[10px] ${theme === 'dark' ? 'text-amber-400' : 'text-amber-700'} font-bold`}>
+                      {t.collectionSub}
+                    </p>
+                  </div>
+                </div>
+                
+                {/* Navigation Items */}
+                <div className="space-y-2">
+                  {/* Account/Login Button */}
+                  {isAuthenticated ? (
+                    <button 
+                      onClick={() => { handleOpenDashboard(); setMobileMenuOpen(false); }}
+                      className={`w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all duration-300 ${
+                        theme === 'dark'
+                          ? 'bg-amber-500/10 text-amber-400 hover:bg-amber-500/20'
+                          : 'bg-amber-600/10 text-amber-600 hover:bg-amber-600/20'
+                      }`}
+                    >
+                      <User size={22} />
+                      <span className="font-bold">{isAnonymous ? 'ড্যাশবোর্ড' : profile?.display_name || 'ড্যাশবোর্ড'}</span>
+                      <ArrowRight className="ml-auto" size={18} />
+                    </button>
+                  ) : (
+                    <button 
+                      onClick={() => { setShowLoginModal(true); setMobileMenuOpen(false); }}
+                      className={`w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all duration-300 ${
+                        theme === 'dark'
+                          ? 'bg-amber-500 text-white hover:bg-amber-400'
+                          : 'bg-amber-600 text-white hover:bg-amber-500'
+                      }`}
+                    >
+                      <User size={22} />
+                      <span className="font-bold">লগইন / সাইন আপ</span>
+                      <ArrowRight className="ml-auto" size={18} />
+                    </button>
+                  )}
+                  
+                  <div className={`h-px mx-2 ${theme === 'dark' ? 'bg-white/5' : 'bg-black/5'}`} />
+                  
+                  <button 
+                    onClick={() => { setActiveView('SEARCH'); setMobileMenuOpen(false); }}
+                    className={`w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all duration-300 ${activeView === 'SEARCH' ? 'bg-amber-500 text-white shadow-lg shadow-amber-500/25' : (theme === 'dark' ? 'text-slate-300 hover:bg-white/5' : 'text-slate-700 hover:bg-black/5')}`}
+                  >
+                    <Search size={22} />
+                    <span className="font-bold">{t.navSearch}</span>
+                    {activeView === 'SEARCH' && <ArrowRight className="ml-auto" size={18} />}
+                  </button>
+                  <button 
+                    onClick={() => { setActiveView('SAVED'); setMobileMenuOpen(false); }}
+                    className={`w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all duration-300 ${activeView === 'SAVED' ? 'bg-amber-500 text-white shadow-lg shadow-amber-500/25' : (theme === 'dark' ? 'text-slate-300 hover:bg-white/5' : 'text-slate-700 hover:bg-black/5')}`}
+                  >
+                    <Bookmark size={22} />
+                    <span className="font-bold">{t.navSaved}</span>
+                    {activeView === 'SAVED' && <ArrowRight className="ml-auto" size={18} />}
+                  </button>
+                  <button 
+                    onClick={() => { setActiveView('SETTINGS'); setMobileMenuOpen(false); }}
+                    className={`w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all duration-300 ${activeView === 'SETTINGS' ? 'bg-amber-500 text-white shadow-lg shadow-amber-500/25' : (theme === 'dark' ? 'text-slate-300 hover:bg-white/5' : 'text-slate-700 hover:bg-black/5')}`}
+                  >
+                    <Settings size={22} />
+                    <span className="font-bold">{t.navSettings}</span>
+                    {activeView === 'SETTINGS' && <ArrowRight className="ml-auto" size={18} />}
+                  </button>
+                </div>
+                
+                {/* Bottom Section */}
+                <div className="absolute bottom-0 left-0 right-0 p-6 border-t ${theme === 'dark' ? 'border-white/10' : 'border-black/10'}">
+                  <p className={`text-[10px] ${theme === 'dark' ? 'text-slate-500' : 'text-slate-400'} text-center`}>
+                    {t.appName} © 2026
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+
+      {/* Login Modal */}
+      <LoginModal
+        isOpen={showLoginModal}
+        onClose={handleCloseLogin}
+        onGoogleSignIn={handleGoogleSignIn}
+        onAnonymousSignIn={handleAnonymousSignIn}
+        isLoading={authLoading}
+        error={authError}
+      />
+
+      {/* Dashboard */}
+      <Dashboard
+        isOpen={showDashboard}
+        onClose={handleCloseDashboard}
+        profile={profile}
+        user={user}
+        isAnonymous={isAnonymous}
+        syncStatus={syncStatus}
+        savedVersesCount={savedVerses.length}
+        savedSnippetsCount={savedSnippets.length}
+        onSyncNow={handleSync}
+        onExportData={handleExportData}
+        onImportData={handleImportData}
+        onClearLocalData={handleClearData}
+        onSignOut={handleSignOut}
+        onUpdateProfile={() => setActiveView('SETTINGS')}
+        theme={theme}
+      />
     </div>
   );
 }

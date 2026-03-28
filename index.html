@@ -4,11 +4,68 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>পবিত্র বানী - Sacred Word </title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#d97706" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)" />
+    <meta name="color-scheme" content="dark light" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="পবিত্র বানী" />
+    <meta name="application-name" content="পবিত্র বানী" />
+    <meta name="msapplication-TileColor" content="#d97706" />
+    <meta name="msapplication-tap-highlight" content="no" />
+    <meta name="format-detection" content="telephone=no" />
+    
+    <!-- SEO Meta Tags -->
+    <title>পবিত্র বানী - Sacred Word | AI-পাওয়ার্ড বাইবেল স্টাডি</title>
+    <meta name="description" content="AI-পাওয়ার্ড বাইবেল স্টাডি অ্যাপ। বাংলায় বাইবেলের গভীর অর্থ, তাত্ত্বিক বিশ্লেষণ এবং প্রার্থনা। Biblical wisdom companion in Bengali." />
+    <meta name="keywords" content="bible, বাইবেল, পবিত্র বানী, biblical, scripture, gospel, কার্যাবলী, ইভাঞ্জেলিক্যাল, Christian, church, salvation, faith, God, Jesus, Christ, worship, prayer" />
+    <meta name="author" content="Sacred Word" />
+    <meta name="robots" content="index, follow" />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://sacredword.vercel.app/" />
+    <meta property="og:title" content="পবিত্র বানী - Sacred Word | AI-পাওয়ার্ড বাইবেল স্টাডি" />
+    <meta property="og:description" content="AI-পাওয়ার্ড বাইবেল স্টাডি অ্যাপ। বাংলায় বাইবেলের গভীর অর্থ, তাত্ত্বিক বিশ্লেষণ এবং প্রার্থনা।" />
+    <meta property="og:image" content="https://sacredword.vercel.app/og-image.png" />
+    <meta property="og:locale" content="bn_BD" />
+    <meta property="og:site_name" content="পবিত্র বানী" />
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://sacredword.vercel.app/" />
+    <meta property="twitter:title" content="পবিত্র বানী - Sacred Word | AI-পাওয়ার্ড বাইবেল স্টাডি" />
+    <meta property="twitter:description" content="AI-পাওয়ার্ড বাইবেল স্টাডি অ্যাপ। বাংলায় বাইবেলের গভীর অর্থ, তাত্ত্বিক বিশ্লেষণ এবং প্রার্থনা।" />
+    <meta property="twitter:image" content="https://sacredword.vercel.app/og-image.png" />
+    
+    <!-- PWA Icons -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="apple-touch-icon" sizes="152x152" href="/apple-touch-icon-152x152.png" />
+    <link rel="apple-touch-icon" sizes="144x144" href="/apple-touch-icon-144x144.png" />
+    <link rel="apple-touch-icon" sizes="120x120" href="/apple-touch-icon-120x120.png" />
+    <link rel="apple-touch-icon" sizes="114x114" href="/apple-touch-icon-114x114.png" />
+    <link rel="apple-touch-icon" sizes="76x76" href="/apple-touch-icon-76x76.png" />
+    <link rel="apple-touch-icon" sizes="72x72" href="/apple-touch-icon-72x72.png" />
+    <link rel="mask-icon" href="/mask-icon.svg" color="#d97706" />
+    
+    <!-- Splash Screens for iOS -->
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    
+    <!-- Preconnect to external resources -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://sacredword.vercel.app">
+    
+    <!-- Fonts -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Noto+Sans+Bengali:wght@300;400;500;600;700&family=Noto+Serif+Bengali:wght@400;700&display=swap" rel="stylesheet">
+    
     <style>
       @font-face {
         font-family: 'SolaimanLipi';
@@ -140,7 +197,6 @@
       /* Base typography overrides */
       h1, h2, h3, h4, p, span, button, input, select {
         font-family: inherit;
-        /* Smooth color transition for all elements */
         transition: color 0.8s cubic-bezier(0.4, 0, 0.2, 1),
                     background-color 0.8s cubic-bezier(0.4, 0, 0.2, 1),
                     border-color 0.8s cubic-bezier(0.4, 0, 0.2, 1),
@@ -202,6 +258,44 @@
       .no-scrollbar::-webkit-scrollbar {
         display: none;
       }
+      
+      /* Loading screen */
+      #loading-screen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: #0a0a0a;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        transition: opacity 0.5s ease-out;
+      }
+      
+      #loading-screen.fade-out {
+        opacity: 0;
+        pointer-events: none;
+      }
+      
+      .loading-content {
+        text-align: center;
+      }
+      
+      .loading-spinner {
+        width: 48px;
+        height: 48px;
+        border: 3px solid rgba(217, 119, 6, 0.2);
+        border-top-color: #d97706;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 16px;
+      }
+      
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
     </style>
     <script type="importmap">
     {
@@ -215,9 +309,9 @@
     }
     </script>
   <link rel="stylesheet" href="/index.css">
-</head>
+  </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/index.tsx"></script>
-</body>
+  </body>
 </html>

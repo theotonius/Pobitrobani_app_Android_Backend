@@ -33,14 +33,16 @@ export const bibleService = {
         reference: data.reference,
         text: data.text.trim(),
         explanation: {
-          theologicalMeaning: "এই পদের গভীর তাত্ত্বিক অর্থ অনুসন্ধানের জন্য শাস্ত্রীয় ভাষ্যকারদের সাহায্য নিন। (AI ব্যাখ্যা বর্তমানে নিষ্ক্রিয়)",
+          theologicalMeaning: "এই পদের গভীর তাত্ত্বিক অর্থ অনুসন্ধানের জন্য শাস্ত্রীয় ভাষ্যকারদের সাহায্য নিন। (AI ব্যাখ্যা বর্তমানে নিষ্ক্রিয়)",
           theologicalReference: "Bible Commentary",
           historicalContext: "এই পদের ঐতিহাসিক প্রেক্ষাপট জানতে বাইবেলের ভূমিকা অংশটি দেখুন।",
           historicalReference: "Biblical History",
-          practicalApplication: "আপনার প্রতিদিনের জীবনে এই পদের প্রয়োগ নিয়ে প্রার্থনা করুন।",
+          practicalApplication: "আপনার প্রতিদিনের জীবনে এই পদের প্রয়োগ নিয়ে প্রার্থনা করুন।",
           practicalReference: "Christian Living",
-          crossReferences: ["John 1:1", "Genesis 1:1"], // Mock cross references
-          meditationPoint: "ঈশ্বরের বাক্য নিয়ে ধ্যান করুন।"
+          crossReferences: ["John 1:1", "Genesis 1:1"],
+          meditationPoint: "ঈশ্বরের বাক্য নিয়ে ধ্যান করুন।",
+          metaphoricalMeaning: "এই পদের রূপক অর্থ অনুসন্ধানের জন্য বিশেষজ্ঞদের পরামর্শ নিন।",
+          metaphoricalReference: "Biblical Metaphors"
         },
         prayer: "প্রভু, তোমার বাক্যের মাধ্যমে আমাদের পথ দেখাও। আমেন।",
         keyThemes: ["Faith", "Love", "Grace"],
