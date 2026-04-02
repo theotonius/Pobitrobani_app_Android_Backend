@@ -19,6 +19,12 @@ async function startServer() {
   app.post("/api/ai/generate", async (req, res) => {
     const apiKey = process.env.OPENROUTER_API_KEY;
     
+    console.log("=== AI Proxy Debug ===");
+    console.log("API Key exists:", !!apiKey);
+    console.log("API Key prefix:", apiKey ? apiKey.substring(0, 15) + "..." : "null");
+    console.log("Request model:", req.body.model);
+    console.log("Request max_tokens:", req.body.max_tokens);
+    
     if (!apiKey) {
       console.error("AI Proxy Error: OPENROUTER_API_KEY is missing from environment variables.");
       return res.status(500).json({ error: "OPENROUTER_API_KEY is not set on the server. Please add it to your environment variables." });
@@ -28,9 +34,10 @@ async function startServer() {
 
     try {
       const requestBody = { ...req.body };
-      if (!requestBody.max_tokens || requestBody.max_tokens > 10000) {
-        requestBody.max_tokens = 10000;
+      if (!requestBody.max_tokens || requestBody.max_tokens > 8000) {
+        requestBody.max_tokens = 8000;
       }
+      console.log("Final request body:", JSON.stringify(requestBody).substring(0, 200));
       const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
         method: "POST",
         headers: {
@@ -43,6 +50,8 @@ async function startServer() {
       });
 
       const responseText = await response.text();
+      console.log("OpenRouter Response Status:", response.status);
+      console.log("OpenRouter Response:", responseText.substring(0, 500));
       
       if (!response.ok) {
         console.error(`OpenRouter Error (${response.status}):`, responseText);
