@@ -2,7 +2,7 @@ import React, { memo, useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   X, Heart, Users, MessageCircle, Send, Check, Sparkles,
-  HandsPraying, Shield, ChevronUp, Eye, Clock, MoreHorizontal
+  HeartHandshake, Shield, ChevronUp, Eye, Clock, MoreHorizontal
 } from 'lucide-react';
 
 interface PrayerRequest {
@@ -187,7 +187,7 @@ export const CommunityHubModal = memo<CommunityHubProps>(({
             {/* Tabs */}
             <div className={`flex border-b flex-shrink-0 ${theme === 'dark' ? 'border-white/10' : 'border-black/5'}`}>
               {[
-                { id: 'prayers', label: 'প্রার্থনার অনুরোধ', icon: HandsPraying, count: prayers.length },
+                { id: 'prayers', label: 'প্রার্থনার অনুরোধ', icon: HeartHandshake, count: prayers.length },
                 { id: 'community', label: 'সম্প্রদায়ের ভাবনা', icon: MessageCircle, count: communityNotes.length },
               ].map((tab) => (
                 <button
@@ -277,7 +277,7 @@ export const CommunityHubModal = memo<CommunityHubProps>(({
                         onClick={() => handlePray(prayer.id)}
                         className="flex items-center gap-2 px-4 py-2 rounded-xl bg-violet-500/10 text-violet-500 font-bold text-sm hover:bg-violet-500/20 transition-colors"
                       >
-                        <HandsPraying size={16} />
+                        <HeartHandshake size={16} />
                         প্রার্থনা করেছি ({prayer.prayers})
                       </button>
                     </div>

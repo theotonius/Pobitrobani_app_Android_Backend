@@ -256,7 +256,7 @@ export const DailyDevotionalModal = memo<DailyDevotionalProps>(({
                           </p>
                         </div>
                         <span className="text-2xl font-black text-amber-500">
-                          {getPlanProgress(BIBLE_READING_PLANS.find(p => p.id === progress.planId)!}%
+                          {getPlanProgress(BIBLE_READING_PLANS.find(p => p.id === progress.planId)!) + '%'}
                         </span>
                       </div>
                       
@@ -266,7 +266,7 @@ export const DailyDevotionalModal = memo<DailyDevotionalProps>(({
                       }`}>
                         <motion.div
                           initial={{ width: 0 }}
-                          animate={{ width: `${getPlanProgress(BIBLE_READING_PLANS.find(p => p.id === progress.planId)!}%` }}
+                          animate={{ width: getPlanProgress(BIBLE_READING_PLANS.find(p => p.id === progress.planId)!) + '%' }}
                           className="h-full bg-amber-500 rounded-full"
                         />
                       </div>
