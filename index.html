@@ -297,6 +297,31 @@
         to { transform: rotate(360deg); }
       }
     </style>
+    <script>
+      // Detect in-app browsers on Android and redirect to external browser
+      function isInAppBrowser() {
+        const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+        // Check for Android in-app browsers
+        if (/android/i.test(userAgent)) {
+          // Common in-app browser indicators
+          return /FBAN|FBAV|Instagram|WhatsApp|Twitter|LinkedIn|Snapchat|Pinterest|TikTok|wv|WebView/i.test(userAgent) ||
+                 (window.navigator.standalone === false && /Safari/i.test(userAgent));
+        }
+        return false;
+      }
+
+      if (isInAppBrowser()) {
+        // Redirect to external browser
+        window.location.href = 'googlechrome://navigate?url=' + encodeURIComponent(window.location.href);
+        // Fallback for other browsers
+        setTimeout(function() {
+          if (document.hasFocus()) {
+            // If still in in-app browser after 1 second, try intent URL
+            window.location.href = 'intent://' + window.location.host + window.location.pathname + window.location.search + '#Intent;scheme=https;package=com.android.chrome;end';
+          }
+        }, 1000);
+      }
+    </script>
     <script type="importmap">
     {
       "imports": {
