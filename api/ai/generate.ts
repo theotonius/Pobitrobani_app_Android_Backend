@@ -57,7 +57,7 @@ export default async function handler(
 
   const baseHeaders = {
     'Content-Type': 'application/json',
-    'HTTP-Referer': request.headers.referer || 'https://sacred-word.app',
+    'HTTP-Referer': request.headers.referer || 'https://sacredword.vercel.app',
     'X-Title': 'Sacred Word'
   };
 

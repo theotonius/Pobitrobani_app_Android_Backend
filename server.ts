@@ -1,5 +1,4 @@
 import express from "express";
-import { createServer as createViteServer } from "vite";
 import path from "path";
 import { fileURLToPath } from "url";
 import dotenv from "dotenv";
@@ -9,7 +8,7 @@ dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-async function startServer() {
+function startServer() {
   const app = express();
   const PORT = 3000;
 
@@ -18,12 +17,6 @@ async function startServer() {
   // OpenRouter Proxy Endpoint
   app.post("/api/ai/generate", async (req, res) => {
     const apiKey = process.env.OPENROUTER_API_KEY;
-    
-    console.log("=== AI Proxy Debug ===");
-    console.log("API Key exists:", !!apiKey);
-    console.log("API Key prefix:", apiKey ? apiKey.substring(0, 15) + "..." : "null");
-    console.log("Request model:", req.body.model);
-    console.log("Request max_tokens:", req.body.max_tokens);
     
     if (!apiKey) {
       console.error("AI Proxy Error: OPENROUTER_API_KEY is missing from environment variables.");
@@ -34,10 +27,9 @@ async function startServer() {
 
     try {
       const requestBody = { ...req.body };
-      if (!requestBody.max_tokens || requestBody.max_tokens > 8000) {
-        requestBody.max_tokens = 8000;
+      if (!requestBody.max_tokens || requestBody.max_tokens > 10000) {
+        requestBody.max_tokens = 10000;
       }
-      console.log("Final request body:", JSON.stringify(requestBody).substring(0, 200));
       const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
         method: "POST",
         headers: {
@@ -50,8 +42,6 @@ async function startServer() {
       });
 
       const responseText = await response.text();
-      console.log("OpenRouter Response Status:", response.status);
-      console.log("OpenRouter Response:", responseText.substring(0, 500));
       
       if (!response.ok) {
         console.error(`OpenRouter Error (${response.status}):`, responseText);
@@ -76,24 +66,18 @@ async function startServer() {
     }
   });
 
-  // API routes (if any needed in future)
+  // Health check endpoint
   app.get("/api/health", (req, res) => {
     res.json({ status: "ok" });
   });
 
-  // Vite middleware for development
-  if (process.env.NODE_ENV !== "production") {
-    const vite = await createViteServer({
-      server: { middlewareMode: true },
-      appType: "spa",
-    });
-    app.use(vite.middlewares);
-  } else {
-    app.use(express.static(path.join(__dirname, "dist")));
-    app.get("*", (req, res) => {
-      res.sendFile(path.join(__dirname, "dist", "index.html"));
-    });
-  }
+  // Serve static files from dist folder (works for both production mode AND network/public access)
+  app.use(express.static(path.join(__dirname, "dist")));
+  
+  // Serve index.html for SPA routing (including network/public URLs)
+  app.use((req, res) => {
+    res.sendFile(path.join(__dirname, "dist", "index.html"));
+  });
 
   app.listen(PORT, "0.0.0.0", () => {
     console.log(`Server running on http://localhost:${PORT}`);
