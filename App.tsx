@@ -10,7 +10,6 @@ import { normalizeBengali, transliterateToBengali, BENGALI_SEARCH_INDEX } from '
 import { lightThemePresets, applyLightThemeColors, getThemeColorsFromStorage, saveThemeColorsToStorage, ThemeColors } from './src/config/themeConfig';
 import { useAuth } from './src/hooks/useAuth';
 import { useSync } from './src/hooks/useSync';
-import { useOfflineBible } from './src/hooks/useOfflineBible';
 import { useNotifications } from './src/hooks/useNotifications';
 import { LoginModal } from './src/components/Auth';
 import { Dashboard } from './src/components/Dashboard';
@@ -211,15 +210,6 @@ export default function App() {
     importData, 
     clearLocalData 
   } = useSync(user?.id || null);
-
-  const {
-    isDownloaded,
-    isDownloading,
-    downloadProgress,
-    storageUsage,
-    downloadBible,
-    clearBible
-  } = useOfflineBible();
 
   const {
     settings: notificationSettings,
@@ -1124,7 +1114,6 @@ export default function App() {
           {isAuthenticated && (
             <SyncIndicator
               isSyncing={syncStatus.isSyncing}
-              isOnline={syncStatus.connectionStatus === 'online'}
               lastSyncTime={syncStatus.lastSyncTime}
               pendingChanges={syncStatus.pendingChanges}
               onClick={handleOpenDashboard}
@@ -2125,56 +2114,7 @@ export default function App() {
                           <ArrowUp className="rotate-180" size={16} />
                         </div>
                       </div>
-                    </div>
-
-                    <div className={`pt-10 md:pt-12 border-t ${theme === 'dark' ? 'border-white/5' : 'border-black/5'} space-y-6 md:space-y-8 transition-colors duration-300`}>
-                      <div className="flex items-center gap-4">
-                        <div className="h-2 w-2 bg-amber-500 rounded-full"></div>
-                        <h4 className="text-xs md:text-base font-black text-amber-700 uppercase tracking-wide">অফলাইন বাইবেল লাইব্রেরি</h4>
-                      </div>
-                      
-                      {!isDownloaded ? (
-                        <div className="space-y-4">
-                          <p className={`text-sm ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}`}>
-                            অফলাইনে পদ খুঁজতে ও পড়তে বাইবেল ডাউনলোড করুন।
-                          </p>
-                          <button 
-                            onClick={downloadBible}
-                            disabled={isDownloading}
-                            className="w-full py-4 rounded-xl bg-amber-500 hover:bg-amber-400 text-white font-bold flex items-center justify-center gap-3 disabled:opacity-50 transition-colors"
-                          >
-                            {isDownloading ? (
-                              <>
-                                <Loader2 className="animate-spin" size={20} />
-                                <span>ডাউনলোড হচ্ছে... {downloadProgress}%</span>
-                              </>
-                            ) : (
-                              <>
-                                <Download size={20} />
-                                <span>বাইবেল ডাউনলোড করুন</span>
-                              </>
-                            )}
-                          </button>
-                        </div>
-                      ) : (
-                        <div className="space-y-4">
-                          <div className="flex items-center gap-3 p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20">
-                            <WifiOff size={20} className="text-emerald-500" />
-                            <div className="flex-1">
-                              <p className="text-sm font-bold text-emerald-500">ডাউনলোড সম্পন্ন</p>
-                              <p className="text-xs text-slate-500">সংরক্ষণ: {storageUsage}</p>
-                            </div>
-                          </div>
-                          <button 
-                            onClick={clearBible}
-                            className="w-full py-3 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-500 font-bold flex items-center justify-center gap-2 transition-colors"
-                          >
-                            <Trash2 size={18} />
-                            <span>ডাটা মুছুন</span>
-                          </button>
-                        </div>
-                      )}
-                    </div>
+</div>
 
                     <div className={`pt-10 md:pt-12 border-t ${theme === 'dark' ? 'border-white/5' : 'border-black/5'} space-y-6 md:space-y-8 transition-colors duration-300`}>
                       <div className="flex items-center gap-4">
@@ -2476,25 +2416,6 @@ export default function App() {
             </motion.div>
         )}
       </main>
-
-      {/* Offline Bible Settings */}
-      <div className={`fixed bottom-6 right-6 z-50 divine-glass p-4 rounded-2xl shadow-2xl border ${theme === 'dark' ? 'border-white/10' : 'border-amber-200/30'} transition-all duration-300`}>
-        <div className="flex items-center gap-3 mb-3">
-          {isDownloaded ? (
-            <WifiOff size={18} className="text-emerald-500" />
-          ) : (
-            <Wifi size={18} className="text-amber-500" />
-          )}
-          <span className={`text-xs font-bold ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>
-            {isDownloaded ? 'অফলাইন পাওয়া যাচ্ছে' : 'অনলাইন'}
-          </span>
-        </div>
-        {isDownloaded && (
-          <div className="text-[10px] text-slate-500 mb-2">
-            সংরক্ষণ: {storageUsage}
-          </div>
-        )}
-      </div>
 
       {/* Mobile Hamburger Button */}
       <button 

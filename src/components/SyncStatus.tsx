@@ -1,10 +1,9 @@
 import React, { memo } from 'react';
 import { motion } from 'motion/react';
-import { Cloud, CloudOff, RefreshCw, Check, AlertCircle, Wifi, WifiOff } from 'lucide-react';
+import { Cloud, RefreshCw, Check } from 'lucide-react';
 
 interface SyncIndicatorProps {
   isSyncing: boolean;
-  isOnline: boolean;
   lastSyncTime: Date | null;
   pendingChanges: number;
   onClick?: () => void;
@@ -14,7 +13,6 @@ interface SyncIndicatorProps {
 
 export const SyncIndicator = memo<SyncIndicatorProps>(({
   isSyncing,
-  isOnline,
   lastSyncTime,
   pendingChanges,
   onClick,
@@ -36,7 +34,6 @@ export const SyncIndicator = memo<SyncIndicatorProps>(({
   };
 
   const getStatus = () => {
-    if (!isOnline) return { icon: WifiOff, color: 'text-amber-500', bg: 'bg-amber-500/10' };
     if (isSyncing) return { icon: RefreshCw, color: 'text-blue-500', bg: 'bg-blue-500/10' };
     if (pendingChanges > 0) return { icon: Cloud, color: 'text-amber-500', bg: 'bg-amber-500/10' };
     return { icon: Check, color: 'text-emerald-500', bg: 'bg-emerald-500/10' };
@@ -85,25 +82,17 @@ export const SyncIndicator = memo<SyncIndicatorProps>(({
       
       <div className="flex-1 text-left">
         <p className={`text-sm font-bold ${theme === 'dark' ? 'text-slate-200' : 'text-slate-800'}`}>
-          {!isOnline 
-            ? 'Offline Mode' 
-            : isSyncing 
-              ? 'Syncing...' 
-              : pendingChanges > 0 
-                ? `${pendingChanges} changes pending` 
-                : 'Synced'
+          {isSyncing 
+            ? 'Syncing...' 
+            : pendingChanges > 0 
+              ? `${pendingChanges} changes pending` 
+              : 'Synced'
           }
         </p>
         <p className={`text-xs ${theme === 'dark' ? 'text-slate-500' : 'text-slate-500'}`}>
-          {isOnline ? formatTime(lastSyncTime) : 'Check your connection'}
+          {formatTime(lastSyncTime)}
         </p>
       </div>
-      
-      {!isOnline && (
-        <span className={`text-xs px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-500 font-bold`}>
-          Offline
-        </span>
-      )}
     </button>
   );
 });

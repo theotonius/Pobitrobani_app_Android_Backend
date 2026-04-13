@@ -3,7 +3,6 @@ import { useState, useEffect, useCallback } from 'react';
 export interface PWAInstallState {
   isInstallable: boolean;
   isInstalled: boolean;
-  isOffline: boolean;
   serviceWorkerReady: boolean;
   updateAvailable: boolean;
   installPrompt: Event | null;
@@ -15,7 +14,6 @@ export interface PWAInstallState {
 export function usePWA(): PWAInstallState {
   const [isInstallable, setIsInstallable] = useState(false);
   const [isInstalled, setIsInstalled] = useState(false);
-  const [isOffline, setIsOffline] = useState(false);
   const [serviceWorkerReady, setServiceWorkerReady] = useState(false);
   const [updateAvailable, setUpdateAvailable] = useState(false);
   const [installPrompt, setInstallPrompt] = useState<Event | null>(null);
@@ -30,16 +28,6 @@ export function usePWA(): PWAInstallState {
       }
     };
     checkInstalled();
-
-    // Online/Offline detection
-    const handleOnline = () => setIsOffline(false);
-    const handleOffline = () => setIsOffline(true);
-    
-    window.addEventListener('online', handleOnline);
-    window.addEventListener('offline', handleOffline);
-    
-    // Initial offline check
-    setIsOffline(!navigator.onLine);
 
     // Install prompt handler
     const handleBeforeInstall = (e: Event) => {
@@ -75,8 +63,6 @@ export function usePWA(): PWAInstallState {
     }
 
     return () => {
-      window.removeEventListener('online', handleOnline);
-      window.removeEventListener('offline', handleOffline);
       window.removeEventListener('beforeinstallprompt', handleBeforeInstall);
     };
   }, []);
@@ -116,7 +102,6 @@ export function usePWA(): PWAInstallState {
   return {
     isInstallable,
     isInstalled,
-    isOffline,
     serviceWorkerReady,
     updateAvailable,
     installPrompt,
@@ -127,35 +112,5 @@ export function usePWA(): PWAInstallState {
 }
 
 export function useOfflineIndicator() {
-  const [showOffline, setShowOffline] = useState(false);
-  const [wasOffline, setWasOffline] = useState(false);
-
-  useEffect(() => {
-    const handleOffline = () => {
-      setShowOffline(true);
-      setWasOffline(true);
-    };
-
-    const handleOnline = () => {
-      setShowOffline(false);
-      // Hide after 2 seconds of being back online
-      setTimeout(() => setWasOffline(false), 2000);
-    };
-
-    window.addEventListener('offline', handleOffline);
-    window.addEventListener('online', handleOnline);
-
-    // Initial state
-    if (!navigator.onLine) {
-      setShowOffline(true);
-      setWasOffline(true);
-    }
-
-    return () => {
-      window.removeEventListener('offline', handleOffline);
-      window.removeEventListener('online', handleOnline);
-    };
-  }, []);
-
-  return { showOffline, wasOffline };
+  return { showOffline: false, wasOffline: false };
 }

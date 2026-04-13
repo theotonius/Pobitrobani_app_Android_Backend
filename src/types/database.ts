@@ -87,7 +87,6 @@ export interface SyncStatus {
   pendingChanges: number;
   hasConflicts: boolean;
   error: string | null;
-  connectionStatus: 'online' | 'offline';
 }
 
 export interface User {

@@ -67,7 +67,6 @@ export const auth = {
         options: {
           redirectTo: redirectUrl,
           queryParams: {
-            access_type: 'offline',
             prompt: 'consent',
           },
         },

@@ -20,34 +20,9 @@ export function useSync(userId: string | null): UseSyncReturn {
     pendingChanges: 0,
     hasConflicts: false,
     error: null,
-    connectionStatus: navigator.onLine ? 'online' : 'offline',
   });
 
   const syncIntervalRef = useRef<NodeJS.Timeout | null>(null);
-  const isOnline = typeof navigator !== 'undefined' ? navigator.onLine : true;
-
-  // Update online status
-  useEffect(() => {
-    const handleOnline = () => {
-      setSyncStatus(prev => ({ ...prev, connectionStatus: 'online' }));
-      // Auto-sync when back online
-      if (userId && isSupabaseConfigured) {
-        syncNow();
-      }
-    };
-
-    const handleOffline = () => {
-      setSyncStatus(prev => ({ ...prev, connectionStatus: 'offline' }));
-    };
-
-    window.addEventListener('online', handleOnline);
-    window.addEventListener('offline', handleOffline);
-
-    return () => {
-      window.removeEventListener('online', handleOnline);
-      window.removeEventListener('offline', handleOffline);
-    };
-  }, [userId]);
 
   // Sync verses from local storage to Supabase
   const syncVerses = useCallback(async () => {
@@ -238,7 +213,7 @@ export function useSync(userId: string | null): UseSyncReturn {
 
   // Full sync
   const syncNow = useCallback(async () => {
-    if (!userId || !isSupabaseConfigured || syncStatus.connectionStatus === 'offline') {
+    if (!userId || !isSupabaseConfigured) {
       return;
     }
 
@@ -370,9 +345,7 @@ export function useSync(userId: string | null): UseSyncReturn {
     if (!userId || !isSupabaseConfigured) return;
 
     syncIntervalRef.current = setInterval(() => {
-      if (syncStatus.connectionStatus === 'online') {
-        syncNow();
-      }
+      syncNow();
     }, 5 * 60 * 1000); // 5 minutes
 
     return () => {
@@ -380,7 +353,7 @@ export function useSync(userId: string | null): UseSyncReturn {
         clearInterval(syncIntervalRef.current);
       }
     };
-  }, [userId, syncStatus.connectionStatus, syncNow]);
+  }, [userId, syncNow]);
 
   return {
     syncStatus,

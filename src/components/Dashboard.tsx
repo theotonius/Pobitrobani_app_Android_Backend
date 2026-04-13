@@ -3,7 +3,7 @@ import { motion } from 'motion/react';
 import { 
   User, Cloud, CloudOff, RefreshCw, Download, Upload, Trash2, 
   Check, AlertCircle, Clock, BookOpen, Bookmark, Settings, 
-  LogOut, ChevronRight, Shield, Database, Wifi, WifiOff
+  LogOut, ChevronRight, Shield, Database
 } from 'lucide-react';
 import { Profile } from '../types/database';
 
@@ -17,7 +17,6 @@ interface DashboardProps {
     lastSyncTime: Date | null;
     isSyncing: boolean;
     pendingChanges: number;
-    connectionStatus: 'online' | 'offline';
   };
   savedVersesCount: number;
   savedSnippetsCount: number;
@@ -215,15 +214,11 @@ export const Dashboard = memo<DashboardProps>(({
 
           {/* Sync Status */}
           <div className={`flex items-center gap-3 mt-4 p-3 rounded-xl ${
-            syncStatus.connectionStatus === 'offline'
-              ? 'bg-amber-500/10 border border-amber-500/20'
-              : theme === 'dark'
-                ? 'bg-emerald-500/10 border border-emerald-500/20'
-                : 'bg-emerald-500/5 border border-emerald-500/20'
+            theme === 'dark'
+              ? 'bg-emerald-500/10 border border-emerald-500/20'
+              : 'bg-emerald-500/5 border border-emerald-500/20'
           }`}>
-            {syncStatus.connectionStatus === 'offline' ? (
-              <WifiOff size={18} className="text-amber-500" />
-            ) : syncStatus.isSyncing ? (
+            {syncStatus.isSyncing ? (
               <motion.div
                 animate={{ rotate: 360 }}
                 transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
@@ -231,28 +226,24 @@ export const Dashboard = memo<DashboardProps>(({
                 <RefreshCw size={18} className="text-emerald-500" />
               </motion.div>
             ) : (
-              <Wifi size={18} className="text-emerald-500" />
+              <Cloud size={18} className="text-emerald-500" />
             )}
             <div className="flex-1">
               <p className={`text-sm font-bold ${
-                syncStatus.connectionStatus === 'offline'
-                  ? 'text-amber-500'
-                  : theme === 'dark'
-                    ? 'text-emerald-500'
-                    : 'text-emerald-600'
+                theme === 'dark'
+                  ? 'text-emerald-500'
+                  : 'text-emerald-600'
               }`}>
-                {syncStatus.connectionStatus === 'offline' 
-                  ? 'অফলাইন'
-                  : syncStatus.isSyncing 
-                    ? 'সিঙ্ক হচ্ছে...'
-                    : 'সংযুক্ত'
+                {syncStatus.isSyncing 
+                  ? 'সিঙ্ক হচ্ছে...'
+                  : 'সংযুক্ত'
                 }
               </p>
               <p className={`text-xs ${theme === 'dark' ? 'text-slate-500' : 'text-slate-500'}`}>
                 শেষ সিঙ্ক: {formatLastSync(syncStatus.lastSyncTime)}
               </p>
             </div>
-            {syncStatus.connectionStatus !== 'offline' && !syncStatus.isSyncing && (
+            {!syncStatus.isSyncing && (
               <button
                 onClick={onSyncNow}
                 className="px-3 py-1.5 bg-amber-500 hover:bg-amber-400 text-white text-xs font-bold rounded-lg transition-colors"
