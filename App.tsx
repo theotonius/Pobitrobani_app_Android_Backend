@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useRef, useCallback, useMemo, memo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Bird, Cross, Search, Bookmark, Settings, Sparkles, Quote, Share2, ArrowUp, RefreshCcw, BookOpen, Book, Church, Link as LinkIcon, Lightbulb, Languages, HandHeart, XCircle, CircleAlert, Loader2, History, ArrowRight, Trash2, Info as CircleInfo, Phone, Github, Linkedin, Mail, Check, Globe, Moon, Sun, Menu, User, Cloud, Wifi, WifiOff, Download, Bell } from 'lucide-react';
+import { Bird, Cross, Search, Bookmark, Settings, Sparkles, Quote, Share2, ArrowUp, RefreshCcw, BookOpen, Book, Church, Link as LinkIcon, Lightbulb, Languages, HandHeart, XCircle, CircleAlert, Loader2, History, ArrowRight, Trash2, Info as CircleInfo, Phone, Github, Linkedin, Mail, Check, Globe, Moon, Sun, Menu, User, Cloud, Wifi, WifiOff, Download } from 'lucide-react';
 import Fuse from 'fuse.js';
 import { geminiService } from './services/geminiService';
 import { VerseData, AppState, View, SnippetData, Language } from './types';
@@ -10,7 +10,6 @@ import { normalizeBengali, transliterateToBengali, BENGALI_SEARCH_INDEX } from '
 import { lightThemePresets, applyLightThemeColors, getThemeColorsFromStorage, saveThemeColorsToStorage, ThemeColors } from './src/config/themeConfig';
 import { useAuth } from './src/hooks/useAuth';
 import { useSync } from './src/hooks/useSync';
-import { useNotifications } from './src/hooks/useNotifications';
 import { LoginModal } from './src/components/Auth';
 import { Dashboard } from './src/components/Dashboard';
 import { SyncIndicator, UserAvatar } from './src/components/SyncStatus';
@@ -211,15 +210,6 @@ export default function App() {
     clearLocalData 
   } = useSync(user?.id || null);
 
-  const {
-    settings: notificationSettings,
-    updateSettings: updateNotificationSettings,
-    isPermissionGranted,
-    requestPermission,
-    testNotification
-  } = useNotifications();
-
-  
   const [activeView, setActiveView] = useState<View>('SEARCH');
   const [savedViewMode, setSavedViewMode] = useState<'VERSES' | 'SNIPPETS'>('VERSES');
   const [query, setQuery] = useState('');
@@ -2114,101 +2104,6 @@ export default function App() {
                           <ArrowUp className="rotate-180" size={16} />
                         </div>
                       </div>
-</div>
-
-                    <div className={`pt-10 md:pt-12 border-t ${theme === 'dark' ? 'border-white/5' : 'border-black/5'} space-y-6 md:space-y-8 transition-colors duration-300`}>
-                      <div className="flex items-center gap-4">
-                        <div className="h-2 w-2 bg-violet-500 rounded-full"></div>
-                        <h4 className="text-xs md:text-base font-black text-amber-700 uppercase tracking-wide">দৈনিক নোটিফিকেশন</h4>
-                      </div>
-                      
-                      {!isPermissionGranted ? (
-                        <div className="space-y-4">
-                          <p className={`text-sm ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}`}>
-                            নোটিফিকেশন পেতে অনুমতি দিন।
-                          </p>
-                          <button 
-                            onClick={requestPermission}
-                            className="w-full py-4 rounded-xl bg-violet-500 hover:bg-violet-400 text-white font-bold flex items-center justify-center gap-3 transition-colors"
-                          >
-                            <Bell size={20} />
-                            <span>অনুমতি দিন</span>
-                          </button>
-                        </div>
-                      ) : (
-                        <div className="space-y-6">
-                          <div className="flex items-center justify-between p-4 rounded-xl bg-white/5">
-                            <div className="flex items-center gap-3">
-                              <Bell size={20} className="text-amber-500" />
-                              <span className={`font-bold ${theme === 'dark' ? 'text-slate-200' : 'text-slate-700'}`}>নোটিফিকেশন চালু</span>
-                            </div>
-                            <button 
-                              onClick={() => updateNotificationSettings({ ...notificationSettings, enabled: !notificationSettings.enabled })}
-                              className={`w-14 h-8 rounded-full transition-all ${notificationSettings.enabled ? 'bg-amber-500' : 'bg-slate-600'}`}
-                            >
-                              <div className={`w-6 h-6 bg-white rounded-full shadow-lg transition-transform ${notificationSettings.enabled ? 'translate-x-7' : 'translate-x-1'}`} />
-                            </button>
-                          </div>
-                          
-                          {notificationSettings.enabled && (
-                            <>
-                              <div className="space-y-4">
-                                <div className="flex items-center justify-between p-4 rounded-xl bg-white/5">
-                                  <div className="flex items-center gap-3">
-                                    <span className="text-xl">🌅</span>
-                                    <span className={`font-bold ${theme === 'dark' ? 'text-slate-200' : 'text-slate-700'}`}>সকালের নোটিফিকেশন</span>
-                                  </div>
-                                  <button 
-                                    onClick={() => updateNotificationSettings({ ...notificationSettings, morningEnabled: !notificationSettings.morningEnabled })}
-                                    className={`w-12 h-6 rounded-full transition-all ${notificationSettings.morningEnabled ? 'bg-amber-500' : 'bg-slate-600'}`}
-                                  >
-                                    <div className={`w-5 h-5 bg-white rounded-full shadow transition-transform ${notificationSettings.morningEnabled ? 'translate-x-6' : 'translate-x-1'}`} />
-                                  </button>
-                                </div>
-                                {notificationSettings.morningEnabled && (
-                                  <input 
-                                    type="time"
-                                    value={notificationSettings.morningTime}
-                                    onChange={(e) => updateNotificationSettings({ ...notificationSettings, morningTime: e.target.value })}
-                                    className={`w-full p-3 rounded-xl border-2 ${theme === 'dark' ? 'bg-slate-900 border-white/10 text-slate-200' : 'bg-white border-black/5 text-slate-800'}`}
-                                  />
-                                )}
-                              </div>
-                              
-                              <div className="space-y-4">
-                                <div className="flex items-center justify-between p-4 rounded-xl bg-white/5">
-                                  <div className="flex items-center gap-3">
-                                    <span className="text-xl">🌙</span>
-                                    <span className={`font-bold ${theme === 'dark' ? 'text-slate-200' : 'text-slate-700'}`}>সন্ধ্যার নোটিফিকেশন</span>
-                                  </div>
-                                  <button 
-                                    onClick={() => updateNotificationSettings({ ...notificationSettings, eveningEnabled: !notificationSettings.eveningEnabled })}
-                                    className={`w-12 h-6 rounded-full transition-all ${notificationSettings.eveningEnabled ? 'bg-amber-500' : 'bg-slate-600'}`}
-                                  >
-                                    <div className={`w-5 h-5 bg-white rounded-full shadow transition-transform ${notificationSettings.eveningEnabled ? 'translate-x-6' : 'translate-x-1'}`} />
-                                  </button>
-                                </div>
-                                {notificationSettings.eveningEnabled && (
-                                  <input 
-                                    type="time"
-                                    value={notificationSettings.eveningTime}
-                                    onChange={(e) => updateNotificationSettings({ ...notificationSettings, eveningTime: e.target.value })}
-                                    className={`w-full p-3 rounded-xl border-2 ${theme === 'dark' ? 'bg-slate-900 border-white/10 text-slate-200' : 'bg-white border-black/5 text-slate-800'}`}
-                                  />
-                                )}
-                              </div>
-                              
-                              <button 
-                                onClick={testNotification}
-                                className="w-full py-3 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 font-bold flex items-center justify-center gap-2 transition-colors"
-                              >
-                                <Bell size={18} />
-                                <span>পরীক্ষা করুন</span>
-                              </button>
-                            </>
-                          )}
-                        </div>
-                      )}
                     </div>
 
                     <div className={`pt-10 md:pt-12 border-t ${theme === 'dark' ? 'border-white/5' : 'border-black/5'} space-y-6 md:space-y-8 transition-colors duration-300`}>
