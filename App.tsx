@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useRef, useCallback, useMemo, memo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Bird, Cross, Search, Bookmark, Settings, Sparkles, Quote, Share2, ArrowUp, RefreshCcw, BookOpen, Book, Church, Link as LinkIcon, Lightbulb, Languages, HandHeart, XCircle, CircleAlert, Loader2, History, ArrowRight, Trash2, Info as CircleInfo, Phone, Github, Linkedin, Mail, Check, Globe, Moon, Sun, Menu, User, Cloud, Wifi, WifiOff, Download } from 'lucide-react';
+import { Bird, Cross, Search, Bookmark, Settings, Sparkles, Quote, Share2, ArrowUp, RefreshCcw, BookOpen, Book, Church, Link as LinkIcon, Lightbulb, Languages, HandHeart, XCircle, CircleAlert, Loader2, History, ArrowRight, Trash2, Info as CircleInfo, Phone, Github, Linkedin, Mail, Check, Globe, Moon, Sun, Menu, User, Cloud, Wifi, WifiOff, Download, Facebook, Twitter, Instagram, Youtube } from 'lucide-react';
 import Fuse from 'fuse.js';
 import { geminiService } from './services/geminiService';
 import { VerseData, AppState, View, SnippetData, Language } from './types';
@@ -2312,6 +2312,53 @@ export default function App() {
         )}
       </main>
 
+      {/* Footer with Social Media Links */}
+      <footer className={`w-full max-w-7xl mx-auto px-4 md:px-6 py-8 md:py-12 border-t ${theme === 'dark' ? 'border-white/5' : 'border-amber-200/30'} mt-8 md:mt-16`}>
+        <div className="flex flex-col md:flex-row items-center justify-between gap-6 md:gap-8">
+          <div className="text-center md:text-left space-y-2">
+            <p className={`text-xs md:text-sm font-black ${theme === 'dark' ? 'text-amber-100' : 'text-amber-900'} bn-serif`}>
+              {t.appName} © 2026
+            </p>
+            <p className={`text-[9px] md:text-[10px] ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>
+              আপনার আধ্যাত্মিক যাত্রার সঙ্গী
+            </p>
+          </div>
+
+          <div className="flex items-center gap-3 md:gap-4">
+            <p className={`text-[9px] md:text-[10px] font-black uppercase tracking-wide ${theme === 'dark' ? 'text-amber-400/50' : 'text-amber-600/50'}`}>Follow Us:</p>
+            {[
+              { name: 'Facebook', url: 'https://facebook.com/sacredword', icon: <Facebook size={16} /> },
+              { name: 'Twitter', url: 'https://twitter.com/sacredword', icon: <Twitter size={16} /> },
+              { name: 'Instagram', url: 'https://instagram.com/sacredword', icon: <Instagram size={16} /> },
+              { name: 'YouTube', url: 'https://youtube.com/@sacredword', icon: <Youtube size={16} /> }
+            ].map((social) => (
+              <motion.a
+                key={social.name}
+                whileHover={{ y: -3, scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
+                href={social.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl flex items-center justify-center transition-all duration-300 border-2 ${
+                  theme === 'dark'
+                    ? 'bg-white/5 text-slate-300 border-white/5 hover:border-amber-500/30 hover:text-amber-400 hover:bg-amber-500/10'
+                    : 'bg-black/5 text-slate-600 border-black/5 hover:border-amber-500/30 hover:text-amber-600 hover:bg-amber-500/10'
+                }`}
+                title={social.name}
+              >
+                {social.icon}
+              </motion.a>
+            ))}
+          </div>
+
+          <div className="text-center md:text-right">
+            <p className={`text-[9px] md:text-[10px] ${theme === 'dark' ? 'text-slate-500' : 'text-slate-400'}`}>
+              Powered by <span className="text-amber-600 font-bold">AI</span> & <span className="text-amber-600 font-bold">Divine Grace</span>
+            </p>
+          </div>
+        </div>
+      </footer>
+      
       {/* Mobile Hamburger Button */}
       <button 
         onClick={() => setMobileMenuOpen(true)}

@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://sacredword.vercel.app/sitemap.xml
