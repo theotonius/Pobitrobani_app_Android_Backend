@@ -1,11 +1,11 @@
 {
-  "name": "পবিত্র-বানী-(sacred-word)",
+  "name": "sacred-word",
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
     "dev": "tsx server.ts",
-    "start": "node server.ts",
+    "start": "tsx server.ts",
     "build": "vite build",
     "preview": "vite preview",
     "lint": "tsc --noEmit"
