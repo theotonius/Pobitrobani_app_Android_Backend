@@ -2353,7 +2353,7 @@ export default function App() {
 
           <div className="text-center md:text-right">
             <p className={`text-[9px] md:text-[10px] ${theme === 'dark' ? 'text-slate-500' : 'text-slate-400'}`}>
-              Powered by <span className="text-amber-600 font-bold">AI</span> & <span className="text-amber-600 font-bold">Divine Grace</span>
+              Powered by <span className="text-amber-600 font-bold">Divine Grace</span>
             </p>
           </div>
         </div>
