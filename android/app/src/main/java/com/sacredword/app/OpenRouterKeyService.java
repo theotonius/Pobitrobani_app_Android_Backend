@@ -2,6 +2,7 @@ package com.sacredword.app;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 import androidx.annotation.NonNull;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
