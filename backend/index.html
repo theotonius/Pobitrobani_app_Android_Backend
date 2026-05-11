@@ -374,9 +374,12 @@
             document.getElementById('error').textContent = '';
         }
 
-        function setError(message) {
+        function setError(message, details) {
             const errorDiv = document.getElementById('error');
             errorDiv.textContent = '❌ ' + message;
+            if (details) {
+                errorDiv.innerHTML += '<br><small style="opacity:0.7">' + details + '</small>';
+            }
             errorDiv.style.display = 'block';
         }
 
@@ -502,7 +505,7 @@
                 if (result.success) {
                     showResponse(result);
                 } else {
-                    setError(result.error || 'Failed to send message');
+                    setError(result.error || 'Failed to send message', result.details);
                 }
             } catch (error) {
                 setError('Error: ' + error.message);
