@@ -17,6 +17,7 @@ function resolveModel(model) {
   const map = {
     'google/gemini-2.0-flash-exp:free': 'google/gemini-2.0-flash-001',
     'google/gemini-2.0-flash-exp': 'google/gemini-2.0-flash-001',
+    'gemini-2.0-flash-001': 'google/gemini-2.0-flash-001',
   };
   return map[model] || model;
 }
@@ -72,10 +73,11 @@ app.post('/api/ai/generate', async (req, res) => {
       return res.status(400).json({ error: 'Messages array is required' });
     }
 
-    const resolvedModel = resolveModel(model || 'deepseek/deepseek-chat');
+    const resolvedModel = resolveModel(model || 'google/gemini-2.0-flash-001');
     const response = await axios.post('https://openrouter.ai/api/v1/chat/completions', {
       model: resolvedModel,
       messages: messages,
+      max_tokens: 65536,
       response_format: { type: "json_object" }
     }, {
       timeout: 30000,
@@ -184,11 +186,11 @@ app.post('/api/openrouter/proxy', async (req, res) => {
     entry.lastUsed = new Date().toISOString();
     saveKeys(keys);
 
-    const resolvedModel = resolveModel(model || 'deepseek/deepseek-chat');
+    const resolvedModel = resolveModel(model || 'google/gemini-2.0-flash-001');
     const response = await axios.post('https://openrouter.ai/api/v1/chat/completions', {
       model: resolvedModel,
       messages: [{ role: 'user', content: message }],
-      max_tokens: 5000
+      max_tokens: 65536
     }, {
       timeout: 30000,
       headers: {
