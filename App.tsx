@@ -13,6 +13,8 @@ import { useSync } from './src/hooks/useSync';
 import { LoginModal } from './src/components/Auth';
 import { Dashboard } from './src/components/Dashboard';
 import { SyncIndicator, UserAvatar } from './src/components/SyncStatus';
+import { OfflineBanner } from './src/components/PWA';
+import { useNetworkStatus, usePushNotifications } from './src/hooks/useCapacitor';
 
 const NavItem = memo<{ icon: React.ReactNode; label: string; active: boolean; onClick: () => void; theme: string }>(({ icon, label, active, onClick, theme }) => (
   <button 
@@ -210,6 +212,14 @@ export default function App() {
     clearLocalData 
   } = useSync(user?.id || null);
 
+  // Capacitor hooks
+  const networkStatus = useNetworkStatus();
+  const {
+    pushToken,
+    hasPermission: pushPermission,
+    register: registerPush,
+  } = usePushNotifications();
+
   const [activeView, setActiveView] = useState<View>('SEARCH');
   const [savedViewMode, setSavedViewMode] = useState<'VERSES' | 'SNIPPETS'>('VERSES');
   const [query, setQuery] = useState('');
@@ -248,6 +258,27 @@ export default function App() {
   // Login & Dashboard modal states
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showDashboard, setShowDashboard] = useState(false);
+
+  // Offline/online banner states
+  const [wasOffline, setWasOffline] = useState(false);
+  const [showBackOnline, setShowBackOnline] = useState(false);
+
+  // Track network changes for back-online banner
+  useEffect(() => {
+    if (!networkStatus.connected) {
+      setWasOffline(true);
+    } else if (wasOffline) {
+      setShowBackOnline(true);
+      setWasOffline(false);
+      const timer = setTimeout(() => setShowBackOnline(false), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [networkStatus.connected, wasOffline]);
+
+  // Register push notifications on native
+  useEffect(() => {
+    registerPush();
+  }, [registerPush]);
 
   // Pull to refresh states
   const [pullDistance, setPullDistance] = useState(0);
@@ -1044,6 +1075,9 @@ export default function App() {
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
     >
+      {/* Offline / Back Online Banner */}
+      <OfflineBanner isOffline={!networkStatus.connected} isBackOnline={showBackOnline} />
+
       {/* Pull to Refresh Indicator */}
       <div 
         className="fixed top-0 left-0 right-0 flex justify-center z-[100] pointer-events-none transition-transform duration-300"

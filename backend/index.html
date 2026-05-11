@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenRouter API Key Manager - Test UI</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+
+        .section {
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .section h2 {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            color: #555;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        input[type="text"],
+        input[type="password"],
+        textarea,
+        input[type="url"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            font-family: 'Courier New', monospace;
+            margin-bottom: 10px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus,
+        input[type="password"]:focus,
+        textarea:focus,
+        input[type="url"]:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .btn-danger {
+            background: #ff4757;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #ff3838;
+            transform: translateY(-2px);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .status {
+            padding: 12px;
+            border-radius: 5px;
+            margin-top: 10px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .status.show {
+            display: block;
+        }
+
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .status.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .status.warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeeba;
+        }
+
+        #loading,
+        #error,
+        #response {
+            display: none;
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 5px;
+        }
+
+        #loading {
+            background: #e7f3ff;
+            color: #004085;
+            text-align: center;
+            display: none;
+        }
+
+        #error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        #response {
+            background: #f5f5f5;
+            border: 1px solid #ddd;
+            border-left: 4px solid #667eea;
+        }
+
+        #response h3 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        pre {
+            background: #f9f9f9;
+            padding: 10px;
+            border-radius: 3px;
+            overflow-x: auto;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .info-box {
+            background: #f0f7ff;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            border-radius: 5px;
+            font-size: 13px;
+            color: #004085;
+            margin-bottom: 15px;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h1>🔑 OpenRouter API Key Manager</h1>
+            <p class="subtitle">Manage your OpenRouter API key through the backend</p>
+
+            <!-- Configuration -->
+            <div class="section">
+                <h2>Configuration</h2>
+                <label>Backend URL:</label>
+                <input
+                    type="url"
+                    id="backendUrl"
+                    value="http://localhost:3000"
+                    placeholder="http://localhost:3000"
+                />
+                <div class="info-box">
+                    💡 Use <code>http://localhost:3000</code> if running locally, or your server URL for production
+                </div>
+                <button class="btn-secondary" onclick="checkHealth()">Check Backend Health</button>
+                <div id="healthStatus" class="status"></div>
+            </div>
+
+            <!-- Set API Key -->
+            <div class="section">
+                <h2>Set API Key</h2>
+                <label>Your OpenRouter API Key:</label>
+                <input
+                    type="password"
+                    id="apiKeyInput"
+                    placeholder="sk-..."
+                />
+                <div class="info-box">
+                    ℹ️ Your API key will be stored on the backend server securely
+                </div>
+                <div class="button-group">
+                    <button class="btn-primary" onclick="setApiKey()">Save API Key</button>
+                    <button class="btn-secondary" onclick="toggleApiKeyVisibility()">
+                        👁️ Show
+                    </button>
+                </div>
+            </div>
+
+            <!-- Check Status -->
+            <div class="section">
+                <h2>API Key Status</h2>
+                <div class="button-group">
+                    <button class="btn-secondary" onclick="checkStatus()">Check Status</button>
+                    <button class="btn-danger" onclick="deleteApiKey()"
+                            style="flex: 0 1 auto; min-width: auto;">
+                        Delete Key
+                    </button>
+                </div>
+                <div id="keyStatus" class="status"></div>
+            </div>
+
+            <!-- Send Message -->
+            <div class="section">
+                <h2>Test Message</h2>
+                <label>Message to send:</label>
+                <textarea
+                    id="messageInput"
+                    placeholder="What would you like to ask OpenRouter?"
+                ></textarea>
+                <label>Model (optional):</label>
+                <input
+                    type="text"
+                    id="modelInput"
+                    value="openrouter/auto"
+                    placeholder="openrouter/auto"
+                />
+                <button class="btn-primary" onclick="sendMessage()">Send Message</button>
+            </div>
+
+            <!-- Status Display -->
+            <div id="loading">
+                <div class="spinner"></div>
+                <span>Processing...</span>
+            </div>
+
+            <div id="error"></div>
+
+            <div id="response">
+                <h3>Response:</h3>
+                <pre id="responseContent"></pre>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global service instance
+        let service = null;
+
+        // Initialize service when page loads
+        window.addEventListener('load', () => {
+            const backendUrl = document.getElementById('backendUrl').value;
+            initializeService(backendUrl);
+        });
+
+        // Update service when backend URL changes
+        document.getElementById('backendUrl').addEventListener('change', (e) => {
+            initializeService(e.target.value);
+        });
+
+        function initializeService(url) {
+            service = new OpenRouterBackendService(url);
+            console.log('Service initialized with:', url);
+        }
+
+        function setLoading(show) {
+            document.getElementById('loading').style.display = show ? 'block' : 'none';
+        }
+
+        function clearError() {
+            document.getElementById('error').style.display = 'none';
+            document.getElementById('error').textContent = '';
+        }
+
+        function setError(message) {
+            const errorDiv = document.getElementById('error');
+            errorDiv.textContent = '❌ ' + message;
+            errorDiv.style.display = 'block';
+        }
+
+        function showStatus(element, success, message) {
+            const status = document.getElementById(element);
+            status.textContent = message;
+            status.className = `status show ${success ? 'success' : 'error'}`;
+        }
+
+        function showResponse(data) {
+            const responseDiv = document.getElementById('response');
+            const content = document.getElementById('responseContent');
+            content.textContent = JSON.stringify(data, null, 2);
+            responseDiv.style.display = 'block';
+            responseDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        async function checkHealth() {
+            setLoading(true);
+            clearError();
+
+            try {
+                const result = await service.healthCheck();
+                if (result.success) {
+                    showStatus('healthStatus', true, '✓ Backend is healthy');
+                } else {
+                    showStatus('healthStatus', false, '✗ Backend error: ' + result.error);
+                }
+            } catch (error) {
+                setError('Failed to check backend: ' + error.message);
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        async function setApiKey() {
+            const apiKey = document.getElementById('apiKeyInput').value;
+            if (!apiKey) {
+                setError('Please enter your API key');
+                return;
+            }
+
+            setLoading(true);
+            clearError();
+
+            try {
+                const result = await service.setOpenRouterApiKey(apiKey);
+                if (result.success) {
+                    showStatus('healthStatus', true, '✓ API Key saved successfully');
+                    document.getElementById('apiKeyInput').value = '';
+                    showResponse(result);
+                    checkStatus();
+                } else {
+                    setError(result.error || 'Failed to save API key');
+                }
+            } catch (error) {
+                setError('Error: ' + error.message);
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        async function checkStatus() {
+            setLoading(true);
+            clearError();
+
+            try {
+                const result = await service.checkApiKeyStatus();
+                if (result.success) {
+                    const message = result.isConfigured
+                        ? `✓ API Key configured (Last used: ${result.lastUsed || 'Never'})`
+                        : '⚠ API Key not configured';
+                    showStatus('keyStatus', result.isConfigured, message);
+                    showResponse(result);
+                } else {
+                    setError(result.error || 'Failed to check status');
+                }
+            } catch (error) {
+                setError('Error: ' + error.message);
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        async function deleteApiKey() {
+            if (!confirm('Are you sure you want to delete the API key?')) {
+                return;
+            }
+
+            setLoading(true);
+            clearError();
+
+            try {
+                const result = await service.deleteOpenRouterApiKey();
+                if (result.success) {
+                    showStatus('keyStatus', true, '✓ API Key deleted successfully');
+                    showResponse(result);
+                    checkStatus();
+                } else {
+                    setError(result.error || 'Failed to delete API key');
+                }
+            } catch (error) {
+                setError('Error: ' + error.message);
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        async function sendMessage() {
+            const message = document.getElementById('messageInput').value;
+            const model = document.getElementById('modelInput').value;
+
+            if (!message) {
+                setError('Please enter a message');
+                return;
+            }
+
+            setLoading(true);
+            clearError();
+
+            try {
+                const result = await service.sendMessageToOpenRouter(message, model);
+                if (result.success) {
+                    showResponse(result);
+                } else {
+                    setError(result.error || 'Failed to send message');
+                }
+            } catch (error) {
+                setError('Error: ' + error.message);
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        function toggleApiKeyVisibility() {
+            const input = document.getElementById('apiKeyInput');
+            const btn = event.target;
+            if (input.type === 'password') {
+                input.type = 'text';
+                btn.textContent = '🙈 Hide';
+            } else {
+                input.type = 'password';
+                btn.textContent = '👁️ Show';
+            }
+        }
+    </script>
+
+    <!-- Include the OpenRouter Backend Service -->
+    <script src="./OpenRouterBackendService.js"></script>
+</body>
+</html>
+

@@ -11,6 +11,10 @@
     "lint": "tsc --noEmit"
   },
   "dependencies": {
+    "@capacitor/core": "^8.3.0",
+    "@capacitor/network": "^8.0.1",
+    "@capacitor/preferences": "^8.0.1",
+    "@capacitor/share": "^8.0.1",
     "@supabase/supabase-js": "^2.98.0",
     "cookie-parser": "^1.4.7",
     "dotenv": "^17.3.1",
@@ -24,6 +28,8 @@
     "tsx": "^4.21.0"
   },
   "devDependencies": {
+    "@capacitor/android": "^8.3.0",
+    "@capacitor/cli": "^8.3.0",
     "@tailwindcss/vite": "^4.2.1",
     "@types/cookie-parser": "^1.4.10",
     "@types/express": "^5.0.6",

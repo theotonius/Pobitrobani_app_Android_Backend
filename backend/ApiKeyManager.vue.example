@@ -1,0 +1,383 @@
+/**
+ * Example: Using OpenRouter Backend Service in a Vue.js Component
+ * This is an example of how to integrate the backend service in a Vue component
+ *
+ * File location: src/components/ApiKeyManager.vue or similar
+ */
+
+<template>
+  <div class="api-key-manager">
+    <div class="card">
+      <h2>OpenRouter API Key Management</h2>
+
+      <!-- Backend Status -->
+      <div class="status-section">
+        <button @click="checkBackendHealth" class="btn btn-secondary">
+          Check Backend Status
+        </button>
+        <p v-if="backendStatus" :class="['status', backendStatus.success ? 'success' : 'error']">
+          {{ backendStatus.message }}
+        </p>
+      </div>
+
+      <!-- Set API Key -->
+      <div class="input-section">
+        <label>OpenRouter API Key:</label>
+        <input
+          v-model="apiKey"
+          type="password"
+          placeholder="Paste your OpenRouter API Key"
+          class="input"
+        />
+        <button @click="setApiKey" class="btn btn-primary" :disabled="!apiKey">
+          Save API Key
+        </button>
+      </div>
+
+      <!-- Check Status -->
+      <div class="button-section">
+        <button @click="checkApiStatus" class="btn btn-secondary">
+          Check API Key Status
+        </button>
+        <p v-if="keyStatus" :class="['status', keyStatus.isConfigured ? 'success' : 'info']">
+          {{
+            keyStatus.isConfigured
+              ? `✓ API Key is configured (Last used: ${keyStatus.lastUsed || 'Never'})`
+              : '⚠ API Key not configured'
+          }}
+        </p>
+      </div>
+
+      <!-- Delete API Key -->
+      <div class="button-section">
+        <button @click="deleteApiKey" class="btn btn-danger">
+          Delete API Key
+        </button>
+      </div>
+
+      <!-- Send Message -->
+      <div class="input-section">
+        <label>Send Message to OpenRouter:</label>
+        <textarea
+          v-model="message"
+          placeholder="Enter your message"
+          class="input"
+          rows="4"
+        ></textarea>
+        <button @click="sendMessage" class="btn btn-primary" :disabled="!message">
+          Send Message
+        </button>
+      </div>
+
+      <!-- Response Display -->
+      <div v-if="response" class="response-section">
+        <h3>Response:</h3>
+        <pre>{{ JSON.stringify(response, null, 2) }}</pre>
+      </div>
+
+      <!-- Loading State -->
+      <div v-if="loading" class="loading">
+        Loading...
+      </div>
+
+      <!-- Error Display -->
+      <div v-if="error" class="error">
+        {{ error }}
+      </div>
+    </div>
+  </div>
+</template>
+
+<script lang="ts">
+import { defineComponent } from 'vue';
+import { OpenRouterBackendService } from '../services/OpenRouterBackendService';
+
+export default defineComponent({
+  name: 'ApiKeyManager',
+  data() {
+    return {
+      service: null as OpenRouterBackendService | null,
+      apiKey: '',
+      message: '',
+      response: null,
+      error: null,
+      loading: false,
+      backendStatus: null,
+      keyStatus: null,
+    };
+  },
+  mounted() {
+    // Initialize the service
+    // Change the URL to match your backend
+    this.service = new OpenRouterBackendService('http://localhost:3000');
+
+    // For production, use:
+    // this.service = new OpenRouterBackendService('https://your-backend-domain.com');
+  },
+  methods: {
+    async checkBackendHealth() {
+      this.loading = true;
+      this.error = null;
+
+      try {
+        const result = await this.service!.healthCheck();
+        this.backendStatus = {
+          success: result.success,
+          message: result.success ? '✓ Backend is healthy' : '✗ Backend error: ' + result.error,
+        };
+      } catch (err) {
+        this.error = 'Failed to check backend health: ' + err;
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    async setApiKey() {
+      if (!this.apiKey) {
+        this.error = 'Please enter an API key';
+        return;
+      }
+
+      this.loading = true;
+      this.error = null;
+
+      try {
+        const result = await this.service!.setOpenRouterApiKey(this.apiKey);
+
+        if (result.success) {
+          this.response = result;
+          this.apiKey = '';
+          this.message = '✓ API Key saved successfully';
+          // Refresh status
+          this.checkApiStatus();
+        } else {
+          this.error = result.error || 'Failed to save API key';
+        }
+      } catch (err) {
+        this.error = 'Error: ' + err;
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    async checkApiStatus() {
+      this.loading = true;
+      this.error = null;
+
+      try {
+        const result = await this.service!.checkApiKeyStatus();
+        this.keyStatus = result;
+
+        if (!result.success) {
+          this.error = result.error || 'Failed to check status';
+        }
+      } catch (err) {
+        this.error = 'Error: ' + err;
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    async deleteApiKey() {
+      if (!confirm('Are you sure you want to delete the API key?')) {
+        return;
+      }
+
+      this.loading = true;
+      this.error = null;
+
+      try {
+        const result = await this.service!.deleteOpenRouterApiKey();
+
+        if (result.success) {
+          this.response = result;
+          this.message = '✓ API Key deleted successfully';
+          // Refresh status
+          this.checkApiStatus();
+        } else {
+          this.error = result.error || 'Failed to delete API key';
+        }
+      } catch (err) {
+        this.error = 'Error: ' + err;
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    async sendMessage() {
+      if (!this.message) {
+        this.error = 'Please enter a message';
+        return;
+      }
+
+      this.loading = true;
+      this.error = null;
+      this.response = null;
+
+      try {
+        const result = await this.service!.sendMessageToOpenRouter(this.message);
+
+        if (result.success) {
+          this.response = result.response;
+        } else {
+          this.error = result.error || 'Failed to send message';
+        }
+      } catch (err) {
+        this.error = 'Error: ' + err;
+      } finally {
+        this.loading = false;
+      }
+    },
+  },
+});
+</script>
+
+<style scoped>
+.api-key-manager {
+  padding: 20px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.card {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+  margin: 0 0 20px;
+  color: #333;
+}
+
+h3 {
+  margin: 15px 0 10px;
+  color: #555;
+}
+
+.status-section,
+.input-section,
+.button-section {
+  margin-bottom: 20px;
+}
+
+label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #555;
+}
+
+.input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  font-family: monospace;
+}
+
+textarea.input {
+  resize: vertical;
+  font-family: monospace;
+}
+
+.btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  margin-right: 10px;
+  margin-top: 10px;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background-color: #0056b3;
+}
+
+.btn-secondary {
+  background-color: #6c757d;
+  color: white;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background-color: #545b62;
+}
+
+.btn-danger {
+  background-color: #dc3545;
+  color: white;
+}
+
+.btn-danger:hover:not(:disabled) {
+  background-color: #c82333;
+}
+
+.status {
+  padding: 10px;
+  border-radius: 4px;
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+.status.success {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.status.error {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+.status.info {
+  background-color: #d1ecf1;
+  color: #0c5460;
+  border: 1px solid #bee5eb;
+}
+
+.response-section {
+  margin-top: 20px;
+  padding: 15px;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+  border-left: 4px solid #007bff;
+}
+
+pre {
+  margin: 0;
+  overflow-x: auto;
+  font-size: 12px;
+}
+
+.loading {
+  text-align: center;
+  padding: 20px;
+  color: #666;
+}
+
+.error {
+  background-color: #f8d7da;
+  color: #721c24;
+  padding: 12px;
+  border-radius: 4px;
+  border: 1px solid #f5c6cb;
+  margin-bottom: 20px;
+}
+</style>
+

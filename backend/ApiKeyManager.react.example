@@ -1,0 +1,238 @@
+/**
+ * Example: Using OpenRouter Backend Service in React
+ * This is an example of how to integrate the backend service in a React component
+ */
+
+import React, { useState, useEffect } from 'react';
+import { OpenRouterBackendService } from './services/OpenRouterBackendService';
+import './ApiKeyManager.css';
+
+const ApiKeyManager: React.FC = () => {
+  const [service, setService] = useState<OpenRouterBackendService | null>(null);
+  const [apiKey, setApiKey] = useState('');
+  const [message, setMessage] = useState('');
+  const [response, setResponse] = useState<any>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [backendStatus, setBackendStatus] = useState<any>(null);
+  const [keyStatus, setKeyStatus] = useState<any>(null);
+
+  // Initialize service on mount
+  useEffect(() => {
+    // Change this URL to match your backend
+    const newService = new OpenRouterBackendService('http://localhost:3000');
+    setService(newService);
+  }, []);
+
+  const checkBackendHealth = async () => {
+    if (!service) return;
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      const result = await service.healthCheck();
+      setBackendStatus({
+        success: result.success,
+        message: result.success ? '✓ Backend is healthy' : '✗ Backend error: ' + result.error,
+      });
+    } catch (err) {
+      setError('Failed to check backend health: ' + err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSetApiKey = async () => {
+    if (!service || !apiKey) {
+      setError('Please enter an API key');
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      const result = await service.setOpenRouterApiKey(apiKey);
+
+      if (result.success) {
+        setResponse(result);
+        setApiKey('');
+        alert('✓ API Key saved successfully');
+        checkApiStatus();
+      } else {
+        setError(result.error || 'Failed to save API key');
+      }
+    } catch (err) {
+      setError('Error: ' + err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const checkApiStatus = async () => {
+    if (!service) return;
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      const result = await service.checkApiKeyStatus();
+      setKeyStatus(result);
+
+      if (!result.success) {
+        setError(result.error || 'Failed to check status');
+      }
+    } catch (err) {
+      setError('Error: ' + err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDeleteApiKey = async () => {
+    if (!service || !window.confirm('Are you sure you want to delete the API key?')) {
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      const result = await service.deleteOpenRouterApiKey();
+
+      if (result.success) {
+        setResponse(result);
+        alert('✓ API Key deleted successfully');
+        checkApiStatus();
+      } else {
+        setError(result.error || 'Failed to delete API key');
+      }
+    } catch (err) {
+      setError('Error: ' + err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSendMessage = async () => {
+    if (!service || !message) {
+      setError('Please enter a message');
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+    setResponse(null);
+
+    try {
+      const result = await service.sendMessageToOpenRouter(message);
+
+      if (result.success) {
+        setResponse(result.response);
+      } else {
+        setError(result.error || 'Failed to send message');
+      }
+    } catch (err) {
+      setError('Error: ' + err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="api-key-manager">
+      <div className="card">
+        <h2>OpenRouter API Key Management</h2>
+
+        {/* Backend Status */}
+        <div className="status-section">
+          <button onClick={checkBackendHealth} className="btn btn-secondary">
+            Check Backend Status
+          </button>
+          {backendStatus && (
+            <p className={`status ${backendStatus.success ? 'success' : 'error'}`}>
+              {backendStatus.message}
+            </p>
+          )}
+        </div>
+
+        {/* Set API Key */}
+        <div className="input-section">
+          <label>OpenRouter API Key:</label>
+          <input
+            type="password"
+            placeholder="Paste your OpenRouter API Key"
+            value={apiKey}
+            onChange={(e) => setApiKey(e.target.value)}
+            className="input"
+          />
+          <button
+            onClick={handleSetApiKey}
+            className="btn btn-primary"
+            disabled={!apiKey || loading}
+          >
+            Save API Key
+          </button>
+        </div>
+
+        {/* Check Status */}
+        <div className="button-section">
+          <button onClick={checkApiStatus} className="btn btn-secondary" disabled={loading}>
+            Check API Key Status
+          </button>
+          {keyStatus && (
+            <p className={`status ${keyStatus.isConfigured ? 'success' : 'info'}`}>
+              {keyStatus.isConfigured
+                ? `✓ API Key is configured (Last used: ${keyStatus.lastUsed || 'Never'})`
+                : '⚠ API Key not configured'}
+            </p>
+          )}
+        </div>
+
+        {/* Delete API Key */}
+        <div className="button-section">
+          <button onClick={handleDeleteApiKey} className="btn btn-danger" disabled={loading}>
+            Delete API Key
+          </button>
+        </div>
+
+        {/* Send Message */}
+        <div className="input-section">
+          <label>Send Message to OpenRouter:</label>
+          <textarea
+            placeholder="Enter your message"
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            className="input"
+            rows={4}
+          />
+          <button
+            onClick={handleSendMessage}
+            className="btn btn-primary"
+            disabled={!message || loading}
+          >
+            Send Message
+          </button>
+        </div>
+
+        {/* Response Display */}
+        {response && (
+          <div className="response-section">
+            <h3>Response:</h3>
+            <pre>{JSON.stringify(response, null, 2)}</pre>
+          </div>
+        )}
+
+        {/* Loading State */}
+        {loading && <div className="loading">Loading...</div>}
+
+        {/* Error Display */}
+        {error && <div className="error">{error}</div>}
+      </div>
+    </div>
+  );
+};
+
+export default ApiKeyManager;
+

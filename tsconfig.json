@@ -26,5 +26,13 @@
     },
     "allowImportingTsExtensions": true,
     "noEmit": true
-  }
+  },
+  "exclude": [
+    "android",
+    "dist",
+    "node_modules",
+    "bibles",
+    "supabase",
+    "public"
+  ]
 }

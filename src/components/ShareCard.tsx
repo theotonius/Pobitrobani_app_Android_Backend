@@ -1,6 +1,7 @@
 import React, { memo, useState, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { X, Download, Share2, Copy, Check, Palette, Type, Image } from 'lucide-react';
+import { X, Download, Share2, Copy, Check, Palette, Type, Image, Smartphone } from 'lucide-react';
+import { shareContent } from '../hooks/useCapacitor';
 
 interface ShareCardProps {
   isOpen: boolean;
@@ -137,6 +138,20 @@ export const ShareCardModal = memo<ShareCardProps>(({
     navigator.clipboard.writeText(text);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+  }, [verse]);
+
+  const handleNativeShare = useCallback(async () => {
+    const text = `"${verse.text}"\n\n— ${verse.reference}\n\n📜 পবিত্র বানী - Sacred Word`;
+    try {
+      await shareContent({
+        title: 'পবিত্র বানী - Sacred Word',
+        text,
+        url: `https://sacredword.vercel.app/?verse=${encodeURIComponent(verse.reference)}`,
+        dialogTitle: 'শেয়ার করুন',
+      });
+    } catch (err) {
+      console.error('Share failed:', err);
+    }
   }, [verse]);
 
   return (
@@ -290,6 +305,13 @@ export const ShareCardModal = memo<ShareCardProps>(({
                   >
                     {copied ? <Check size={20} className="text-emerald-500" /> : <Copy size={20} />}
                     <span>{copied ? 'কপি হয়েছে!' : 'টেক্সট কপি'}</span>
+                  </button>
+                  <button
+                    onClick={handleNativeShare}
+                    className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl font-bold bg-emerald-500 hover:bg-emerald-400 text-white transition-all"
+                  >
+                    <Smartphone size={20} />
+                    <span>নেটিভ শেয়ার</span>
                   </button>
                   <button
                     onClick={handleExport}
