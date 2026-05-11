@@ -59,11 +59,16 @@ app.post('/api/ai/generate', async (req, res) => {
       return res.status(500).json({ error: 'Server configuration error: OPENROUTER_API_KEY missing' });
     }
 
+    if (!messages || !Array.isArray(messages) || messages.length === 0) {
+      return res.status(400).json({ error: 'Messages array is required' });
+    }
+
     const response = await axios.post('https://openrouter.ai/api/v1/chat/completions', {
       model: model || 'google/gemini-2.0-flash-exp:free',
       messages: messages,
       response_format: { type: "json_object" }
     }, {
+      timeout: 30000,
       headers: {
         'Authorization': `Bearer ${apiKey}`,
         'HTTP-Referer': 'https://sacredword.app',
@@ -74,7 +79,16 @@ app.post('/api/ai/generate', async (req, res) => {
     res.json(response.data);
   } catch (error) {
     console.error('AI Proxy Error:', error.message);
-    res.status(500).json({ error: 'Failed to connect with AI service' });
+    if (error.response) {
+      const status = error.response.status;
+      const data = error.response.data;
+      const detail = data?.error?.message || data?.error || JSON.stringify(data);
+      res.status(status).json({ error: `OpenRouter error (${status}): ${detail}` });
+    } else if (error.code === 'ECONNABORTED') {
+      res.status(504).json({ error: 'AI service timeout after 30s' });
+    } else {
+      res.status(502).json({ error: `Connection failed: ${error.message}` });
+    }
   }
 });
 
