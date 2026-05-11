@@ -181,11 +181,11 @@ app.post('/api/openrouter/proxy', async (req, res) => {
       const status = error.response.status;
       const data = error.response.data;
       const detail = data?.error?.message || data?.error || JSON.stringify(data);
-      res.status(status).json({ success: false, error: 'Failed to connect with AI service', details: detail });
+      res.status(status).json({ success: false, error: `OpenRouter error (${status}): ${detail}` });
     } else if (error.code === 'ECONNABORTED') {
-      res.status(504).json({ success: false, error: 'AI service timeout', details: 'Request timed out after 30s' });
+      res.status(504).json({ success: false, error: 'AI service timeout after 30s' });
     } else {
-      res.status(502).json({ success: false, error: 'Failed to connect with AI service', details: error.message });
+      res.status(502).json({ success: false, error: `Connection failed: ${error.message}` });
     }
   }
 });
