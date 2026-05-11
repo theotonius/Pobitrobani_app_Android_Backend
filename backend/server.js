@@ -8,7 +8,9 @@ const axios = require('axios');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const KEYS_FILE = path.join(__dirname, 'api_keys.json');
+const KEYS_FILE = process.env.VERCEL
+  ? path.join('/tmp', 'api_keys.json')
+  : path.join(__dirname, 'api_keys.json');
 
 // CORS - সব ডিভাইসকে এক্সেস দেওয়া হচ্ছে
 app.use(cors());
