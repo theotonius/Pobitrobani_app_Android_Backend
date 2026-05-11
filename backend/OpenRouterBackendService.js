@@ -213,7 +213,16 @@ class OpenRouterBackendService {
    * Handle successful response
    */
   async handleResponse(response) {
-    const data = await response.json();
+    let data;
+    try {
+      data = await response.json();
+    } catch (e) {
+      return {
+        success: false,
+        error: `HTTP ${response.status}: Invalid response from server`,
+        details: response.statusText,
+      };
+    }
 
     if (!response.ok) {
       return {
