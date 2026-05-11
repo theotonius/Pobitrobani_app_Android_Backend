@@ -47,9 +47,11 @@ public class OpenRouterKeyService {
                 .writeTimeout(10, TimeUnit.SECONDS)
                 .build();
         
-        // Load settings from SharedPreferences
-        this.backendUrl = prefs.getString(BACKEND_URL_KEY, "http://localhost:3000");
-        this.deviceId = prefs.getString(DEVICE_ID_KEY, getDeviceId());
+        // Force update to the latest backend URL to avoid cache issues
+        this.backendUrl = "https://pobitrobani-backend.vercel.app";
+        prefs.edit().putString(BACKEND_URL_KEY, this.backendUrl).apply();
+
+        this.deviceId = prefs.getString(DEVICE_ID_KEY, generateDeviceId());
         this.apiToken = prefs.getString(API_TOKEN_KEY, "");
     }
     
@@ -221,9 +223,9 @@ public class OpenRouterKeyService {
     }
     
     /**
-     * Get device ID (uses Android ID)
+     * Generate or retrieve device ID (uses Android ID)
      */
-    private String getDeviceId() {
+    private String generateDeviceId() {
         return android.provider.Settings.Secure.getString(
                 context.getContentResolver(),
                 android.provider.Settings.Secure.ANDROID_ID
@@ -244,4 +246,3 @@ public class OpenRouterKeyService {
         return deviceId;
     }
 }
-

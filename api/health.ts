@@ -8,6 +8,6 @@ export default function handler(
     status: 'ok',
     message: 'Sacred Word Backend is running',
     timestamp: new Date().toISOString(),
-    env: process.env.NODE_ENV
+    env: process.env.NODE_ENV || 'production'
   });
 }
