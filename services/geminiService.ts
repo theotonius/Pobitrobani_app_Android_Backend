@@ -34,7 +34,7 @@ export const geminiService = {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          model: "google/gemini-2.0-flash-exp:free",
+          model: "google/gemini-2.0-flash-001",
           messages: [
             { role: "system", content: systemInstruction },
             { role: "user", content: userPrompt }
@@ -77,7 +77,7 @@ export const geminiService = {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          model: "google/gemini-2.0-flash-exp:free",
+          model: "google/gemini-2.0-flash-001",
           messages: [{ role: "user", content: "Inspiring Bible verse JSON: {\"text\": \"...\", \"author\": \"...\"}" }]
         })
       });

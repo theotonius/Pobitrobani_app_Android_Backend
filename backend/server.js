@@ -12,6 +12,15 @@ const KEYS_FILE = process.env.VERCEL
   ? path.join('/tmp', 'api_keys.json')
   : path.join(__dirname, 'api_keys.json');
 
+// Map deprecated model names to current ones
+function resolveModel(model) {
+  const map = {
+    'google/gemini-2.0-flash-exp:free': 'google/gemini-2.0-flash-001',
+    'google/gemini-2.0-flash-exp': 'google/gemini-2.0-flash-001',
+  };
+  return map[model] || model;
+}
+
 // CORS - সব ডিভাইসকে এক্সেস দেওয়া হচ্ছে
 app.use(cors());
 
@@ -63,8 +72,9 @@ app.post('/api/ai/generate', async (req, res) => {
       return res.status(400).json({ error: 'Messages array is required' });
     }
 
+    const resolvedModel = resolveModel(model || 'deepseek/deepseek-chat');
     const response = await axios.post('https://openrouter.ai/api/v1/chat/completions', {
-      model: model || 'deepseek/deepseek-chat',
+      model: resolvedModel,
       messages: messages,
       response_format: { type: "json_object" }
     }, {
@@ -174,8 +184,9 @@ app.post('/api/openrouter/proxy', async (req, res) => {
     entry.lastUsed = new Date().toISOString();
     saveKeys(keys);
 
+    const resolvedModel = resolveModel(model || 'deepseek/deepseek-chat');
     const response = await axios.post('https://openrouter.ai/api/v1/chat/completions', {
-      model: model || 'deepseek/deepseek-chat',
+      model: resolvedModel,
       messages: [{ role: 'user', content: message }],
       max_tokens: 5000
     }, {
