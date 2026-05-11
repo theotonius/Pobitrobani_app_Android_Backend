@@ -223,7 +223,7 @@ class OpenRouterBackendService {
       };
     }
 
-    return data;
+    return { success: true, ...data };
   }
 
   /**
