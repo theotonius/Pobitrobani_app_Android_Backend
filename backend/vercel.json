@@ -2,11 +2,23 @@
   "version": 2,
   "builds": [
     {
+      "src": "OpenRouterBackendService.js",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "index.html",
+      "use": "@vercel/static"
+    },
+    {
       "src": "server.js",
       "use": "@vercel/node"
     }
   ],
   "routes": [
+    {
+      "src": "/OpenRouterBackendService.js",
+      "dest": "/OpenRouterBackendService.js"
+    },
     {
       "src": "/(.*)",
       "dest": "server.js"

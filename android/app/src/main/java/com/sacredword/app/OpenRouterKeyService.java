@@ -132,6 +132,16 @@ public class OpenRouterKeyService {
      * Health check - verify backend is running
      */
     public void healthCheck(ApiKeyCallback callback) {
+        if (callback == null) {
+            Log.e(TAG, "healthCheck: callback is null");
+            return;
+        }
+
+        if (backendUrl == null || backendUrl.isEmpty()) {
+            callback.onError("Backend URL not configured");
+            return;
+        }
+
         String url = backendUrl + "/health";
         makeGetRequest(url, callback);
     }
@@ -140,11 +150,16 @@ public class OpenRouterKeyService {
      * Make a GET request to the backend
      */
     private void makeGetRequest(String url, ApiKeyCallback callback) {
+        if (url == null || url.isEmpty()) {
+            callback.onError("Invalid URL");
+            return;
+        }
+
         Request.Builder requestBuilder = new Request.Builder()
                 .url(url)
                 .get();
         
-        if (!apiToken.isEmpty()) {
+        if (apiToken != null && !apiToken.isEmpty()) {
             requestBuilder.addHeader("X-API-Token", apiToken);
         }
         
@@ -155,11 +170,16 @@ public class OpenRouterKeyService {
      * Make a DELETE request to the backend
      */
     private void makeDeleteRequest(String url, ApiKeyCallback callback) {
+        if (url == null || url.isEmpty()) {
+            callback.onError("Invalid URL");
+            return;
+        }
+
         Request.Builder requestBuilder = new Request.Builder()
                 .url(url)
                 .delete();
         
-        if (!apiToken.isEmpty()) {
+        if (apiToken != null && !apiToken.isEmpty()) {
             requestBuilder.addHeader("X-API-Token", apiToken);
         }
         
@@ -170,6 +190,11 @@ public class OpenRouterKeyService {
      * Make a POST request to the backend
      */
     private void makeRequest(String method, String endpoint, JSONObject body, ApiKeyCallback callback) {
+        if (backendUrl == null || backendUrl.isEmpty() || endpoint == null) {
+            callback.onError("Backend configuration error");
+            return;
+        }
+
         String url = backendUrl + endpoint;
         RequestBody requestBody = RequestBody.create(
                 body.toString(),
@@ -180,13 +205,15 @@ public class OpenRouterKeyService {
                 .url(url)
                 .header("Content-Type", "application/json");
         
-        if (method.equals("POST")) {
-            requestBuilder.post(requestBody);
-        } else if (method.equals("PUT")) {
-            requestBuilder.put(requestBody);
+        if (method != null) {
+            if (method.equals("POST")) {
+                requestBuilder.post(requestBody);
+            } else if (method.equals("PUT")) {
+                requestBuilder.put(requestBody);
+            }
         }
         
-        if (!apiToken.isEmpty()) {
+        if (apiToken != null && !apiToken.isEmpty()) {
             requestBuilder.addHeader("X-API-Token", apiToken);
         }
         
@@ -197,6 +224,16 @@ public class OpenRouterKeyService {
      * Execute the HTTP request asynchronously
      */
     private void executeRequest(Request request, ApiKeyCallback callback) {
+        if (callback == null) {
+            Log.e(TAG, "executeRequest: callback is null");
+            return;
+        }
+
+        if (httpClient == null) {
+            callback.onError("HTTP client not initialized");
+            return;
+        }
+
         httpClient.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {

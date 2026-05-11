@@ -21,6 +21,11 @@ public class MainActivity extends BridgeActivity {
     }
 
     private void checkBackendHealth() {
+        if (keyService == null) {
+            Log.e(TAG, "❌ Failed to check backend: keyService is null");
+            return;
+        }
+
         keyService.healthCheck(new OpenRouterKeyService.ApiKeyCallback() {
             @Override
             public void onSuccess(JSONObject response) {

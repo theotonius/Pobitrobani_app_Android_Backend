@@ -135,6 +135,11 @@ public class ApiKeyManager {
      * Check backend health
      */
     public void checkBackendHealth() {
+        if (keyService == null) {
+            showToast("Error: Backend service not initialized");
+            return;
+        }
+
         keyService.healthCheck(new OpenRouterKeyService.ApiKeyCallback() {
             @Override
             public void onSuccess(JSONObject response) {
