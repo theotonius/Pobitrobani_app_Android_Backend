@@ -144,6 +144,9 @@ app.get('/api/keys/list', (req, res) => {
 // Proxy request to OpenRouter using stored API key
 app.post('/api/openrouter/proxy', async (req, res) => {
   try {
+    if (!req.body) {
+      return res.status(400).json({ success: false, error: 'Invalid request body' });
+    }
     const { message, model, deviceId } = req.body;
     if (!message) {
       return res.status(400).json({ success: false, error: 'Message is required' });
@@ -158,9 +161,11 @@ app.post('/api/openrouter/proxy', async (req, res) => {
     saveKeys(keys);
 
     const response = await axios.post('https://openrouter.ai/api/v1/chat/completions', {
-      model: model || 'openrouter/auto',
-      messages: [{ role: 'user', content: message }]
+      model: model || 'google/gemini-2.0-flash-exp:free',
+      messages: [{ role: 'user', content: message }],
+      max_tokens: 5000
     }, {
+      timeout: 30000,
       headers: {
         'Authorization': `Bearer ${entry.apiKey}`,
         'Content-Type': 'application/json',
@@ -172,9 +177,16 @@ app.post('/api/openrouter/proxy', async (req, res) => {
     res.json({ success: true, response: response.data });
   } catch (error) {
     console.error('OpenRouter Proxy Error:', error.message);
-    const status = error.response?.status || 500;
-    const detail = error.response?.data?.error?.message || error.message;
-    res.status(status).json({ success: false, error: 'Failed to connect with AI service', details: detail });
+    if (error.response) {
+      const status = error.response.status;
+      const data = error.response.data;
+      const detail = data?.error?.message || data?.error || JSON.stringify(data);
+      res.status(status).json({ success: false, error: 'Failed to connect with AI service', details: detail });
+    } else if (error.code === 'ECONNABORTED') {
+      res.status(504).json({ success: false, error: 'AI service timeout', details: 'Request timed out after 30s' });
+    } else {
+      res.status(502).json({ success: false, error: 'Failed to connect with AI service', details: error.message });
+    }
   }
 });
 
