@@ -64,7 +64,7 @@ app.post('/api/ai/generate', async (req, res) => {
     }
 
     const response = await axios.post('https://openrouter.ai/api/v1/chat/completions', {
-      model: model || 'google/gemini-2.0-flash-exp:free',
+      model: model || 'deepseek/deepseek-chat',
       messages: messages,
       response_format: { type: "json_object" }
     }, {
@@ -175,7 +175,7 @@ app.post('/api/openrouter/proxy', async (req, res) => {
     saveKeys(keys);
 
     const response = await axios.post('https://openrouter.ai/api/v1/chat/completions', {
-      model: model || 'google/gemini-2.0-flash-exp:free',
+      model: model || 'deepseek/deepseek-chat',
       messages: [{ role: 'user', content: message }],
       max_tokens: 5000
     }, {
