@@ -226,6 +226,7 @@ export default function App() {
   const [state, setState] = useState<AppState>(AppState.IDLE);
   const [highlightVerseNum, setHighlightVerseNum] = useState(false);
   const [currentVerse, setCurrentVerse] = useState<VerseData | null>(null);
+  const [searchResults, setSearchResults] = useState<VerseData[]>([]);
   const [savedVerses, setSavedVerses] = useState<VerseData[]>([]);
   const [savedSnippets, setSavedSnippets] = useState<SnippetData[]>([]);
   const [fontSize, setFontSize] = useState('base'); 
@@ -571,6 +572,7 @@ export default function App() {
       { name: 'text', weight: 0.3 }
     ],
     threshold: 0.3,
+    includeScore: true,
     getFn: (obj: any, path: string | string[]) => {
       const val = obj[path as string];
       if (Array.isArray(val)) return val.map(v => normalizeBengali(v));
@@ -632,8 +634,34 @@ export default function App() {
     // Normalize query for better matching
     const normalizedQuery = normalizeBengali(finalQuery);
 
-    // 1. Search in BENGALI_SEARCH_INDEX
-    indexFuse.search(normalizedQuery);
+    // 1. Search BENGALI_SEARCH_INDEX for instant results
+    const indexResults = indexFuse.search(normalizedQuery);
+    let indexMatch: VerseData | null = null;
+    if (indexResults.length > 0 && indexResults[0].score! < 0.2) {
+      const item = indexResults[0].item;
+      indexMatch = {
+        id: 'index_' + item.reference.replace(/[^a-zA-Z0-9]/g, '_'),
+        reference: item.reference,
+        text: item.text,
+        explanation: {
+          theologicalMeaning: '',
+          theologicalReference: '',
+          historicalContext: '',
+          historicalReference: '',
+          practicalApplication: '',
+          practicalReference: '',
+          crossReferences: [],
+          meditationPoint: '',
+          metaphoricalMeaning: '',
+          metaphoricalReference: '',
+        },
+        prayer: '',
+        keyThemes: item.themes,
+        timestamp: Date.now()
+      };
+      setCurrentVerse(indexMatch);
+      setState(AppState.IDLE);
+    }
 
     // 2. Fuzzy search in saved verses
     const localResults = localFuse.search(normalizedQuery);
@@ -662,40 +690,40 @@ export default function App() {
       setState(AppState.IDLE);
     } catch (err: any) {
       if (err.name === 'AbortError') return;
-      console.error(err);
-      setError(err.message || 'সংযোগ বিচ্ছিন্ন হয়েছে। পুনরায় চেষ্টা করুন।');
-      setState(AppState.ERROR);
+      if (!indexMatch) {
+        console.error(err);
+        setError(err.message || 'সংযোগ বিচ্ছিন্ন হয়েছে। পুনরায় চেষ্টা করুন।');
+        setState(AppState.ERROR);
+      }
     }
   }, [query, state, appLang, languageVersion, searchHistory, indexFuse, localFuse]);
 
-  const filteredAutoSuggestions = useMemo(() => {
-    // Combine search history, predefined suggestions, themes/references from saved verses, and the new index
+  const suggestionsList = useMemo(() => {
     const savedThemes = savedVerses.flatMap(v => v.keyThemes || []);
     const savedRefs = savedVerses.map(v => v.reference);
     const indexRefs = BENGALI_SEARCH_INDEX.map(v => v.reference);
     const indexThemes = BENGALI_SEARCH_INDEX.flatMap(v => v.themes);
-    
-    const combinedSuggestions = Array.from(new Set([
-      ...searchHistory, 
+    return Array.from(new Set([
+      ...searchHistory,
       ...t.suggestions,
       ...savedThemes,
       ...savedRefs,
       ...indexRefs,
       ...indexThemes
     ]));
-    
-    if (!query.trim()) return combinedSuggestions.slice(0, 10);
-    
-    const fuse = new Fuse(combinedSuggestions, {
+  }, [searchHistory, t.suggestions, savedVerses]);
+
+  const filteredAutoSuggestions = useMemo(() => {
+    if (!query.trim()) return suggestionsList.slice(0, 10);
+    const fuse = new Fuse(suggestionsList, {
       includeScore: true,
       threshold: 0.4,
       distance: 100,
-      getFn: (item) => normalizeBengali(item)
+      getFn: (item: string) => normalizeBengali(item)
     });
-    
     const results = fuse.search(normalizeBengali(query));
     return results.map(result => result.item).slice(0, 10);
-  }, [query, searchHistory, t.suggestions, savedVerses]);
+  }, [query, suggestionsList]);
 
   const toggleSave = () => {
     if (!currentVerse) return;
@@ -831,12 +859,34 @@ export default function App() {
     }
   };
 
+  const stripVerseMarkers = (text: string) => text.replace(/\[\d+\]/g, '').trim();
+  const toArabicNum = (num: string) => num.replace(/[০-৯]/g, (d: string) => '০১২৩৪৫৬৭৮৯'.indexOf(d).toString());
+  const prepareVerseText = (text: string, reference: string): string => {
+    if (!reference) return text;
+    const versePart = reference.split(/[ঃ:]/).pop()?.trim();
+    if (!versePart) return text;
+    if (/^(\d+)\s+[\u0980-\u09FF]/.test(text)) {
+      return text.replace(/(^|[।?!])\s*(\d+)\s+(?=[\u0980-\u09FF])/g, '$1[$2] ');
+    }
+    const rangeMatch = versePart.match(/^([\d০-৯]+)\s*[-–]\s*([\d০-৯]+)$/);
+    if (rangeMatch) {
+      const start = parseInt(toArabicNum(rangeMatch[1]));
+      const end = parseInt(toArabicNum(rangeMatch[2]));
+      const markers: string[] = [];
+      for (let i = start; i <= end; i++) {
+        markers.push(`[${i}]`);
+      }
+      return markers.join(' ') + ' ' + text;
+    }
+    return `[${versePart}] ${text}`;
+  };
+
   const renderVerseText = (text: string, color: string = 'amber', isExplanation: boolean = false) => {
     const toArabic = (num: string) => num.replace(/[০-৯]/g, (d: string) => '০১২৩৪৫৬৭৮৯'.indexOf(d).toString());
     const parts = text.split(/(\[[\d০-৯]+\])/g);
     
     const colorClasses: Record<string, string> = {
-      amber: 'bg-amber-600 border-amber-400/30 shadow-[0_0_25px_rgba(217,119,6,0.4)] hover:bg-amber-500',
+      amber: 'bg-gradient-to-br from-yellow-300 via-yellow-500 to-yellow-700 border-yellow-400/50 shadow-[0_0_25px_rgba(234,179,8,0.4)]',
       blue: 'bg-blue-600 border-blue-400/30 shadow-[0_0_25px_rgba(37,99,235,0.4)] hover:bg-blue-500',
       emerald: 'bg-emerald-600 border-emerald-400/30 shadow-[0_0_25px_rgba(5,150,105,0.4)] hover:bg-emerald-500',
       rose: 'bg-rose-600 border-rose-400/30 shadow-[0_0_25px_rgba(225,29,72,0.4)] hover:bg-rose-500',
@@ -875,7 +925,7 @@ export default function App() {
               transition={{ repeat: Infinity, duration: 2, delay: i * 0.5 }}
               className={`inline-flex items-center justify-center w-6 h-6 md:w-8 md:h-8 ${selectedColor} text-white rounded-full text-[10px] md:text-sm font-black mr-3 align-middle border-2 shadow-lg group-hover/verse:scale-110 transition-transform ${highlightVerseNum ? 'ring-4 ring-yellow-400 shadow-[0_0_15px_rgba(250,204,21,0.8)]' : ''}`}
             >
-              {toArabic(currentVerseNum)}
+              {toArabicNum(currentVerseNum)}
             </motion.span>
           );
         } else if (part.trim()) {
@@ -907,7 +957,7 @@ export default function App() {
             key={i} 
             animate={{ scale: [1, 1.1, 1] }}
             transition={{ repeat: Infinity, duration: 3, delay: i * 0.3 }}
-            className={`inline-flex items-center justify-center w-6 h-6 md:w-10 md:h-10 ${selectedColor} text-white rounded-full text-[10px] md:text-lg font-black mx-1.5 mb-1.5 align-middle border-2 transition-all hover:scale-110 ${highlightVerseNum ? 'ring-4 ring-yellow-400 shadow-[0_0_15px_rgba(250,204,21,0.8)]' : ''}`}
+            className={`inline-flex items-center justify-center w-6 h-6 md:w-10 md:h-10 ${selectedColor} text-white rounded-full text-[10px] md:text-lg font-black mx-1.5 mb-1.5 align-middle border-2 transition-all hover:scale-110 ring-4 ring-yellow-400 shadow-[0_0_15px_rgba(250,204,21,0.8)]`}
           >
             {toArabic(match[1])}
           </motion.span>
@@ -1339,7 +1389,7 @@ export default function App() {
                   <CircleAlert size={32} />
                 </div>
                 <h3 className={`text-xl md:text-3xl font-black ${theme === 'dark' ? 'text-slate-100' : 'text-slate-900'} mb-3 md:mb-4 bn-serif transition-colors duration-300`}>{t.errorTitle}</h3>
-                <p className={`${theme === 'dark' ? 'text-slate-300' : 'text-slate-600'} text-base md:text-lg mb-8 md:mb-10 bn-serif text-center md:text-justify px-2`}>{error}</p>
+                <p className={`${theme === 'dark' ? 'text-slate-300' : 'text-slate-600'} text-base md:text-lg mb-8 md:mb-10 bn-serif text-center md:text-justify-pro px-2`}>{error}</p>
                 <button onClick={() => setState(AppState.IDLE)} className={`px-10 py-4 md:px-12 md:py-5 bg-rose-600 hover:bg-rose-500 rounded-2xl text-white font-black transition-all shadow-lg active:scale-95 text-sm md:text-base`}>{t.retry}</button>
               </motion.div>
             )}
@@ -1370,8 +1420,8 @@ export default function App() {
                     </div>
 
                     <div className="mb-8 md:mb-12 relative px-2 md:px-8">
-                      <h2 className={`${readerMode ? (isLongText ? 'text-2xl md:text-4xl' : 'text-3xl md:text-5xl') : mainTextSizeClass} font-normal ${theme === 'dark' ? 'text-amber-50' : 'text-body'} leading-relaxed bn-serif drop-shadow-sm max-w-4xl mx-auto relative z-10 text-justify transition-all duration-300`}>
-                        {renderVerseText(currentVerse.text)}
+                      <h2 className={`${readerMode ? (isLongText ? 'text-2xl md:text-4xl' : 'text-3xl md:text-5xl') : mainTextSizeClass} font-normal ${theme === 'dark' ? 'text-amber-50' : 'text-body'} leading-relaxed bn-serif drop-shadow-sm max-w-4xl mx-auto relative z-10 text-justify-pro transition-all duration-300`}>
+                        {renderVerseText(prepareVerseText(currentVerse.text, currentVerse.reference))}
                       </h2>
                     </div>
                     
@@ -1445,8 +1495,8 @@ export default function App() {
                       <div className="space-y-3 md:space-y-4">
                         {!readerMode && <h4 className={`text-lg md:text-xl font-black text-amber-400 bn-serif`}>{t.versionLabels[languageVersion].theologicalMeaning}</h4>}
                         <div className="h-0.5 w-10 bg-amber-500/20 rounded-full"></div>
-                        <div className={`${readerMode ? 'text-lg md:text-xl' : explanationSizeClass} ${theme === 'dark' ? 'text-slate-300' : 'text-body'} leading-relaxed bn-serif font-medium text-justify transition-all duration-300`}>
-                          {renderVerseText(currentVerse.explanation.theologicalMeaning, 'amber', true)}
+                        <div className={`${readerMode ? 'text-lg md:text-xl' : explanationSizeClass} ${theme === 'dark' ? 'text-slate-300' : 'text-body'} leading-relaxed bn-serif font-medium text-justify-pro transition-all duration-300`}>
+                          {stripVerseMarkers(currentVerse.explanation.theologicalMeaning)}
                         </div>
                       </div>
                     </div>
@@ -1485,8 +1535,8 @@ export default function App() {
                       <div className="space-y-3 md:space-y-4">
                         {!readerMode && <h4 className="text-lg md:text-xl font-black text-amber-400 bn-serif">{t.versionLabels[languageVersion].historicalContext}</h4>}
                         <div className="h-0.5 w-10 bg-blue-500/20 rounded-full"></div>
-                        <div className={`${readerMode ? 'text-lg md:text-xl' : explanationSizeClass} ${theme === 'dark' ? 'text-slate-300' : 'text-body'} leading-relaxed bn-serif font-medium text-justify transition-all duration-300`}>
-                          {renderVerseText(currentVerse.explanation.historicalContext, 'blue', true)}
+                        <div className={`${readerMode ? 'text-lg md:text-xl' : explanationSizeClass} ${theme === 'dark' ? 'text-slate-300' : 'text-body'} leading-relaxed bn-serif font-medium text-justify-pro transition-all duration-300`}>
+                          {stripVerseMarkers(currentVerse.explanation.historicalContext)}
                         </div>
                       </div>
                     </div>
@@ -1525,8 +1575,8 @@ export default function App() {
                       <div className="space-y-3 md:space-y-4">
                         {!readerMode && <h4 className="text-lg md:text-xl font-black text-amber-400 bn-serif">{t.versionLabels[languageVersion].practicalApplication}</h4>}
                         <div className="h-0.5 w-10 bg-emerald-500/20 rounded-full"></div>
-                        <div className={`${readerMode ? 'text-lg md:text-xl' : explanationSizeClass} ${theme === 'dark' ? 'text-slate-300' : 'text-body'} leading-relaxed bn-serif font-medium text-justify transition-all duration-300`}>
-                          {renderVerseText(currentVerse.explanation.practicalApplication, 'emerald', true)}
+                        <div className={`${readerMode ? 'text-lg md:text-xl' : explanationSizeClass} ${theme === 'dark' ? 'text-slate-300' : 'text-body'} leading-relaxed bn-serif font-medium text-justify-pro transition-all duration-300`}>
+                          {stripVerseMarkers(currentVerse.explanation.practicalApplication)}
                         </div>
                       </div>
                     </div>
@@ -1565,8 +1615,8 @@ export default function App() {
                       <div className="space-y-3 md:space-y-4">
                         {!readerMode && <h4 className="text-lg md:text-xl font-black text-amber-400 bn-serif">{t.versionLabels[languageVersion].metaphoricalMeaning}</h4>}
                         <div className="h-0.5 w-10 bg-violet-500/20 rounded-full"></div>
-                        <div className={`${readerMode ? 'text-lg md:text-xl' : explanationSizeClass} ${theme === 'dark' ? 'text-slate-300' : 'text-body'} leading-relaxed bn-serif font-medium italic text-justify transition-all duration-300`}>
-                          {renderVerseText(currentVerse.explanation.metaphoricalMeaning, 'violet', true)}
+                        <div className={`${readerMode ? 'text-lg md:text-xl' : explanationSizeClass} ${theme === 'dark' ? 'text-slate-300' : 'text-body'} leading-relaxed bn-serif font-medium italic text-justify-pro transition-all duration-300`}>
+                          {stripVerseMarkers(currentVerse.explanation.metaphoricalMeaning)}
                         </div>
                       </div>
                     </div>
@@ -1626,8 +1676,8 @@ export default function App() {
                           theme={theme}
                         />
                       </div>
-                      <div className={`${readerMode ? 'text-lg md:text-xl' : explanationSizeClass} ${theme === 'dark' ? 'text-slate-300' : 'text-body'} leading-relaxed bn-serif font-medium italic transition-all duration-300`}>
-                        {renderVerseText(currentVerse.explanation.meditationPoint, 'rose', true)}
+                      <div className={`${readerMode ? 'text-lg md:text-xl' : explanationSizeClass} ${theme === 'dark' ? 'text-slate-300' : 'text-body'} leading-relaxed bn-serif font-medium italic text-justify-pro transition-all duration-300`}>
+                        {stripVerseMarkers(currentVerse.explanation.meditationPoint)}
                       </div>
                     </div>
                   </div>
@@ -1657,8 +1707,8 @@ export default function App() {
                         theme={theme}
                       />
                     </div>
-                    <div className={`${readerMode ? 'text-lg md:text-xl' : explanationSizeClass} ${theme === 'dark' ? 'text-slate-300' : 'text-body'} leading-relaxed bn-serif font-medium transition-all duration-300`}>
-                      {renderVerseText(currentVerse.explanation.originalInsight, 'indigo', true)}
+                    <div className={`${readerMode ? 'text-lg md:text-xl' : explanationSizeClass} ${theme === 'dark' ? 'text-slate-300' : 'text-body'} leading-relaxed bn-serif font-medium text-justify-pro transition-all duration-300`}>
+                      {stripVerseMarkers(currentVerse.explanation.originalInsight)}
                     </div>
                   </div>
                 )}
@@ -1690,8 +1740,8 @@ export default function App() {
                     </motion.div>
                     <h4 className={`text-xl md:text-2xl font-black text-amber-400 bn-serif`}>ঐশ্বরিক প্রার্থনা</h4>
                   </div>
-                  <div className={`${readerMode ? 'text-lg md:text-xl' : explanationSizeClass} ${theme === 'dark' ? 'text-slate-200' : 'text-body'} leading-relaxed bn-serif font-medium text-center sm:text-justify relative z-10 px-2 md:px-4 transition-all duration-300`}>
-                    {renderVerseText(currentVerse.prayer, 'amber', true)}
+                  <div className={`${readerMode ? 'text-lg md:text-xl' : explanationSizeClass} ${theme === 'dark' ? 'text-slate-200' : 'text-body'} leading-relaxed bn-serif font-medium text-justify-pro relative z-10 px-2 md:px-4 transition-all duration-300`}>
+                    {stripVerseMarkers(currentVerse.prayer)}
                   </div>
                   <p className={`${theme === 'dark' ? 'text-amber-400/60' : 'text-amber-400/70'} font-black text-[10px] md:text-xs uppercase tracking-wide bn-serif`}>আমেন</p>
                 </div>
@@ -1744,7 +1794,7 @@ export default function App() {
                     </div>
                     <div className="space-y-4 md:space-y-6 relative z-10">
                       <p className={`${theme === 'dark' ? 'text-amber-400' : 'text-amber-700'} text-[10px] md:text-xs font-black uppercase tracking-wide`}>{t.dailyQuote}</p>
-                      <h3 className={`text-xl md:text-3xl font-bold ${theme === 'dark' ? 'text-amber-100' : 'text-amber-950'} bn-serif leading-relaxed italic text-justify transition-colors duration-300`}>
+                      <h3 className={`text-xl md:text-3xl font-bold ${theme === 'dark' ? 'text-amber-100' : 'text-amber-950'} bn-serif leading-relaxed italic text-justify-pro transition-colors duration-300`}>
                         "{dailyQuote.text}"
                       </h3>
                       <div className="flex items-center justify-center gap-3">
@@ -1915,7 +1965,7 @@ export default function App() {
                             </button>
                           </div>
                         </div>
-                        <p className={`${theme === 'dark' ? 'text-slate-200' : 'text-body'} bn-serif text-base md:text-lg leading-relaxed line-clamp-4 font-medium text-justify transition-colors duration-300`}>{renderVerseText(v.text)}</p>
+                        <p className={`${theme === 'dark' ? 'text-slate-200' : 'text-body'} bn-serif text-base md:text-lg leading-relaxed line-clamp-4 font-medium text-justify-pro transition-colors duration-300`}>{renderVerseText(prepareVerseText(v.text, v.reference))}</p>
                       </div>
 
                       <div className="mt-8 md:mt-10 space-y-4">
@@ -2001,7 +2051,7 @@ export default function App() {
                               <Trash2 size={14} />
                             </button>
                           </div>
-<p className={`text-sm md:text-base leading-relaxed bn-serif font-medium ${theme === 'dark' ? 'text-slate-300' : 'text-body'} transition-colors duration-300 text-justify`}>
+<p className={`text-sm md:text-base leading-relaxed bn-serif font-medium ${theme === 'dark' ? 'text-slate-300' : 'text-body'} transition-colors duration-300 text-justify-pro`}>
                             {snippet.content.length > 200 ? snippet.content.substring(0, 200) + '...' : snippet.content}
                           </p>
                         </div>
@@ -2321,7 +2371,7 @@ export default function App() {
                            <p className={`${theme === 'dark' ? 'text-amber-400' : 'text-amber-700'} font-black text-[9px] md:text-xs uppercase tracking-wide`}>শান্তি ও প্রজ্ঞার কারিগর</p>
                          </div>
                          
-                         <p className={`${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'} leading-relaxed bn-serif text-base md:text-lg font-medium text-justify transition-colors duration-300`}>
+                         <p className={`${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'} leading-relaxed bn-serif text-base md:text-lg font-medium text-justify-pro transition-colors duration-300`}>
                            "পবিত্র বানী" অ্যাপটি আধুনিক বাইবেলীয় দর্শনের এক অনবদ্য মেলবন্ধন। আমাদের লক্ষ্য প্রযুক্তির মাধ্যমে শান্তির আলো ও ঐশ্বরিক জ্ঞান পৌঁছে দেয়া।
                          </p>
 

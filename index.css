@@ -234,6 +234,17 @@
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
+
+  .text-justify-pro {
+    text-align: justify;
+    text-justify: inter-word;
+    -webkit-hyphens: auto;
+    hyphens: auto;
+    -ms-hyphens: auto;
+    overflow-wrap: break-word;
+    word-break: auto-phrase;
+    letter-spacing: 0.005em;
+  }
 }
 
 @keyframes float {
