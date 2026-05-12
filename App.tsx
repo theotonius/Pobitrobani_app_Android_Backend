@@ -859,14 +859,16 @@ export default function App() {
     }
   };
 
+  const BN_DIGIT = '\u09E6-\u09EF';
   const stripVerseMarkers = (text: string) => text.replace(/\[\d+\]/g, '').trim();
   const toArabicNum = (num: string) => num.replace(/[০-৯]/g, (d: string) => '০১২৩৪৫৬৭৮৯'.indexOf(d).toString());
   const prepareVerseText = (text: string, reference: string): string => {
     if (!reference) return text;
     const versePart = reference.split(/[ঃ:]/).pop()?.trim();
     if (!versePart) return text;
-    if (/^(\d+)\s+[\u0980-\u09FF]/.test(text)) {
-      return text.replace(/(^|[।?!])\s*(\d+)\s+(?=[\u0980-\u09FF])/g, '$1[$2] ');
+    const anyDigit = new RegExp(`^([\\d${BN_DIGIT}]+)\\s+[\\u0980-\\u09FF]`);
+    if (anyDigit.test(text)) {
+      return text.replace(new RegExp(`(^|[।?!])\\s*([\\d${BN_DIGIT}]+)\\s+(?=[\\u0980-\\u09FF])`, 'g'), '$1[$2] ');
     }
     const rangeMatch = versePart.match(/^([\d০-৯]+)\s*[-–]\s*([\d০-৯]+)$/);
     if (rangeMatch) {
