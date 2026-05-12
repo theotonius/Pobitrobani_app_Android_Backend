@@ -59,48 +59,96 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok', message: 'Sacred Word Backend is running' });
 });
 
+const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+const FALLBACK_MODELS = [
+  'google/gemini-2.0-flash-001',
+  'deepseek/deepseek-chat',
+  'mistralai/mistral-small-3.1-24b-instruct:free',
+  'openai/gpt-4o-mini'
+];
+
 // AI Generation Endpoint (Frontend calls this)
 app.post('/api/ai/generate', async (req, res) => {
-  try {
-    const { model, messages } = req.body;
-    const apiKey = process.env.OPENROUTER_API_KEY;
+  const { model, messages } = req.body;
+  const apiKey = process.env.OPENROUTER_API_KEY;
 
-    if (!apiKey) {
-      return res.status(500).json({ error: 'Server configuration error: OPENROUTER_API_KEY missing' });
-    }
+  if (!apiKey) {
+    return res.status(500).json({ error: 'Server configuration error: OPENROUTER_API_KEY missing' });
+  }
 
-    if (!messages || !Array.isArray(messages) || messages.length === 0) {
-      return res.status(400).json({ error: 'Messages array is required' });
-    }
+  if (!messages || !Array.isArray(messages) || messages.length === 0) {
+    return res.status(400).json({ error: 'Messages array is required' });
+  }
 
-    const resolvedModel = resolveModel(model || 'google/gemini-2.0-flash-001');
-    const response = await axios.post('https://openrouter.ai/api/v1/chat/completions', {
-      model: resolvedModel,
-      messages: messages,
-      max_tokens: 65536,
-      response_format: { type: "json_object" }
-    }, {
-      timeout: 30000,
-      headers: {
-        'Authorization': `Bearer ${apiKey}`,
-        'HTTP-Referer': 'https://sacredword.app',
-        'X-Title': 'Sacred Word App'
+  const requestedModel = resolveModel(model || 'google/gemini-2.0-flash-001');
+  const modelsToTry = [requestedModel, ...FALLBACK_MODELS.filter(m => m !== requestedModel)];
+  let lastError = null;
+
+  for (const currentModel of modelsToTry) {
+    for (let attempt = 0; attempt < 3; attempt++) {
+      try {
+        const response = await axios.post('https://openrouter.ai/api/v1/chat/completions', {
+          model: currentModel,
+          messages: messages,
+          max_tokens: 65536,
+          ...(currentModel.includes('gemini') ? { response_format: { type: "json_object" } } : {})
+        }, {
+          timeout: 60000,
+          headers: {
+            'Authorization': `Bearer ${apiKey}`,
+            'HTTP-Referer': 'https://sacredword.app',
+            'X-Title': 'Sacred Word App'
+          }
+        });
+
+        return res.json(response.data);
+      } catch (error) {
+        lastError = error;
+        if (error.response) {
+          const status = error.response.status;
+          const data = error.response.data;
+          const detail = data?.error?.message || data?.error || JSON.stringify(data);
+
+          if (status === 429 && attempt < 2) {
+            const backoff = Math.pow(2, attempt) * 1000;
+            console.warn(`429 on ${currentModel}, retry ${attempt + 1} in ${backoff}ms`);
+            await sleep(backoff);
+            continue;
+          }
+
+          if (status === 402) {
+            console.warn(`402 on ${currentModel}, trying next model`);
+            break;
+          }
+
+          if (attempt === 2) {
+            console.warn(`${currentModel} failed after 3 attempts, trying next model`);
+            break;
+          }
+        } else if (error.code === 'ECONNABORTED') {
+          if (attempt < 2) {
+            await sleep(1000);
+            continue;
+          }
+          break;
+        } else {
+          break;
+        }
       }
-    });
-
-    res.json(response.data);
-  } catch (error) {
-    console.error('AI Proxy Error:', error.message);
-    if (error.response) {
-      const status = error.response.status;
-      const data = error.response.data;
-      const detail = data?.error?.message || data?.error || JSON.stringify(data);
-      res.status(status).json({ error: `OpenRouter error (${status}): ${detail}` });
-    } else if (error.code === 'ECONNABORTED') {
-      res.status(504).json({ error: 'AI service timeout after 30s' });
-    } else {
-      res.status(502).json({ error: `Connection failed: ${error.message}` });
     }
+  }
+
+  console.error('All models/retries exhausted:', lastError?.message);
+  if (lastError?.response) {
+    const status = lastError.response.status;
+    const data = lastError.response.data;
+    const detail = data?.error?.message || data?.error || JSON.stringify(data);
+    res.status(status).json({ error: `OpenRouter error (${status}): ${detail}` });
+  } else if (lastError?.code === 'ECONNABORTED') {
+    res.status(504).json({ error: 'AI service timeout' });
+  } else {
+    res.status(502).json({ error: `Connection failed: ${lastError?.message}` });
   }
 });
 
